@@ -13,6 +13,8 @@ class Controller
         $data['header'] = $loadpage->header();
         $data['footer'] = $loadpage->footer();
         $data['bookingForm'] = $loadpage->bookingForm();
+        $data['comments'] = $loadpage->comments();
+        $data['display'] = $loadpage->display();
         require_once "./app/Views/" . $view . "/index.php";
     }
 

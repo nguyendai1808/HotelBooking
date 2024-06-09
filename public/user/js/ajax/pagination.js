@@ -67,14 +67,14 @@ $(document).ready(function () {
                                     <img class="img-fluid" src="`+ USER_PATH + `/${item.anhphong != null ? item.anhphong : 'images/notImage.jpg'}" alt="img">
     
                                     ${item.khuyenmai ? `<small class="item-sale"><i class="fa-solid fa-tags"></i> -${item.khuyenmai}%</small>` : ''}
-                                    <small class="item-price">${giaphong}đ/đêm</small>
+                                    <small class="item-price">${giaphong.toLocaleString('vi-VN')}đ/đêm</small>
                                     <small class="item-payment">${item.loaihinhtt}</small>
                                 </div>
                                 <div class="room-infor col-lg-7 p-3">
                                     <div class="d-flex justify-content-between mb-3">
                                         <h5 class="mb-0">${item.tenphong} - ${item.tengiuong}</h5>
                                         <div class="ps-3">
-                                            <span class="fw-bold text-success">${item.danhgia != null ? item.danhgia : ''}</span>
+                                            <span class="fw-bold text-success">${item.danhgia != null ? item.danhgia + '/10' : ''}</span>
                                         </div>
                                     </div>
                                     <div class="mb-3">
@@ -93,7 +93,7 @@ $(document).ready(function () {
                                     <input type="hidden" name="giaphong" value="${giaphong}">
                                     <div class="d-flex justify-content-between">
                                         <a class="btn btn-sm btn-warning rounded py-2 px-4 fw-bold" href="`+ URLROOT + `/room/detailroom/${item.idphong}">Xem chi tiết</a>
-                                        <button type="submit" name="booknow" onclick="clickBooknow(event);" class="btn btn-sm btn-dark rounded py-2 px-4 fw-bold">Đặt ngay</button>
+                                        <button type="submit" name="booknow" onclick="clickBooknow(event,'${item.idphong}');" class="btn btn-sm btn-dark rounded py-2 px-4 fw-bold">Đặt ngay</button>
                                     </div>
                                 </div>
                             </div>

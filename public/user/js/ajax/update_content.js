@@ -2,7 +2,6 @@ $(document).ready(function () {
     selectMenuItem();
 
     $('#sidebar').on('click', 'li', function (e) {
-        e.preventDefault();
         $('#sidebar li').removeClass('selected');
         $(this).addClass('selected');
 
@@ -17,7 +16,7 @@ $(document).ready(function () {
             type: 'GET',
             dataType: 'json',
             success: function (data) {
-                $('#main-content').html(data.display);
+                $('#main-content').html(data.page);
             },
             error: function (xhr, status, error) {
                 console.error('Error loading content:', error);

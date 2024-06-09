@@ -1,95 +1,190 @@
-/* ---------------------------login------------------------------------- */
-
-.wrapper-layout {
-  border-radius: 5px;
-  max-width: 500px;
+.form-layout {
+  position: relative;
   width: 100%;
   background: #fff;
-  padding: 25px;
-  margin: auto;
-  margin-top: 50px;
-  margin-bottom: 50px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  padding: 10px 20px;
+  border-radius: 8px;
 }
 
-.wrapper-layout h2 {
+.form-layout h3 {
   font-size: 1.5rem;
   color: #333;
   font-weight: 500;
-  text-align: center;
-  margin-bottom: 30px;
 }
 
-.form-layout .input-layout {
+
+.form .input-box {
   width: 100%;
-  margin-bottom: 30px;
+  margin-top: 20px;
 }
 
-.input-layout label {
+.input-box label {
   color: #333;
 }
 
-.wrapper-layout a {
-  text-decoration: none;
-}
-
-.form-layout :where(.input-layout input) {
-  height: 45px;
+.form :where(.input-box input, .select-box) {
+  position: relative;
+  height: 50px;
   width: 100%;
   outline: none;
   font-size: 1rem;
   color: #707070;
   margin-top: 8px;
   border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 0 15px;
+}
+
+.input-box input[type="file"] {
+  padding: 10px;
+  border: 1px solid #ccc;
   border-radius: 5px;
-  padding: 15px;
-}
-
-.input-layout input:focus {
-  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1);
-}
-
-.form-layout .btn-layout {
-  height: 50px;
   width: 100%;
-  color: #fff;
+  box-sizing: border-box;
+}
+
+.input-box input[type="file"]:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}
+
+.input-box .avatar {
+  height: 70px;
+  width: 70px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: solid 3px #FFC107;
+}
+
+.input-box img {
+  height: 50px;
+  width: 50px;
+  object-fit: cover;
+  margin: 0 10px;
+}
+
+
+
+.input-box textarea {
+  position: relative;
+  color: #707070;
+  width: 100%;
+  font-size: 1rem;
+  margin-top: 8px;
+  border: 1px solid #ddd;
+  outline: none;
+  border-radius: 6px;
+  padding: 0 15px;
+  padding-top: 10px;
+}
+
+.input-box input:focus {
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+}
+
+.input-box textarea:focus {
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+}
+
+.form .column {
+  display: flex;
+  column-gap: 15px;
+}
+
+.form .gender-box {
+  margin-top: 20px;
+}
+
+.gender-box h3 {
+  color: #333;
   font-size: 1rem;
   font-weight: 400;
-  margin-bottom: 30px;
+  margin-bottom: 8px;
+}
+
+.form :where(.gender-option, .gender) {
+  display: flex;
+  align-items: center;
+  column-gap: 50px;
+  flex-wrap: wrap;
+}
+
+.form .gender {
+  column-gap: 5px;
+}
+
+.gender input {
+  accent-color: rgb(130, 106, 251);
+}
+
+.form :where(.gender input, .gender label) {
+  cursor: pointer;
+}
+
+.gender label {
+  color: #707070;
+}
+
+.address :where(input, .select-box) {
+  margin-top: 15px;
+}
+
+.select-box select {
+  height: 100%;
+  width: 100%;
+  outline: none;
   border: none;
-  background: rgb(106, 79, 244);
+  color: #707070;
+  font-size: 1rem;
 }
 
-.form-layout .btn-layout:hover {
-  background: rgb(131, 96, 248);
-}
-
-.back-home {
-  text-align: center;
-  margin: auto;
-}
-
-.back-home a {
+.form button,
+.form a {
   text-decoration: none;
+  padding: 10px;
+  color: #fff;
+  font-weight: 400;
+  margin-top: 30px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: all 0.2s ease;
+  margin-right: 10px;
+}
+
+.form .btn-save {
+  background: rgb(97, 66, 250);
+}
+
+.form .btn-add {
+  background: rgb(2, 141, 55);
+}
+
+.form .btn-cancel {
+  background: rgb(219, 17, 17);
+}
+
+.form .btn-save:hover {
+  background: rgba(97, 66, 250, 0.633);
+}
+
+.form .btn-add:hover {
+  background: rgba(2, 141, 55, 0.721);
+}
+
+.form .btn-cancel:hover {
+  background: rgba(219, 17, 17, 0.688);
 }
 
 
+/*Responsive*/
+@media screen and (max-width: 550px) {
+  .form .column {
+    flex-wrap: wrap;
+  }
 
-#form-pass {
-  position: relative;
-}
-
-#form-pass img {
-  position: absolute;
-  right: 8px;
-  bottom: 2px;
-  transform: translate(-50%, -50%);
-}
-
-#form-pass :where(#eye-close, #eye-open) {
-  width: 20px;
-  height: auto;
-}
-#form-pass #eye-open {
-  display: none;
+  /* .form :where(.gender-option, .gender) {
+    row-gap: 15px;
+  } */
 }

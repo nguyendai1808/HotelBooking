@@ -1,0 +1,129 @@
+/*import icon*/
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css");
+
+/* ----------------------------login, register, myinfor------------------------------ */
+
+.wrapper-layout {
+  border-radius: 5px;
+  max-width: 500px;
+  width: 100%;
+  background: #fff;
+  padding: 25px;
+  margin: auto;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+.wrapper-layout h2 {
+  font-size: 1.5rem;
+  color: #333;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.form-layout .input-layout {
+  margin-bottom: 25px;
+}
+
+.input-layout label {
+  color: #333;
+}
+
+.input-layout a {
+  text-decoration: none;
+}
+
+.form-layout :where(.input-layout input) {
+  height: 45px;
+  width: 100%;
+  outline: none;
+  font-size: 1rem;
+  color: #707070;
+  margin-top: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+}
+
+.input-layout input:focus {
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1);
+}
+
+.input-layout textarea:focus {
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1);
+}
+
+.input-layout img {
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 10px;
+}
+
+.input-layout input[type="file"] {
+  background-color: #fff;
+  height: auto;
+  padding: 10px 15px;
+}
+
+.form-layout .btn-layout {
+  height: 50px;
+  width: 100%;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 400;
+  margin-bottom: 30px;
+  border: none;
+  background: rgb(106, 79, 244);
+}
+
+.form-layout .btn-layout:hover {
+  background: rgb(131, 96, 248);
+}
+
+
+/* passworrd - eye */
+#form-pass {
+  position: relative;
+}
+
+#form-pass .eye-toggle {
+  position: absolute;
+  right: 8px;
+  bottom: 2px;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: auto;
+}
+
+.form-layout .btn-save,
+.form-layout .btn-cancel {
+  padding: 8px 20px;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.form-layout .btn-save {
+  background: rgb(106, 79, 244);
+  margin-right: 20px;
+}
+
+.form-layout .btn-cancel {
+  background-color: crimson;
+  margin-left: 20px;
+}
+
+.form-layout .btn-save:hover {
+  background: rgba(107, 79, 244, 0.727);
+}
+
+.form-layout .btn-cancel:hover {
+  background-color: rgba(220, 20, 60, 0.651);
+}
+
+

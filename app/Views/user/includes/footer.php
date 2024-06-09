@@ -1,6 +1,6 @@
 <!-- backtop -->
 <?php if ($page != 'cart.php') : ?>
-    <a href="#" class="backtop btn btn-lg btn-warning btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    <a href="#" class="backtop back-to-top"><i class="bi bi-arrow-up"></i></a>
 <?php endif; ?>
 
 
@@ -12,7 +12,7 @@
                 foreach ($data['footer'] as $item) : ?>
                     <div class="footer-item">
                         <a href="<?= URLROOT ?>/home">
-                            <img src="<?= USER_PATH ?>/images/HotelBooking-logo.png" class="logo" />
+                            <img src="<?= USER_PATH ?>/images/<?= $data['display']['logo'] ?? 'notlogo.png' ?>" class="logo" />
                         </a>
                         <p class="desc">
                             <?= $item['mota'] ?>
@@ -80,7 +80,7 @@
         </div>
         <div class="footer-copyright">
             <p>
-                &copy; HotelSay là nhà cung cấp dịch vụ du lịch trực tuyến & các dịch vụ có liên quan hàng đầu Việt Nam.
+                &copy; HotelBokking là nhà cung cấp dịch vụ du lịch trực tuyến & các dịch vụ có liên quan hàng đầu Việt Nam.
             </p>
         </div>
     </div>

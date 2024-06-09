@@ -13,20 +13,18 @@
                 </thead>
                 <tbody>
 
-                    <?php
-                    if (!empty($data['category'])) :
+                    <?php if (!empty($data['category'])) :
                         $count = 0;
                         foreach ($data['category'] as $item) :
-                            $count++;
-                    ?>
+                            $count++; ?>
                             <tr>
                                 <td class="stt"><?= $count ?></td>
                                 <td class="name"><?= $item['tendanhmuc'] ?></td>
                                 <td class="number"><?= $item['sophong'] ?></td>
                                 <td class="method">
                                     <div class="d-flex justify-content-center">
-                                        <a type="submit" href="<?= URLROOT ?>/admin/category/update/<?= $item['iddanhmuc'] ?>" class="btn btn-info text-white mx-1"><i class="fa-solid fa-pen-to-square"></i></a>
-                                        <a type="submit" href="<?= URLROOT ?>/admin/category/delete/<?= $item['iddanhmuc'] ?>" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></a>
+                                        <a href="<?= URLROOT ?>/admin/category/update/<?= $item['iddanhmuc'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-pen-to-square"></i></a>
+                                        <a href="<?= URLROOT ?>/admin/category/delete/<?= $item['iddanhmuc'] ?>" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></a>
                                     </div>
                                 </td>
                             </tr>

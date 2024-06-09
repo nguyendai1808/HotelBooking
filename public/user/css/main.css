@@ -29,10 +29,10 @@ body a {
 .line-below::after {
     content: "";
     display: block;
-    border-bottom: 3px solid #9D6D33;
+    border-bottom: 2px solid #9D6D33;
     width: 150px;
     position: absolute;
-    bottom: -20px;
+    bottom: -18px;
     left: 0%;
 }
 
@@ -43,7 +43,7 @@ body a {
 .title-name-below::after {
     content: "";
     display: block;
-    border-bottom: 3px solid #9D6D33;
+    border-bottom: 2px solid #9D6D33;
     width: 20%;
     position: absolute;
     bottom: -15px;
@@ -195,9 +195,16 @@ body a {
 
 .room-item .item-img img {
     width: 100%;
-    height: 100%;
+    height: 165px;
     object-fit: cover;
 }
+
+@media screen and (max-width: 1200px) {
+    .room-item .item-img img {
+        height: 100%;
+    }
+}
+
 
 .room-item .item-img .item-sale {
     position: absolute;
@@ -223,12 +230,8 @@ body a {
     cursor: pointer;
     font-size: 18px;
     padding-left: 10px;
-}
-
-.room-item .item-detail .item-delete {
-    cursor: pointer;
-    font-size: 18px;
-    padding-left: 10px;
+    border: none;
+    background: none;
 }
 
 .room-item .item-detail .item-rating {
@@ -271,9 +274,27 @@ body a {
     float: right;
 }
 
-.room-item .item-detail .btn-item-review {
+.room-item .item-detail .btn-invoice {
+    color: #FFC107;
+    border: none;
+    cursor: pointer;
+    background: none;
+    padding: 0;
+}
+
+
+.room-item .item-detail .btn-item-book {
     padding: 5px 10px;
     background-color: #FFC107;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.room-item .item-detail .btn-item-cancel {
+    padding: 5px 10px;
+    background-color: rgb(245, 71, 71);
     color: #fff;
     border: none;
     border-radius: 5px;
@@ -360,29 +381,53 @@ body a {
 }
 
 
-/*  ---------------------------------------history ---------------------------------------*/
-.history .sidebar {
+/*  ---------------------------------------history - personal-infor ---------------------------------------*/
+.sidebar {
     position: sticky;
     top: 120px;
 }
 
-.history .sidebar ul {
+.sidebar ul {
     padding: 0;
+    margin: 0;
 }
 
-.history .sidebar li {
+.sidebar li {
+    background-color: #9D6D33;
     list-style: none;
     padding: 10px 20px;
-    width: 100%;
-    background-color: rebeccapurple;
     margin-bottom: 10px;
     color: white;
     border-radius: 5px;
     cursor: pointer;
+    text-transform: uppercase;
+    font-weight: 500;
 }
 
-.history .sidebar li:hover {
+.sidebar li:hover {
     background-color: #FFC107;
+}
+
+.sidebar .selected {
+    background-color: #FFC107;
+    color: white;
+}
+
+.personal-infor .title {
+    font-size: 25px;
+    color: #333;
+    font-weight: 500;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+}
+
+.history .sidebar li {
+    background-color: rebeccapurple;
+}
+
+.history .sidebar .selected {
+    background-color: #FFC107;
+    color: white;
 }
 
 
@@ -408,6 +453,7 @@ body a {
 #detailroom-page .room .room-infor a {
     color: #212529;
 }
+
 .room .room-img {
     position: relative;
 }
@@ -551,7 +597,7 @@ body a {
     #detailroom-page .room .img-fluid {
         height: 320px;
     }
-    
+
 
     #room-page .room .img-fluid {
         height: 300px;
@@ -567,7 +613,7 @@ body a {
     #detailroom-page .room .img-fluid {
         height: 250px;
     }
-    
+
 
     #room-page .room .img-fluid {
         height: 230px;
@@ -979,6 +1025,22 @@ main .service .service-item:hover {
     position: absolute;
     bottom: 0;
     left: 25%;
+}
+
+.service .service-item:hover::before {
+    content: "Liên hệ";
+    padding: 10px 20px;
+    border: 3px solid white;
+    border-left: none;
+    border-top: none;
+    border-radius: 8px 0 50px 0;
+    background: #ffc233;
+    color: #333;
+    font-weight: 500;
+    display: inline-block;
+    position: absolute;
+    left: 0;
+    top: 0;
 }
 
 
@@ -1439,20 +1501,6 @@ main .service .service-item:hover {
     z-index: 2;
 }
 
-.comment .comment-content .comment-item {
-    margin-top: 50px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.200);
-}
-
-.comment .comment-item img {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    z-index: 2;
-    transform: translateX(-50%);
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.300);
-}
-
 @media screen and (max-width: 992px) {
     .comment .slider-wrapper .carousel {
         grid-auto-columns: calc((100% / 2) - 9px);
@@ -1552,6 +1600,7 @@ main .service .service-item:hover {
     margin-bottom: 7%;
     border-radius: 5px;
     border: 3px solid white;
+    object-fit: cover;
 }
 
 .about .image-2 {
@@ -1564,6 +1613,7 @@ main .service .service-item:hover {
     margin-left: 4%;
     margin-top: 7%;
     border-radius: 5px;
+    object-fit: cover;
 }
 
 /* about list image ------------------------*/
@@ -1824,15 +1874,24 @@ main .comment {
     height: 100%;
     background-color: white;
     border-radius: 8px;
-
+    margin-top: 50px;
+    box-shadow: 0px 4px 8px rgba(110, 110, 110, 0.2);
+    width: 100%;
 }
 
 .comment .comment-item img {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    z-index: 2;
+    transform: translateX(-50%);
+    box-shadow: 0px 4px 8px rgba(105, 105, 105, 0.3);
     border-radius: 50%;
     width: 100px;
     height: 100px;
     object-fit: cover;
-    border: 5px solid #FFC107;
+    border: 3px solid #FFC107;
+    background-color: white;
 }
 
 .comment .comment-item h6 {
@@ -1970,11 +2029,17 @@ textarea {
 
 header {
     background-color: rgb(254, 237, 213);
-    box-shadow: 0 0 15px rgba(16, 16, 15, 0.2);
     height: 60px;
     position: sticky;
     top: 0;
+    box-shadow: 0 5px 10px rgba(16, 16, 15, 0.2);
     z-index: 10;
+}
+
+header .header {
+    width: 100%;
+    max-width: 1350px;
+    margin: 0 auto;
     display: flex;
     align-items: center;
 }
@@ -2010,7 +2075,7 @@ header .navbar-content li {
     list-style: none;
     height: 50px;
     line-height: 50px;
-    padding: 0 20px;
+    padding: 0 15px;
 }
 
 header .navbar-content .navbar-other {
@@ -2065,7 +2130,7 @@ header .cart .cart-count {
     background-color: #FFC107;
     border-radius: 50%;
     top: 10px;
-    left: 38px;
+    left: 32px;
     width: 20px;
     height: 20px;
     line-height: 20px;
@@ -2087,6 +2152,12 @@ header .account li {
     height: auto;
     padding: 0;
 }
+
+header .account img {
+    border: 1px solid #919191;
+    border-radius: 50%;
+}
+
 
 header .account li a {
     margin: 0;
@@ -2359,11 +2430,22 @@ footer {
 
 /* backtop */
 .backtop {
+    padding: 10px 15px;
+    border-radius: 8px;
+    background-color: #FFC107;
+    color: #333;
+    font-size: 18px;
     position: fixed;
     bottom: 20px;
     right: 20px;
     display: none;
     z-index: 2;
+}
+
+@media (max-width: 400px) {
+    .backtop {
+        font-size: 15px;
+    }
 }
 
 /* error 404 */

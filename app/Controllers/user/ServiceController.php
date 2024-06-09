@@ -4,15 +4,14 @@ class Service extends Controller
     private $ServiceModel;
 
     private $pagination;
-    
+
     private $Services;
 
 
     public function __construct()
     {
         //gọi model User
-        $this->ServiceModel = $this->model('Services');
-
+        $this->ServiceModel = $this->model('ServiceModel');
         //phân trang
         $per_page = 6;
         $services = $this->ServiceModel->getServices();
@@ -23,6 +22,7 @@ class Service extends Controller
 
     public function index()
     {
+
         $pag = [
             'total_pages' => $this->pagination->getTotalPages(),
             'current_page' => $this->pagination->getcurrentPage()
@@ -55,18 +55,20 @@ class Service extends Controller
             echo json_encode($response);
             exit;
         } else {
+            if (!empty($current_page) && filter_var($current_page, FILTER_VALIDATE_INT)) {
+                $this->Services = $this->pagination->getItemsbyCurrentPage($current_page);
+                $pag = [
+                    'total_pages' => $this->pagination->getTotalPages(),
+                    'current_page' => $this->pagination->getcurrentPage()
+                ];
 
-            $this->Services = $this->pagination->getItemsbyCurrentPage($current_page);
-            $pag = [
-                'total_pages' => $this->pagination->getTotalPages(),
-                'current_page' => $this->pagination->getcurrentPage()
-            ];
-
-            $this->view('user', 'service.php', [
-                'services' => $this->Services,
-                'pagination' => $pag
-            ]);
+                $this->view('user', 'service.php', [
+                    'services' => $this->Services,
+                    'pagination' => $pag
+                ]);
+            } else {
+                header('location:' . URLROOT . '/service');
+            }
         }
     }
-
 }

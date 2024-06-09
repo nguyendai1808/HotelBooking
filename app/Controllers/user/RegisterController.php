@@ -6,7 +6,7 @@ class Register extends Controller
     public function __construct()
     {
         //gọi model User
-        $this->AccountModel = $this->model('Accounts');
+        $this->AccountModel = $this->model('AccountModel');
     }
 
     public function index()
@@ -18,11 +18,11 @@ class Register extends Controller
                     'error' => 'Tài khoản đã có người sử dụng.'
                 ]);
             } else {
-                if ($this->AccountModel->createAccount($_POST['surname'], $_POST['name'], $_POST['email'], $_POST['pass'])) {
+                if ($this->AccountModel->createAccount($_POST['surname'], $_POST['name'], $_POST['email'], $_POST['pass'], 'user', date('Y-m-d'))) {
                     echo '<script>
                         alert("Đăng ký thành công");
                         location.href="' . URLROOT . '/login";' .
-                    '</script>';
+                        '</script>';
                 }
             }
         }

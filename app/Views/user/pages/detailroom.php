@@ -2,7 +2,7 @@
 
     <!-- banner image Start -->
     <section class="banner-image">
-        <img src="<?= USER_PATH ?>/images/bg-img.jpg" alt="banner">
+        <img src="<?= USER_PATH ?>/images/<?= $data['display']['baner'] ?? 'notbg.jpg'?>" alt="banner">
     </section>
     <!-- banner image end -->
 
@@ -28,7 +28,7 @@
                                         <?php if (!empty($data['roomImgs'])) :
                                             foreach ($data['roomImgs'] as $item) : ?>
 
-                                                <img src="<?= USER_PATH ?>/<?= $item['duongdan'] ?>/<?= $item['tenanh'] ?>" alt="img">
+                                                <img src="<?= USER_PATH ?>/<?= !empty($item['anh']) ? $item['anh'] : 'images/notImage.jpg'; ?>" alt="img">
 
                                             <?php endforeach; ?>
                                         <?php else : ?>
@@ -51,7 +51,7 @@
                                     <div class="detail-desc pb-3">
                                         <div class="d-flex justify-content-between mb-3">
                                             <h4 class="m-0"><?= $item['tenphong'] ?> - <?= $item['tengiuong'] ?></h4>
-                                            <span class="fw-bold text-success"> <?= !empty($item['danhgia']) ? $item['danhgia'] : ''; ?></span>
+                                            <span class="fw-bold text-success h5"> <?= !empty($item['danhgia']) ? $item['danhgia'] . '/10' : ''; ?></span>
                                         </div>
 
                                         <?php $giaphong = $item['giaphong'];
@@ -59,17 +59,17 @@
                                             $giaphong = $item['giaphong'] - (($item['khuyenmai'] / 100) * $item['giaphong']); ?>
 
                                             <p class="text-warning">Khuyến mãi: <span><?= $item['khuyenmai'] ?>%</span></p>
-                                            <h5><del><?= number_format($item['giaphong'], 0, ',', '.') ?>đ</del> <?= number_format($giaphong, 0, ',', '.') ?>đ</h5>
+                                            <h5><del><?= number_format($item['giaphong'], 0, ',', '.') ?>đ</del> <?= number_format($giaphong, 0, ',', '.') ?>đ/đêm</h5>
 
                                         <?php else : ?>
 
-                                            <h5><?= number_format($giaphong, 0, ',', '.') ?>đ</h5>
+                                            <h5><?= number_format($giaphong, 0, ',', '.') ?>đ/đêm</h5>
 
                                         <?php endif; ?>
 
                                         <p><?= $item['mota'] ?></p>
 
-                                        <p class="text-body"><i class="fa fa-chart-area text-warning pe-2"></i>Kích thước: <?= $item['kichthuoc'] ?> m² - <i class="fa fa-bed text-warning pe-2"></i>Số giường: <?= $item['sogiuong'] ?></p>
+                                        <p class="text-body"><i class="fa fa-chart-area text-warning pe-2"></i>Kích thước: <?= $item['kichthuoc'] ?> m²<i class="fa fa-bed text-warning pe-2 ps-2 border-start ms-2"></i>Số giường: <?= $item['sogiuong'] ?></p>
 
                                         <h6 class="text-primary fw-bold">Loại hình thanh toán: <span class="text-success"><?= $item['loaihinhtt'] ?></span></h6>
 
@@ -97,7 +97,7 @@
                                     </div>
                                     <div class="d-flex justify-content-between">
                                         <button type="submit" name="addcart" class="btn btn-sm btn-warning rounded py-2 px-4 fw-bold">Thêm vào giỏ hàng</button>
-                                        <button type="submit" name="booknow" onclick="clickBooknow(event);" formaction="<?= URLROOT ?>/payment" class="btn btn-sm btn-dark rounded py-2 px-4 fw-bold">Đặt ngay</button>
+                                        <button type="submit" name="booknow" onclick="clickBooknow(event, '<?= $item['idphong'] ?>');" formaction="<?= URLROOT ?>/payment" class="btn btn-sm btn-dark rounded py-2 px-4 fw-bold">Đặt ngay</button>
                                     </div>
                                 </form>
                         <?php endforeach;
@@ -138,100 +138,86 @@
                                 echo '</div>';
                             }
                             echo '</div>';
-                        endif;
-                        ?>
+                        else : ?>
+
+                            <p class="h6">Không có tiện nghi nào!</p>
+
+                        <?php endif; ?>
+
                     </div>
                 </div>
 
                 <div id="reviews" class="tab-content">
-                    <div class="room-rating mb-3 border-bottom">
-                        <div class="row">
-                            <div class="rating-title mb-3 col-12">
-                                <h4 class="m-0 pe-3">9,5/10 Tuyệt vời</h4>
-                                <a href="#"><span>(232 đánh giá)</span></a>
+
+                    <?php if (!empty($data['detailRating']) && !empty($data['ratingUser'])) :
+                        $rating = $data['detailRating']; ?>
+
+                        <div class="room-rating mb-3 border-bottom">
+                            <div class="row">
+                                <div class="rating-title mb-3 col-12">
+
+                                    <h4 class="m-0 pe-3"><?= $rating[0]['tongdiem'] ?? '' ?>/10 Tuyệt vời</h4>
+
+                                    <span class="text-secondary">(<?= $rating[0]['sodanhgia'] ?? '' ?> đánh giá)</span>
+                                </div>
+
+                                <?php if (!empty($rating[0]['diemtheotieuchi'])) :
+                                    foreach ($rating[0]['diemtheotieuchi'] as $item) : ?>
+
+                                        <div class="rating-box col-lg-6">
+                                            <div class="rating-text">
+                                                <span class="title"><?= $item['tentieuchi'] ?? '' ?></span>
+                                                <span class="score"><?= round($item['sodiem'], 1)  ?? '' ?> điểm</span>
+                                            </div>
+                                            <div class="rating-bar">
+                                                <span class="score-bar" style="width: <?= intval($item['sodiem']) * 10 ?? 0 ?>%;"></span>
+                                            </div>
+                                        </div>
+
+                                <?php endforeach;
+                                endif; ?>
+
                             </div>
-                            <div class="rating-box col-lg-6">
-                                <div class="rating-text">
-                                    <span class="title">Sạch sẽ</span>
-                                    <span class="score">9,5 điểm</span>
-                                </div>
-                                <div class="rating-bar">
-                                    <span class="score-bar" style="width: 90%;"></span>
-                                </div>
-                            </div>
-                            <div class="rating-box col-lg-6">
-                                <div class="rating-text">
-                                    <span class="title">Thoải mãi & chất lượng</span>
-                                    <span class="score">9,5 điểm</span>
-                                </div>
-                                <div class="rating-bar">
-                                    <span class="score-bar" style="width: 40%;"></span>
-                                </div>
-                            </div>
-                            <div class="rating-box col-lg-6">
-                                <div class="rating-text">
-                                    <span class="title">Tiện nghi</span>
-                                    <span class="score">9,5 điểm</span>
-                                </div>
-                                <div class="rating-bar">
-                                    <span class="score-bar" style="width: 80%;"></span>
-                                </div>
-                            </div>
-                            <div class="rating-box col-lg-6">
-                                <div class="rating-text">
-                                    <span class="title">Dịch vụ</span>
-                                    <span class="score">9,5 điểm</span>
-                                </div>
-                                <div class="rating-bar">
-                                    <span class="score-bar" style="width: 70%;"></span>
-                                </div>
-                            </div>
+
                         </div>
-                    </div>
-                    <div class="review-box mt-4">
-                        <div class="review-item">
-                            <div class="review-user">
-                                <img class="user-avatar" src="images/hotel/hotel-1.jpg" alt="Avatar">
-                                <div>
-                                    <strong>Người dùng 1</strong>
-                                    <p class="m-0">12-09-2024</p>
+                        <div class="review-box mt-4">
+
+                            <?php foreach ($data['ratingUser'] as $item) : ?>
+
+                                <div class="review-item">
+                                    <div class="review-user">
+                                        <img class="user-avatar" src="<?= USER_PATH ?>/images/avatars/<?= $item['anh'] ?? 'user.png' ?>" alt="avatar">
+                                        <div>
+                                            <strong><?= trim($item['ho'] . ' ' . $item['ten']) ?></strong>
+                                            <p class="m-0"><?= $item['thoigian'] ? date('d-m-Y', strtotime($item['thoigian'])) : '' ?></p>
+                                        </div>
+                                        <small><i class="fa-solid fa-quote-right fa-2x"></i></small>
+                                    </div>
+                                    <ul class="rating">
+                                        <li class="lable">Đánh giá:</li>
+
+                                        <?php foreach ($item['chitietdanhgia'] as $row) : ?>
+
+                                            <li class="text-success"><?= $row['tentieuchi'] ?? '' ?>: <?= round($row['sodiem'], 1)  ?? '' ?>đ</li>
+
+                                        <?php endforeach; ?>
+
+                                    </ul>
+                                    <p class="cmt">Bình luận: <span><?= $item['noidung'] ?></span></p>
                                 </div>
-                                <small><i class="fa-solid fa-quote-right fa-2x"></i></small>
-                            </div>
-                            <ul class="rating">
-                                <li class="lable">Đánh giá:</li>
-                                <li class="text-success">Sạch sẽ: 9đ</li>
-                                <li class="text-success">Tiện nghi phòng: 9đ</li>
-                                <li class="text-success">Thoái mái: 8đ</li>
-                                <li class="text-success">Dịch vụ: 8đ</li>
-                            </ul>
-                            <p class="cmt">Bình luận: <span>tốt</span></p>
+
+                            <?php endforeach; ?>
+
                         </div>
 
-                        <div class="review-item">
-                            <div class="review-user">
-                                <img class="user-avatar" src="images/hotel/hotel-1.jpg" alt="Avatar">
-                                <strong>Người dùng 1</strong>
-                                <small><i class="fa-solid fa-quote-right fa-2x"></i></small>
-                            </div>
-                            <ul class="rating">
-                                <li class="lable">Đánh giá:</li>
-                                <li class="text-success">Sạch sẽ: 9đ</li>
-                                <li class="text-success">Tiện nghi phòng: 9đ</li>
-                                <li class="text-success">Thoái mái: 8đ</li>
-                                <li class="text-success">Dịch vụ: 8đ</li>
-                            </ul>
-                            <p class="cmt">Bình luận: <span>tốt</span></p>
-                        </div>
+                    <?php else : ?>
 
-                    </div>
+                        <p class="h6">Chưa có đánh giá nào!</p>
 
+                    <?php endif; ?>
 
                 </div>
             </div>
-
-
-
         </div>
     </section>
     <!-- detail room End -->
@@ -239,18 +225,19 @@
     <!-- room more Start -->
     <section class="room-suggestion pt-5 pb-5">
         <div class="container">
-            <div class="text-center">
-                <h6 class="section-title text-center text-warning text-uppercase">xem thêm phòng</h6>
-                <h2 class="title-name-below mb-5">Gợi ý những <span class="text-warning text-uppercase">Phòng tương tự</span></h2>
-            </div>
 
-            <div class="room-slider">
-                <div class="slider-wrapper">
-                    <i id="left" class="fa-solid fa-angle-left"></i>
-                    <ul class="carousel">
+            <?php if (!empty($data['roomMore'])) : ?>
 
-                        <?php if (!empty($data['roomMore'])) :
-                            foreach ($data['roomMore'] as $item) :
+                <div class="text-center">
+                    <h6 class="section-title text-center text-warning text-uppercase">xem thêm phòng</h6>
+                    <h2 class="title-name-below mb-5">Gợi ý những <span class="text-warning text-uppercase">Phòng tương tự</span></h2>
+                </div>
+                <div class="room-slider">
+                    <div class="slider-wrapper">
+                        <i id="left" class="fa-solid fa-angle-left"></i>
+                        <ul class="carousel">
+
+                            <?php foreach ($data['roomMore'] as $item) :
                                 $giaphong = !empty($item['khuyenmai']) ? ($item['giaphong'] - ($item['khuyenmai'] * 0.01 * $item['giaphong'])) :  $item['giaphong']; ?>
 
                                 <li class="card">
@@ -258,7 +245,7 @@
                                         <div class="room-item rounded overflow-hidden">
                                             <div class="room-img p-3">
                                                 <img class="img-fluid" src="<?= USER_PATH ?>/<?= !empty($item['anhphong']) ? $item['anhphong'] : 'images/notImage.jpg'; ?>" alt="image" draggable="false">
-                                                <small class="item-price"><?= number_format($giaphong) ?> đ/đêm</small>
+                                                <small class="item-price"><?= number_format($giaphong, 0, ',', '.') ?> đ/đêm</small>
                                                 <small class="item-payment"><?= $item['loaihinhtt'] ?></small>
                                                 <?php if (!empty($item['khuyenmai'])) : ?>
                                                     <small class="item-sale"><i class="fa-solid fa-tags"></i> -<?= $item['khuyenmai'] ?>%</small>
@@ -268,7 +255,7 @@
                                             <div class="room-infor p-3">
                                                 <div class="d-flex justify-content-between mb-2">
                                                     <h5 class="item-name mb-0"><a href="<?= URLROOT ?>/room/detailroom/<?= $item['idphong'] ?>"><?= $item['tenphong'] ?> - <?= $item['tengiuong'] ?></a></h5>
-                                                    <span class="ps-3 fw-bold text-success"><?= !empty($item['danhgia']) ? $item['danhgia'] : ''; ?></span>
+                                                    <span class="ps-3 fw-bold text-success"><?= !empty($item['danhgia']) ? $item['danhgia'] . '/10' : ''; ?></span>
                                                 </div>
                                                 <div class="d-flex mb-2">
                                                     <small class="border-end me-2 pe-2"><i class="fa fa-bed text-warning pe-2"></i><?= $item['sogiuong'] ?> giường</small>
@@ -284,13 +271,15 @@
                                     </div>
                                 </li>
 
-                        <?php endforeach;
-                        endif; ?>
+                            <?php endforeach; ?>
 
-                    </ul>
-                    <i id="right" class="fa-solid fa-angle-right"></i>
+                        </ul>
+                        <i id="right" class="fa-solid fa-angle-right"></i>
+                    </div>
                 </div>
-            </div>
+
+            <?php endif; ?>
+
         </div>
 
     </section>

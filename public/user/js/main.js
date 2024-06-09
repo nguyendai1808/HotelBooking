@@ -1,3 +1,7 @@
+// const URLROOT = 'http://localhost/HotelBooking';
+// const USER_PATH = URLROOT + '/public/user';
+// const ADMIN_PATH = URLROOT + '/public/admin';
+
 //------------------------------------slider-wrapper-----------------------------------//
 document.addEventListener("DOMContentLoaded", function () {
     const sliders = document.querySelectorAll(".slider-wrapper");
@@ -293,13 +297,45 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 //------------------------------------------change-date--------------------------------------------/
-function openChangDate() {
+function openChangDate(idphong) {
     var changedate = document.getElementById("change-date");
     changedate.style.display = "block";
+    changedate.querySelector('#idphong').value = idphong;
+
+    var numberDate = changedate.querySelector('#number-date');
+    var arrivalDate = changedate.querySelector('#arrival-input').value;
+    var departureDate = changedate.querySelector('#departure-input').value;
+
+    if (arrivalDate != '' && departureDate != '') {
+        $.ajax({
+            url: 'http://localhost/HotelBooking/home/checkRoom',
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                arrival: arrivalDate,
+                departure: departureDate,
+                idphong: idphong
+            },
+            success: function (data) {
+                changedate.querySelector('#emptyRoom').textContent = data.emptyRoom;
+                changedate.querySelector("#arrival-input").value = arrivalDate;
+                changedate.querySelector("#departure-input").value = departureDate;
+            },
+            error: function (xhr, status, error) {
+                console.error(error);
+            }
+        });
+
+    } else {
+        changedate.querySelector("#arrival-input").value = null;
+        changedate.querySelector("#departure-input").value = null;
+    }
+    numberDate.innerText = gapBetweenDate(departureDate, arrivalDate);
 }
 
-function openChangeCartDate(idform) {
+function openChangeCartDate(idform, idphong) {
     var changedate = document.getElementById("change-date");
+    changedate.querySelector('#idphong').value = idphong;
     changedate.style.display = "block";
     changedate.setAttribute("idform", idform);
 
@@ -308,45 +344,89 @@ function openChangeCartDate(idform) {
     var form = document.getElementById(idform);
     var arrivalDate = form.querySelector('#arrival-date').textContent;
     var departureDate = form.querySelector('#departure-date').textContent;
+    changedate.querySelector('#emptyRoom').textContent = 0;
 
-    changedate.querySelector("#arrival-input").value = arrivalDate == "Ngày đến" ? null : formatDateYMD(arrivalDate);
-    changedate.querySelector("#departure-input").value = departureDate == "Ngày đi" ? null : formatDateYMD(departureDate);
+    if (arrivalDate != 'Ngày đến' && departureDate != 'Ngày đi') {
+        $.ajax({
+            url: 'http://localhost/HotelBooking/home/checkRoom',
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                arrival: formatDateYMD(arrivalDate),
+                departure: formatDateYMD(departureDate),
+                idphong: idphong
+            },
+            success: function (data) {
+                changedate.querySelector('#emptyRoom').textContent = data.emptyRoom;
+                changedate.querySelector("#arrival-input").value = formatDateYMD(arrivalDate);
+                changedate.querySelector("#departure-input").value = formatDateYMD(departureDate);
+            },
+            error: function (xhr, status, error) {
+                console.error(error);
+            }
+        });
+
+    } else {
+        changedate.querySelector("#arrival-input").value = null;
+        changedate.querySelector("#departure-input").value = null;
+    }
 
     numberDate.innerText = gapBetweenDate(formatDateYMD(departureDate), formatDateYMD(arrivalDate));
 }
 
 function saveChangeDate() {
 
-    var mainContent = document.body.querySelector('main');
-    if (mainContent.id == 'cart-page') {
-        updateChangeCartDate();
+    var ngayden = document.getElementById("arrival-input").value;
+    var ngaydi = document.getElementById("departure-input").value;
+
+    if (ngayden == '' || ngaydi == '') {
+        alert("Hãy nhập đầy đủ ngày đến và ngày đi");
+        return false;
     } else {
-        var ngayden = document.getElementById("arrival-input").value;
-        var ngaydi = document.getElementById("departure-input").value;
-
-        if (ngayden == '' || ngaydi == '') {
-            alert("Hãy nhập đầy đủ ngày đến và ngày đi");
+        var mainContent = document.body.querySelector('main');
+        if (mainContent.id == 'cart-page') {
+            updateChangeCartDate();
+            return false;
         } else {
-            // Gửi yêu cầu POST thông qua AJAX
-            $.ajax({
-                url: 'http://localhost/HotelBooking/home/changedate',
-                type: 'POST',
-                data: {
-                    checkin: ngayden,
-                    checkout: ngaydi
-                },
-                success: function (response) {
+            var form = document.getElementById('change-date-form');
+            var phongtrong = document.getElementById("emptyRoom").textContent;
 
-                    document.getElementById('checkinDate').value = ngayden;
-                    document.getElementById('checkoutDate').value = ngaydi;
+            if (Number(phongtrong) <= 0) {
+                if (confirm("Với lịch hiện tại số phòng trống đã hết, Bạn vẫn muốn chọn lịch với những phòng khác chứ!")) {
+
+                    form.action = 'http://localhost/HotelBooking/room/search';
                     closeChangeDate();
-                    console.log(response);
-                },
-                error: function (xhr, status, error) {
-                    console.error(error);
+                } else {
+                    return false;
                 }
-            });
+            } else {
+                if (mainContent.id == 'detailroom-page') {
+                    $.ajax({
+                        url: 'http://localhost/HotelBooking/home/changedate',
+                        type: 'POST',
+                        data: {
+                            checkin: ngayden,
+                            checkout: ngaydi
+                        },
+                        success: function (response) {
 
+                            document.getElementById('checkinDate').value = ngayden;
+                            document.getElementById('checkoutDate').value = ngaydi;
+                            closeChangeDate();
+                        },
+                        error: function (xhr, status, error) {
+                            console.error(error);
+                        }
+                    });
+
+                    return false;
+                }
+
+                form.action = 'http://localhost/HotelBooking/payment';
+                closeChangeDate();
+            }
+
+            return true;
         }
     }
 }
@@ -354,22 +434,22 @@ function saveChangeDate() {
 function updateChangeCartDate() {
 
     var idform = document.getElementById("change-date").getAttribute("idform");
-
     var ngayden = document.getElementById("arrival-input").value;
     var ngaydi = document.getElementById("departure-input").value;
+    var phongtrong = document.getElementById("emptyRoom").textContent;
 
-    if (ngayden == '' || ngaydi == '') {
-        alert("Hãy nhập đầy đủ ngày đến và ngày đi");
+    var homnay = new Date();
+    var date1 = new Date(ngayden);
+    var date2 = new Date(ngaydi);
+    if (date1 <= homnay || date1 >= date2 || date2 <= homnay) {
+        alert("Lịch đặt không hợp lệ, vui lòng chỉnh lại lịch đặt !");
+
     } else {
-        var homnay = new Date();
-        var date1 = new Date(ngayden);
-        var date2 = new Date(ngaydi);
-        if (date1 <= homnay || date1 >= date2 || date2 <= homnay) {
-            alert("Lịch đặt không hợp lệ, vui lòng chỉnh lại lịch đặt !");
+        if (Number(phongtrong) <= 0) {
+            alert("Với lịch hiện tại số phòng trống đã hết, vui lòng chọn lại lịch hoặc đặt phòng khác!");
 
         } else {
             var form = document.getElementById(idform);
-
             form.querySelector('#arrival-date').innerText = formatDateDMY(ngayden);
             form.querySelector('#departure-date').innerText = formatDateDMY(ngaydi);
 
@@ -378,9 +458,9 @@ function updateChangeCartDate() {
             form.querySelector('#ngaydi').value = ngaydi;
 
             updateCart(idform);
-
             closeChangeDate();
         }
+
     }
 }
 
@@ -409,8 +489,8 @@ function updateCart(idform) {
             tonggia: tonggia
         },
         success: function (data) {
-            form.querySelector('#arrival-date').innerText = formatDateDMY(data.ngayden);
-            form.querySelector('#departure-date').innerText = formatDateDMY(data.ngaydi);
+            form.querySelector('#arrival-date').innerText = data.ngayden == '' ? 'Ngày đến' : formatDateDMY(data.ngayden);
+            form.querySelector('#departure-date').innerText = data.ngaydi == '' ? 'Ngày đi' : formatDateDMY(data.ngaydi);
 
             form.querySelector('#soluong').innerText = data.soluongdat;
             form.querySelector('#songay').innerText = gapBetweenDate(data.ngaydi, data.ngayden);
@@ -456,6 +536,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         numberDate.innerText = gapBetweenDate(departureInput.value, arrivalInput.value);
+
     });
 
     // Thêm lắng nghe sự kiện cho input ngày đi
@@ -511,6 +592,7 @@ function checkboxChange(checkbox, idform) {
     var form = document.getElementById(idform);
     var ngayden = form.querySelector('#ngayden').value;
     var ngaydi = form.querySelector('#ngaydi').value;
+    var idphong = form.querySelector('#idphong').value;
 
     if (ngayden == "" || ngaydi == "") {
         alert("Bạn chưa chọn ngày !");
@@ -525,7 +607,30 @@ function checkboxChange(checkbox, idform) {
             checkbox.checked = false;
             return;
         } else {
-            updateTotal();
+            var phongtrong = 0;
+            $.ajax({
+                url: 'http://localhost/HotelBooking/home/checkRoom',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    arrival: ngayden,
+                    departure: ngaydi,
+                    idphong: idphong
+                },
+                success: function (data) {
+                    phongtrong = data.emptyRoom;
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                }
+            });
+
+            if (Number(phongtrong) > 0) {
+                updateTotal();
+            } else {
+                alert("Số phòng trống hiện tại đã hết, vui lòng chọn lại lịch hoặc đặt phòng khác!");
+                checkbox.checked = false;
+            }
         }
     }
 }
@@ -656,26 +761,26 @@ document.addEventListener("DOMContentLoaded", function () {
 // --------------------------------------tìm phòng----------------------------------------------//
 document.addEventListener("DOMContentLoaded", function () {
 
-    var timphongButton = document.getElementById('timphong');
+    var timphongButton = document.getElementById('search');
 
     timphongButton.addEventListener('click', function (event) {
         var checkinValue = document.getElementById('checkinDate').value;
         var checkoutValue = document.getElementById('checkoutDate').value;
 
-        if (checkinValue === "" && checkoutValue === "") {
-            alert('Vui lòng nhập ngày đến hoặc ngày đi.');
+        if (checkinValue === "" || checkoutValue === "") {
+            alert('Vui lòng nhập đầy đủ ngày đến và ngày đi.');
             event.preventDefault();
         }
     });
 });
 
 // -----------------------------------------------Booknow---------------------------------------------//
-function clickBooknow(event) {
+function clickBooknow(event, idphong) {
     var ngayden = document.getElementById("checkinDate").value;
     var ngaydi = document.getElementById("checkoutDate").value;
     if (ngayden == '' || ngaydi == '') {
         event.preventDefault();
-        openChangDate();
+        openChangDate(idphong);
     }
 }
 
@@ -701,7 +806,37 @@ document.addEventListener("DOMContentLoaded", function () {
                 child: child
             },
             success: function (response) {
-                console.log(response);
+                // console.log(response);
+            },
+            error: function (xhr, status, error) {
+                console.error(error);
+            }
+        });
+
+    });
+});
+
+// -----------------Bắt sự kiện khi thay đổi giá trị trong change-date kiểm tra phòng trống--------------------//
+document.addEventListener("DOMContentLoaded", function () {
+
+    var changedate = document.getElementById("change-date");
+    changedate.addEventListener("change", function () {
+        var arrival = changedate.querySelector('#arrival-input').value;
+        var departure = changedate.querySelector('#departure-input').value;
+        var idphong = changedate.querySelector('#idphong').value;
+
+        // Gửi yêu cầu POST thông qua AJAX
+        $.ajax({
+            url: 'http://localhost/HotelBooking/home/checkRoom',
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                arrival: arrival,
+                departure: departure,
+                idphong: idphong
+            },
+            success: function (data) {
+                changedate.querySelector('#emptyRoom').textContent = data.emptyRoom;
             },
             error: function (xhr, status, error) {
                 console.error(error);
@@ -828,6 +963,7 @@ function SubmitFormCustomer() {
     var fullname = form.querySelector('#fullname').value;
     var email = form.querySelector('#email').value;
     var phone = form.querySelector('#phone').value;
+    var address = form.querySelector('#address').value;
 
     // Gửi yêu cầu POST thông qua AJAX
     $.ajax({
@@ -836,7 +972,8 @@ function SubmitFormCustomer() {
         data: {
             fullname: fullname,
             email: email,
-            phone: phone
+            phone: phone,
+            address: address
         },
         success: function (response) {
             console.log(response);
@@ -905,18 +1042,41 @@ function checkFormCustomer() {
     return valid;
 }
 
-
 //eye -pass
-function showpass() {
-    document.getElementById('eye-open').style.display = "block";
-    document.getElementById('eye-close').style.display = "none";
-    document.getElementById('eye-pass').type = "text";
+document.querySelectorAll('#form-pass .eye-toggle').forEach(toggle => {
+    toggle.addEventListener('click', function () {
+        const input = this.previousElementSibling;
+        const visible = this.getAttribute('data-visible') === 'true';
+
+        if (visible) {
+            input.type = 'password';
+            this.src = USER_PATH + '/icon/eye-hidden.png';
+            this.setAttribute('data-visible', 'false');
+        } else {
+            input.type = 'text';
+            this.src = USER_PATH + '/icon/eye.png';
+            this.setAttribute('data-visible', 'true');
+        }
+    });
+});
+
+function previewImage(input) {
+    var file = input.files[0];
+    var reader = new FileReader();
+
+    reader.onload = function (e) {
+        var imgElement = input.parentNode.querySelector('img');
+        imgElement.src = e.target.result;
+    }
+    reader.readAsDataURL(file);
 }
-function hiddenpass() {
-    document.getElementById('eye-open').style.display = "none";
-    document.getElementById('eye-close').style.display = "block";
-    document.getElementById('eye-pass').type = "password";
+
+
+function confirmAction(button, message) {
+    const isConfirmed = confirm(message);
+
+    if (!isConfirmed) {
+        return false;
+    }
+    return true;
 }
-
-
-

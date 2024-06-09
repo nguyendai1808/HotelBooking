@@ -7,14 +7,25 @@ class Session
         session_start();
     }
 
-    public static function set($key, $value)
+    public static function set($key, $value, $expiration = null)
     {
-        $_SESSION[$key] = $value;
+        $_SESSION[$key] = [
+            'value' => $value,
+            'expiration' => $expiration ? time() + $expiration : null
+        ];
     }
 
     public static function get($key)
     {
-        return isset($_SESSION[$key]) ? $_SESSION[$key] : null;
+        if (isset($_SESSION[$key])) {
+            if ($_SESSION[$key]['expiration'] === null || $_SESSION[$key]['expiration'] > time()) {
+                return $_SESSION[$key]['value'];
+            } else {
+                unset($_SESSION[$key]);
+                return null;
+            }
+        }
+        return null;
     }
 
     public static function delete($key)

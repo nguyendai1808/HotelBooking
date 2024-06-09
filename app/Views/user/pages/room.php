@@ -2,7 +2,7 @@
 
     <!-- banner image Start -->
     <section class="banner-image">
-        <img src="<?= USER_PATH ?>/images/bg-img.jpg" alt="banner">
+        <img src="<?= USER_PATH ?>/images/<?= $data['display']['baner'] ?? 'notbg.jpg' ?>" alt="banner">
     </section>
     <!-- banner image end -->
 
@@ -17,7 +17,7 @@
     <section class="room pb-5">
         <div class="container">
             <div class="text-center">
-                <h6 class="section-title text-center text-warning text-uppercase">Phòng của HotelStay</h6>
+                <h6 class="section-title text-center text-secondary text-uppercase">Phòng của HotelStay</h6>
                 <h2 class="title-name-below mb-5">Khám phá <span class="text-warning text-uppercase">Phòng nổi bật</span></h2>
             </div>
             <div class="row">
@@ -32,7 +32,7 @@
                                     <?php if (!empty($data['categorys'])) :
                                         foreach ($data['categorys'] as $item) : ?>
 
-                                            <li><a href="javascript:void(0);" onclick="getListRoomByCategory('', '<?= $item['iddanhmuc'] ?>');"><?= $item['tendanhmuc'] ?></a></li>
+                                            <li><a href="<?= URLROOT ?>/room/category/<?= $item['iddanhmuc'] ?>" onclick="getListRoomByCategory('', '<?= $item['iddanhmuc'] ?>');"><?= $item['tendanhmuc'] ?></a></li>
 
                                     <?php endforeach;
                                     endif; ?>
@@ -79,7 +79,7 @@
                                     </label>
                                     <div class="quantity">
                                         <span class="minus">-</span>
-                                        <input type="number" class="num" min="1" max="10" value="1">
+                                        <input type="number" class="num" min="1" max="10" value="1" readonly>
                                         <span class="plus">+</span>
                                     </div>
                                 </div>
@@ -90,7 +90,7 @@
                                     </label>
                                     <div class="quantity">
                                         <span class="minus">-</span>
-                                        <input type="number" class="num" min="1" max="10" value="1">
+                                        <input type="number" class="num" min="1" max="10" value="1" readonly>
                                         <span class="plus">+</span>
                                     </div>
                                 </div>
@@ -148,14 +148,14 @@
                                                                     <small class="item-sale"><i class="fa-solid fa-tags"></i> -<?= $item['khuyenmai'] ?>%</small>
                                                                 <?php endif; ?>
 
-                                                                <small class="item-price"><?= number_format($giaphong) ?>đ/đêm</small>
+                                                                <small class="item-price"><?= number_format($giaphong, 0, ',', '.') ?>đ/đêm</small>
                                                                 <small class="item-payment"><?= $item['loaihinhtt'] ?></small>
                                                             </div>
                                                             <div class="room-infor col-lg-7 p-3">
                                                                 <div class="d-flex justify-content-between mb-3">
                                                                     <h5 class="mb-0"><?= $item['tenphong'] ?> - <?= $item['tengiuong'] ?></h5>
                                                                     <div class="ps-3">
-                                                                        <span class="fw-bold text-success"><?= !empty($item['danhgia']) ? $item['danhgia'] : ''; ?></span>
+                                                                        <span class="fw-bold text-success"><?= !empty($item['danhgia']) ?  $item['danhgia'] . '/10' : ''; ?></span>
                                                                     </div>
                                                                 </div>
                                                                 <div class="mb-3">
@@ -182,7 +182,7 @@
 
                                                                 <div class="d-flex justify-content-between">
                                                                     <a class="btn btn-sm btn-warning rounded fw-bold py-2 px-3" href="<?= URLROOT ?>/room/detailroom/<?= $item['idphong'] ?>">Xem chi tiết</a>
-                                                                    <button type="submit" name="booknow" onclick="clickBooknow(event);" class="btn btn-sm btn-dark rounded py-2 px-4 fw-bold">Đặt ngay</button>
+                                                                    <button type="submit" name="booknow" onclick="clickBooknow(event, '<?= $item['idphong'] ?>');" class="btn btn-sm btn-dark rounded py-2 px-4 fw-bold">Đặt ngay</button>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -239,88 +239,7 @@
 
 
     <!-- Comment Start -->
-    <section class="comment pt-5 pb-5">
-        <div class="container">
-            <div class="text-center">
-                <h6 class="section-title text-center text-secondary text-uppercase">Đánh giá của khách hàng</h6>
-                <h2 class="title-name-below mb-5">Những đánh giá về <span class="text-warning text-uppercase">HotelStay</span></h2>
-            </div>
-            <div class="comment-content">
-                <div class="slider-wrapper">
-                    <i id="left" class="fa-solid fa-angle-left"></i>
-                    <ul class="carousel">
-                        <li class="card">
-                            <div class="comment-item">
-                                <img src="<?= USER_PATH ?>/images/room/room-2.jpg" alt="img" draggable="false">
-                                <h6>Client Name</h6>
-                                <div class="comment-desc">
-                                    <i class="fa-solid fa-quote-left"></i>
-                                    <span>dsfagdas dsadsaTempor stet dsalabore dolor dsa dsasa </span>
-                                    <i class="fa-solid fa-quote-right"></i>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="card">
-                            <div class="comment-item">
-                                <img src="<?= USER_PATH ?>/images/room/room-2.jpg" alt="img" draggable="false">
-                                <h6>Client Name</h6>
-                                <div class="comment-desc">
-                                    <i class="fa-solid fa-quote-left"></i>
-                                    <span>dsfagdas dsadsaTempor stet dsalabore dolor dsa dsasa </span>
-                                    <i class="fa-solid fa-quote-right"></i>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="card">
-                            <div class="comment-item">
-                                <img src="<?= USER_PATH ?>/images/room/room-2.jpg" alt="img" draggable="false">
-                                <h6>Client Name</h6>
-                                <div class="comment-desc">
-                                    <i class="fa-solid fa-quote-left"></i>
-                                    <span>dsfagdas dsadsaTempor stet dsalabore dolor dsa dsasa </span>
-                                    <i class="fa-solid fa-quote-right"></i>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="card">
-                            <div class="comment-item">
-                                <img src="<?= USER_PATH ?>/images/room/room-2.jpg" alt="img" draggable="false">
-                                <h6>Client Name</h6>
-                                <div class="comment-desc">
-                                    <i class="fa-solid fa-quote-left"></i>
-                                    <span>dsfagdas dsadsaTempor stet dsalabore dolor dsa dsasa </span>
-                                    <i class="fa-solid fa-quote-right"></i>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="card">
-                            <div class="comment-item">
-                                <img src="<?= USER_PATH ?>/images/room/room-2.jpg" alt="img" draggable="false">
-                                <h6>Client Name</h6>
-                                <div class="comment-desc">
-                                    <i class="fa-solid fa-quote-left"></i>
-                                    <span>dsfagdas dsadsaTempor stet dsalabore dolor dsa dsasa </span>
-                                    <i class="fa-solid fa-quote-right"></i>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="card">
-                            <div class="comment-item">
-                                <img src="<?= USER_PATH ?>/images/room/room-2.jpg" alt="img" draggable="false">
-                                <h6>Client Name</h6>
-                                <div class="comment-desc">
-                                    <i class="fa-solid fa-quote-left"></i>
-                                    <span>dsfagdas dsadsaTempor stet dsalabore dolor dsa dsasa </span>
-                                    <i class="fa-solid fa-quote-right"></i>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                    <i id="right" class="fa-solid fa-angle-right"></i>
-                </div>
-            </div>
-        </div>
-    </section>
+    <?php include APPROOT . '/views/user/includes/comment.php'; ?>
     <!-- Comment End -->
 
 </Main>

@@ -1,7 +1,7 @@
 <main class="container-fluid">
 
     <section class="banner-image banner-gray mb-5">
-        <img src="<?= USER_PATH ?>/images/bg-img.jpg" alt="banner">
+        <img src="<?= USER_PATH ?>/images/<?= $data['display']['baner'] ?? 'notbg.jpg'?>" alt="banner">
         <div class="banner-content">
             <h3 class="section-title text-uppercase">Thông tin cá nhân</h3>
             <div class="banner-item">
@@ -20,13 +20,13 @@
                     <div class="sidebar" id="sidebar">
                         <ul class="list-group">
                             <li data-url="<?= URLROOT ?>/personalInfo/account">
-                                <span><i class="fa-solid fa-user pe-3 text-white"></i>Thông Tin Tài Khoản</span>
+                                <span><i class="fa-solid fa-user pe-3"></i>Thông Tin Tài Khoản</span>
                             </li>
                             <li data-url="<?= URLROOT ?>/personalInfo/password">
-                                <span><i class="fa-solid fa-lock pe-3 text-white"></i>Đổi Mật Khẩu</span>
+                                <span><i class="fa-solid fa-lock pe-3"></i>Đổi Mật Khẩu</span>
                             </li>
                             <li data-url="<?= URLROOT ?>/personalInfo/booked">
-                                <span><i class="fa-solid fa-file-invoice pe-3 text-white"></i>Các Phòng Đã Đặt</span>
+                                <span><i class="fa-solid fa-file-invoice pe-3"></i>Các Phòng Đã Đặt</span>
                             </li>
                         </ul>
                     </div>
@@ -35,7 +35,7 @@
                 <div class="col-lg-8">
                     <div id="main-content">
 
-                        <?php require_once APPROOT . '/views/user/pages/' . $data['display']; ?>
+                        <?php require_once APPROOT . '/views/user/pages/' . $data['page']; ?>
 
                     </div>
                 </div>

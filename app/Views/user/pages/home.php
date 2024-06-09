@@ -2,12 +2,11 @@
 
     <!-- banner image Start -->
     <section class="banner-image">
-        <img src="<?= USER_PATH ?>/images/bg-img.jpg" alt="banner">
+        <img src="<?= USER_PATH ?>/images/<?= $data['display']['baner'] ?? 'notbg.jpg' ?>" alt="banner">
     </section>
     <!-- banner image end -->
 
     <?php include APPROOT . '/views/user/includes/booking.php'; ?>
-
 
     <?php include APPROOT . '/views/user/includes/changedate.php'; ?>
 
@@ -22,12 +21,26 @@
                         <div class="col-lg-12">
                             <h6 class="section-title text-start text-secondary text-uppercase">Khám phá</h6>
                             <h2 class="mb-2">Những trải nghiệm tuyệt vời cùng với <span class="text-warning text-uppercase"><?= $item['tenkhachsan'] ?></span></h2>
-                            <div class="star line-below mb-3">
-                                <span class="fa fa-star"></span>
-                                <span class="fa fa-star"></span>
-                                <span class="fa fa-star"></span>
-                                <span class="fa fa-star"></span>
-                                <span class="fa fa-star-half-stroke"></span>
+                            <div class="star line-below mb-2">
+
+                                <?php
+                                $star = (floatval($item['sodiem']) * 0.5);
+                                $fullStars = floor($star); // Số sao đầy đủ
+                                $halfStar = ($star - $fullStars >= 0.5) ? 1 : 0; // Số sao nửa
+                                $emptyStars = 5 - $fullStars - $halfStar; // Số sao trống
+
+                                for ($i = 0; $i < $fullStars; $i++) : ?>
+                                    <span class="fa fa-star"></span>
+                                <?php endfor; ?>
+
+                                <?php if ($halfStar) : ?>
+                                    <span class="fa fa-star-half-stroke"></span>
+                                <?php endif; ?>
+
+                                <?php for ($i = 0; $i < $emptyStars; $i++) : ?>
+                                    <span class="fa-regular fa-star"></span>
+                                <?php endfor; ?>
+
                             </div>
                         </div>
 
@@ -38,7 +51,7 @@
                                     <div class="border rounded p-1 bg-white">
                                         <div class="border rounded text-center p-4">
                                             <i class="fa fa-door-open fa-2x text-warning mb-2"></i>
-                                            <h3 class="mb-1">1234</h3>
+                                            <h3 class="mb-1"><?= $item['sophong'] ?></h3>
                                             <p class="mb-0">Phòng</p>
                                         </div>
                                     </div>
@@ -47,7 +60,7 @@
                                     <div class="border rounded p-1 bg-white">
                                         <div class="border rounded text-center p-4">
                                             <i class="fa-solid fa-cart-flatbed-suitcase fa-2x text-warning mb-2"></i>
-                                            <h3 class="mb-1">1234</h3>
+                                            <h3 class="mb-1"><?= $item['sodichvu'] ?></h3>
                                             <p class="mb-0">Dịch vụ</p>
                                         </div>
                                     </div>
@@ -56,7 +69,7 @@
                                     <div class="border rounded p-1 bg-white">
                                         <div class="border rounded text-center p-4">
                                             <i class="fa fa-comment fa-2x text-warning mb-2"></i>
-                                            <h3 class="mb-1">1234</h3>
+                                            <h3 class="mb-1"><?= $item['sodanhgia'] ?></h3>
                                             <p class="mb-0">Đánh giá</p>
                                         </div>
                                     </div>
@@ -68,8 +81,20 @@
                         </div>
                         <div class="col-lg-6 mt-4 mb-5">
                             <div class="about-img">
-                                <img src="<?= USER_PATH ?>/images/hotel/hotel_img_1.webp" alt="Image" class="image-1">
-                                <img src="<?= USER_PATH ?>/images/hotel/hotel_img_2.webp" alt="Image" class="image-2">
+
+                                <?php if (!empty($item['anhks'])) :  $stt = 1;
+                                    foreach ($item['anhks'] as $row) :  ?>
+
+                                        <img src="<?= USER_PATH ?>/<?= !empty($row['anh']) ? $row['anh'] : 'images/notImage.jpg'; ?>" alt="Image" class="image-<?= $stt ?>">
+
+                                    <?php $stt++;
+                                    endforeach;
+                                else : ?>
+
+                                    <img src="<?= USER_PATH ?>/images/notImage.jpg'; ?>" alt="Image" class="image-1">
+                                    <img src="<?= USER_PATH ?>/images/notImage.jpg'; ?>" alt="Image" class="image-2">
+
+                                <?php endif; ?>
                             </div>
                         </div>
 
@@ -83,18 +108,20 @@
     <!-- Room Start -->
     <section class="room pb-5">
         <div class="container">
-            <div class="outstanding-room pb-5">
-                <div class="text-center">
-                    <h6 class="section-title text-center text-secondary text-uppercase">Phòng của khách sạn</h6>
-                    <h2 class="title-name-below mb-5">Khám phá <span class="text-warning text-uppercase">Phòng nổi bật</span></h2>
-                </div>
-                <div class="room-slider">
-                    <div class="slider-wrapper">
-                        <i id="left" class="fa-solid fa-angle-left"></i>
-                        <ul class="carousel">
 
-                            <?php if (!empty($data['rooms'])) :
-                                foreach ($data['rooms'] as $item) :
+            <?php if (!empty($data['roomshot'])) : ?>
+
+                <div class="outstanding-room pb-5">
+                    <div class="text-center">
+                        <h6 class="section-title text-center text-secondary text-uppercase">Phòng của khách sạn</h6>
+                        <h2 class="title-name-below mb-5">Khám phá <span class="text-warning text-uppercase">Phòng nổi bật</span></h2>
+                    </div>
+                    <div class="room-slider">
+                        <div class="slider-wrapper">
+                            <i id="left" class="fa-solid fa-angle-left"></i>
+                            <ul class="carousel">
+
+                                <?php foreach ($data['roomshot'] as $item) :
                                     $giaphong = !empty($item['khuyenmai']) ? ($item['giaphong'] - (($item['khuyenmai'] / 100) * $item['giaphong'])) :  $item['giaphong']; ?>
 
                                     <li class="card">
@@ -102,7 +129,7 @@
                                             <div class="room-item rounded overflow-hidden">
                                                 <div class="room-img p-3">
                                                     <img class="img-fluid" src="<?= USER_PATH ?>/<?= !empty($item['anhphong']) ? $item['anhphong'] : 'images/notImage.jpg'; ?>" alt="image" draggable="false">
-                                                    <small class="item-price"><?= number_format($giaphong) ?> đ/đêm</small>
+                                                    <small class="item-price"><?= number_format($giaphong, 0, ',', '.') ?> đ/đêm</small>
                                                     <small class="item-payment"><?= $item['loaihinhtt'] ?></small>
                                                     <?php if (!empty($item['khuyenmai'])) : ?>
                                                         <small class="item-sale"><i class="fa-solid fa-tags"></i> -<?= $item['khuyenmai'] ?>%</small>
@@ -112,7 +139,7 @@
                                                 <div class="room-infor p-3">
                                                     <div class="d-flex justify-content-between mb-2">
                                                         <h5 class="item-name mb-0"><?= $item['tenphong'] ?> - <?= $item['tengiuong'] ?></h5>
-                                                        <span class="ps-3 fw-bold text-success"><?= !empty($item['danhgia']) ? $item['danhgia'] : ''; ?></span>
+                                                        <span class="ps-3 fw-bold text-success"><?= !empty($item['danhgia']) ?  $item['danhgia'] . '/10' : ''; ?></span>
                                                     </div>
                                                     <div class="d-flex mb-2">
                                                         <small class="border-end me-2 pe-2"><i class="fa fa-bed text-warning pe-2"></i><?= $item['sogiuong'] ?> giường</small>
@@ -126,34 +153,36 @@
 
                                                     <div class="d-flex justify-content-between">
                                                         <a class="btn btn-sm btn-warning rounded fw-bold py-2 px-3" href="<?= URLROOT ?>/room/detailroom/<?= $item['idphong'] ?>">Xem chi tiết</a>
-                                                        <button type="submit" name="booknow" onclick="clickBooknow(event);" class="btn btn-sm btn-dark rounded py-2 px-4 fw-bold">Đặt ngay</button>
+                                                        <button type="submit" name="booknow" onclick="clickBooknow(event, '<?= $item['idphong'] ?>');" class="btn btn-sm btn-dark rounded py-2 px-4 fw-bold">Đặt ngay</button>
                                                     </div>
                                                 </div>
                                             </div>
                                         </form>
                                     </li>
 
-                            <?php endforeach;
-                            endif; ?>
+                                <?php endforeach; ?>
 
-                        </ul>
-                        <i id="right" class="fa-solid fa-angle-right"></i>
+                            </ul>
+                            <i id="right" class="fa-solid fa-angle-right"></i>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="room-sale pb-5 pt-5">
-                <div class="text-center">
-                    <h6 class="section-title text-center text-secondary text-uppercase">Phòng của khách sạn</h6>
-                    <h2 class="title-name-below mb-5">Ưu đãi <span class="text-warning text-uppercase">Phòng giảm giá</span></h2>
-                </div>
-                <div class="room-slider">
-                    <div class="slider-wrapper">
-                        <i id="left" class="fa-solid fa-angle-left"></i>
-                        <ul class="carousel">
+            <?php endif; ?>
 
-                            <?php if (!empty($data['rooms'])) :
-                                foreach ($data['rooms'] as $item) :
+            <?php if (!empty($data['roomsSale'])) : ?>
+
+                <div class="room-sale pb-5 pt-5">
+                    <div class="text-center">
+                        <h6 class="section-title text-center text-secondary text-uppercase">Phòng của khách sạn</h6>
+                        <h2 class="title-name-below mb-5">Ưu đãi <span class="text-warning text-uppercase">Phòng giảm giá</span></h2>
+                    </div>
+                    <div class="room-slider">
+                        <div class="slider-wrapper">
+                            <i id="left" class="fa-solid fa-angle-left"></i>
+                            <ul class="carousel">
+
+                                <?php foreach ($data['roomsSale'] as $item) :
                                     $giaphong = !empty($item['khuyenmai']) ? ($item['giaphong'] - (($item['khuyenmai'] / 100) * $item['giaphong'])) :  $item['giaphong']; ?>
 
                                     <li class="card">
@@ -161,7 +190,7 @@
                                             <div class="room-item rounded overflow-hidden">
                                                 <div class="room-img p-3">
                                                     <img class="img-fluid" src="<?= USER_PATH ?>/<?= !empty($item['anhphong']) ? $item['anhphong'] : 'images/notImage.jpg'; ?>" alt="image" draggable="false">
-                                                    <small class="item-price"><?= number_format($giaphong) ?> đ/đêm</small>
+                                                    <small class="item-price"><?= number_format($giaphong, 0, ',', '.') ?> đ/đêm</small>
                                                     <small class="item-payment"><?= $item['loaihinhtt'] ?></small>
                                                     <?php if (!empty($item['khuyenmai'])) : ?>
                                                         <small class="item-sale"><i class="fa-solid fa-tags"></i> -<?= $item['khuyenmai'] ?>%</small>
@@ -171,7 +200,7 @@
                                                 <div class="room-infor p-3">
                                                     <div class="d-flex justify-content-between mb-2">
                                                         <h5 class="item-name mb-0"><?= $item['tenphong'] ?> - <?= $item['tengiuong'] ?></h5>
-                                                        <span class="ps-3 fw-bold text-success"><?= !empty($item['danhgia']) ? $item['danhgia'] : ''; ?></span>
+                                                        <span class="ps-3 fw-bold text-success"><?= !empty($item['danhgia']) ? $item['danhgia'] . '/10' : ''; ?></span>
                                                     </div>
                                                     <div class="d-flex mb-2">
                                                         <small class="border-end me-2 pe-2"><i class="fa fa-bed text-warning pe-2"></i><?= $item['sogiuong'] ?> giường</small>
@@ -185,21 +214,23 @@
 
                                                     <div class="d-flex justify-content-between">
                                                         <a class="btn btn-sm btn-warning rounded fw-bold py-2 px-3" href="<?= URLROOT ?>/room/detailroom/<?= $item['idphong'] ?>">Xem chi tiết</a>
-                                                        <button type="submit" name="booknow" onclick="clickBooknow(event);" class="btn btn-sm btn-dark rounded py-2 px-4 fw-bold">Đặt ngay</button>
+                                                        <button type="submit" name="booknow" onclick="clickBooknow(event, '<?= $item['idphong'] ?>');" class="btn btn-sm btn-dark rounded py-2 px-4 fw-bold">Đặt ngay</button>
                                                     </div>
                                                 </div>
                                             </div>
                                         </form>
                                     </li>
 
-                            <?php endforeach;
-                            endif; ?>
+                                <?php endforeach; ?>
 
-                        </ul>
-                        <i id="right" class="fa-solid fa-angle-right"></i>
+                            </ul>
+                            <i id="right" class="fa-solid fa-angle-right"></i>
+                        </div>
                     </div>
                 </div>
-            </div>
+
+            <?php endif; ?>
+
         </div>
     </section>
     <!-- Room End -->
@@ -217,15 +248,15 @@
                     foreach ($data['services'] as $item) : ?>
 
                         <div class="col-lg-4 col-md-6">
-                            <div class="service-item line-bottom">
-                                <a href="<?= URLROOT ?>/service">
+                            <a href="<?= URLROOT ?>/contact">
+                                <div class="service-item line-bottom">
                                     <div class="service-img">
                                         <img src="<?= USER_PATH ?>/images/services/<?= $item['icon'] ?>" alt="icon">
                                     </div>
                                     <h5 class="mb-3 text-black"><?= $item['tendichvu'] ?></h5>
                                     <p class="text-body"><?= $item['mota'] ?></p>
-                                </a>
-                            </div>
+                                </div>
+                            </a>
                         </div>
 
                 <?php endforeach;
@@ -236,89 +267,6 @@
     </section>
     <!-- Service End -->
 
-    <!-- Comment Start -->
-    <section class="comment pt-5 pb-5">
-        <div class="container">
-            <div class="text-center">
-                <h6 class="section-title text-center text-secondary text-uppercase">Đánh giá của khách hàng</h6>
-                <h2 class="title-name-below mb-5">Những đánh giá về <span class="text-warning text-uppercase">Khách sạn</span></h2>
-            </div>
-            <div class="comment-content">
-                <div class="slider-wrapper">
-                    <i id="left" class="fa-solid fa-angle-left"></i>
-                    <ul class="carousel">
-                        <li class="card">
-                            <div class="comment-item">
-                                <img src="<?= USER_PATH ?>/images/room/room-2.jpg" alt="img" draggable="false">
-                                <h6>Client Name</h6>
-                                <div class="comment-desc">
-                                    <i class="fa-solid fa-quote-left"></i>
-                                    <span>dsfagdas dsadsaTempor stet dsalabore dolor dsa dsasa </span>
-                                    <i class="fa-solid fa-quote-right"></i>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="card">
-                            <div class="comment-item">
-                                <img src="<?= USER_PATH ?>/images/room/room-2.jpg" alt="img" draggable="false">
-                                <h6>Client Name</h6>
-                                <div class="comment-desc">
-                                    <i class="fa-solid fa-quote-left"></i>
-                                    <span>dsfagdas dsadsaTempor stet dsalabore dolor dsa dsasa </span>
-                                    <i class="fa-solid fa-quote-right"></i>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="card">
-                            <div class="comment-item">
-                                <img src="<?= USER_PATH ?>/images/room/room-2.jpg" alt="img" draggable="false">
-                                <h6>Client Name</h6>
-                                <div class="comment-desc">
-                                    <i class="fa-solid fa-quote-left"></i>
-                                    <span>dsfagdas dsadsaTempor stet dsalabore dolor dsa dsasa </span>
-                                    <i class="fa-solid fa-quote-right"></i>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="card">
-                            <div class="comment-item">
-                                <img src="<?= USER_PATH ?>/images/room/room-2.jpg" alt="img" draggable="false">
-                                <h6>Client Name</h6>
-                                <div class="comment-desc">
-                                    <i class="fa-solid fa-quote-left"></i>
-                                    <span>dsfagdas dsadsaTempor stet dsalabore dolor dsa dsasa </span>
-                                    <i class="fa-solid fa-quote-right"></i>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="card">
-                            <div class="comment-item">
-                                <img src="<?= USER_PATH ?>/images/room/room-2.jpg" alt="img" draggable="false">
-                                <h6>Client Name</h6>
-                                <div class="comment-desc">
-                                    <i class="fa-solid fa-quote-left"></i>
-                                    <span>dsfagdas dsadsaTempor stet dsalabore dolor dsa dsasa </span>
-                                    <i class="fa-solid fa-quote-right"></i>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="card">
-                            <div class="comment-item">
-                                <img src="<?= USER_PATH ?>/images/room/room-2.jpg" alt="img" draggable="false">
-                                <h6>Client Name</h6>
-                                <div class="comment-desc">
-                                    <i class="fa-solid fa-quote-left"></i>
-                                    <span>dsfagdas dsadsaTempor stet dsalabore dolor dsa dsasa </span>
-                                    <i class="fa-solid fa-quote-right"></i>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                    <i id="right" class="fa-solid fa-angle-right"></i>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- Comment End -->
+    <?php include APPROOT . '/views/user/includes/comment.php'; ?>
 
 </Main>

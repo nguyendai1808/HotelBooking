@@ -1,12 +1,12 @@
 <Main class="container-fluid" id="cart-page">
 
     <section class="banner-image banner-gray mb-5">
-        <img src="<?= USER_PATH ?>/images/bg-img.jpg" alt="banner">
+        <img src="<?= USER_PATH ?>/images/<?= $data['display']['baner'] ?? 'notbg.jpg' ?>" alt="banner">
         <div class="banner-content">
             <h3 class="section-title text-uppercase">Giỏ hàng</h3>
             <div class="banner-item">
                 <ul>
-                    <li><a href="index.php">Trang chủ</a></li>
+                    <li><a href="<?= URLROOT ?>/home">Trang chủ</a></li>
                     <li><span>Giỏ hàng</span></li>
                 </ul>
             </div>
@@ -46,16 +46,16 @@
 
                                         </div>
                                         <div class="item-detail">
-                                            <div class="d-flex justify-content-between">
+                                            <form class="d-flex justify-content-between" action="<?= URLROOT ?>/cart/deleteCart" method="post">
                                                 <h5><a href="<?= URLROOT ?>/room/detailroom/<?= $item['id_phong'] ?>"><?= $item['tenphong'] ?> - <?= $item['tengiuong'] ?></a></h5>
-                                                <a href="<?= URLROOT ?>/cart/deleteCart/<?= $item['iddatphong'] ?>" class="item-delete"><i class="fa fa-trash-can"></i></a>
-                                            </div>
+                                                <button class="item-delete" name="delete" type="submit" value="<?= $item['iddatphong'] ?>"><i class="fa fa-trash-can"></i></button>
+                                            </form>
 
                                             <div class="item-date">
                                                 <span id="arrival-date"><?= $item['ngayden'] ? date('d-m-Y', strtotime($item['ngayden'])) : 'Ngày đến' ?></span>
                                                 <i class="bi bi-arrow-right-short"></i>
                                                 <span id="departure-date"><?= $item['ngaydi'] ? date('d-m-Y', strtotime($item['ngaydi'])) : 'Ngày đi' ?></span>
-                                                <a href="javascript:void(0);" onclick="openChangeCartDate('form-<?= $stt ?>')">
+                                                <a href="javascript:void(0);" onclick="openChangeCartDate('form-<?= $stt ?>', '<?= $item['id_phong'] ?>')">
                                                     <i class="fa fa-pen-to-square ps-1"></i>
                                                 </a>
                                             </div>
@@ -78,7 +78,7 @@
                                                 <span class="me-2">Số lượng: </span>
                                                 <div class="quantity">
                                                     <span class="minus">-</span>
-                                                    <input type="number" class="num item-quantity" id="soluongdat" value="<?= $item['soluongdat'] ?>" min="1" max="100">
+                                                    <input type="number" class="num item-quantity" id="soluongdat" value="<?= $item['soluongdat'] ?>" min="1" max="100" readonly>
                                                     <span class="plus">+</span>
                                                 </div>
                                             </div>
@@ -87,6 +87,7 @@
                                             <input type="hidden" id="ngaydi" value="<?= $item['ngaydi'] ?>">
                                             <input type="hidden" id="giaphong" value="<?= $giaphong ?>">
                                             <input type="hidden" id="iddatphong" value="<?= $item['iddatphong'] ?>">
+                                            <input type="hidden" id="idphong" value="<?= $item['id_phong'] ?>">
                                             <button class="btn-item-update" onclick="updateCart('form-<?= $stt ?>')">Cập nhật</button>
                                         </div>
                                     </div>
@@ -142,7 +143,7 @@
                         <h2>Giỏ hàng của bạn đang trống</h2>
                         <a href="<?= URLROOT ?>/room"><i class="fa-solid fa-arrow-right pe-2"></i>Đặt phòng ngay</a>
                     </div>
-                    <div id="cart-his" class="col-md-4 col-sm-12 mb-3">
+                    <div id="cart-his" class="col-md-4 col-sm-12">
                         <a href="<?= URLROOT ?>/history" class="btn-cart-his">Lịch sử đặt phòng</a>
                     </div>
                 </div>

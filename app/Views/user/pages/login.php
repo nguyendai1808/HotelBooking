@@ -14,15 +14,14 @@
 
             <div class="input-layout" id="form-pass">
                 <label>Mật khẩu</label>
-                <input id="eye-pass" name="password" type="password" placeholder="Mật khẩu" required />
-                <img id="eye-open" src="<?= USER_PATH ?>/icon/eye.png" onclick="hiddenpass()">
-                <img id="eye-close" src="<?= USER_PATH ?>/icon/eye-hidden.png" onclick="showpass()">
+                <input name="password" type="password" placeholder="Mật khẩu" required />
+                <img class="eye-toggle" src="<?= USER_PATH ?>/icon/eye-hidden.png" data-visible="false">
             </div>
 
             <button type="submit" class="btn-layout" name="login">Đăng nhập</button>
             <div class="d-flex justify-content-between">
                 <a href="<?= URLROOT ?>/register">Tạo tài khoản</a>
-                <a href="forgetpass.php">Quên mật khẩu?</a>
+                <a href="<?= URLROOT ?>/login/forgotpass">Quên mật khẩu?</a>
             </div>
         </form>
     </div>

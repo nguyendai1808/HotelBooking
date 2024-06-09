@@ -1,7 +1,7 @@
 <!-- booking Start -->
 <section class="booking pb-5">
     <div class="container">
-        <form class="booking-item" method="post" action="room" id="bookingForm">
+        <form class="booking-item" action="<?= URLROOT ?>/room/search" method="post" id="bookingForm">
             <div class="row">
                 <div class="col-lg-10 col-md-12">
                     <div class="row">
@@ -37,7 +37,7 @@
                     </div>
                 </div>
                 <div class="btn-booking col-lg-2 col-md-12 pt-3">
-                    <button type="submit" name="timphong" id="timphong" class="form-control btn btn-warning">Tìm</button>
+                    <button type="submit" name="search" id="search" class="btn btn-warning">Tìm</button>
                 </div>
             </div>
         </form>

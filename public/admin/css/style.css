@@ -49,7 +49,7 @@
 .sidebar .sidebar-item li {
   position: relative;
   list-style: none;
-  height: 50px;
+  height: 48px;
 }
 
 .sidebar .sidebar-item li a {
@@ -61,12 +61,17 @@
   transition: all 0.4s ease;
 }
 
+.sidebar .sidebar-item li a:hover {
+  background: #9D6D33;
+
+}
+
 .sidebar .sidebar-item li a.active {
   background: #9D6D33;
 }
 
-
-.sidebar .sidebar-item li a.active::before {
+.sidebar .sidebar-item li a.active::before,
+.sidebar .sidebar-item li a:hover::before {
   content: "";
   width: 3px;
   height: 100%;
@@ -77,10 +82,7 @@
   top: 0;
 }
 
-.sidebar .sidebar-item li a:hover {
-  background: #9D6D33;
 
-}
 
 .sidebar .sidebar-item li i {
   min-width: 60px;
@@ -119,8 +121,9 @@ nav {
   position: fixed;
   width: calc(100% - 250px);
   left: 250px;
+  top: 0;
   z-index: 100;
-  padding: 0 30px;
+  padding: 0 20px;
   transition: all 0.5s ease;
   background-color: rgb(254, 237, 213);
   box-shadow: 0 0 15px rgba(16, 16, 15, 0.2);
@@ -174,6 +177,7 @@ nav .profile-details img {
   width: 35px;
   border-radius: 50%;
   object-fit: cover;
+  border: 1px solid #878787;
 }
 
 nav .profile-details a {
@@ -199,6 +203,7 @@ nav .profile-details .admin_name {
   color: #333;
   margin-left: 5px;
   white-space: nowrap;
+  text-transform: uppercase;
 }
 
 nav .profile-details i {
@@ -210,7 +215,6 @@ nav .profile-details i {
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  padding: 0 20px;
   margin-bottom: 35px;
 }
 
@@ -352,27 +356,44 @@ footer {
   width: calc(100% - 250px);
   left: 250px;
   text-align: right;
-}
-
-footer p {
-  margin-right: 20px;
+  margin-top: 20px;
 }
 
 /* --------------------------------------table-------------------------------------- */
 
-.table-warpper .table-title {
+.table-warpper {
+  width: 100%;
+  overflow: hidden;
   padding: 0 20px;
+}
+
+.table-warpper .table-title {
+  padding: 10px 0px;
   margin-bottom: 20px;
 }
 
 .table-content {
   max-height: 500px;
   background-color: #fffb;
-  margin: 0 20px;
   border-radius: 5px;
   box-shadow: 2px 5px 10px rgba(0, 0, 0, 0.174);
   margin-bottom: 30px;
   overflow-x: auto;
+  overflow-y: auto;
+}
+
+.table-content::-webkit-scrollbar {
+  height: 5px;
+  width: 5px;
+}
+
+.table-content::-webkit-scrollbar-thumb {
+  background-color: #a8a8a8;
+  border-radius: 10px;
+}
+
+.table-content::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
 }
 
 .table-content table {
@@ -387,6 +408,7 @@ footer p {
   border-radius: 50%;
   object-fit: cover;
   vertical-align: middle;
+  border: 1px solid #878787;
 }
 
 .table-content thead th,
@@ -395,13 +417,13 @@ footer p {
   padding: 15px;
 }
 
-.table-content thead th:where(.stt, .date, .status, .method, .number),
-.table-content tbody tr td:where(.stt, .date, .status, .method, .number) {
+.table-content thead th:where(.stt, .date, .date-long, .status, .method, .number),
+.table-content tbody tr td:where(.stt, .date, .date-long, .status, .method, .number) {
   text-align: center;
 }
 
-.table-content thead th:where(.name, .email),
-.table-content tbody tr td:where(.name, .email) {
+.table-content thead th:where(.name, .email, .desc),
+.table-content tbody tr td:where(.name, .email, .desc) {
   text-align: left;
 }
 
@@ -410,7 +432,7 @@ footer p {
   position: sticky;
   top: 0;
   left: 0;
-  background-color: rgb(248, 240, 228);
+  background-color: #d5d1defe;
 }
 
 .table-content thead th {
@@ -424,6 +446,14 @@ footer p {
   transition: .2s ease-in-out;
 }
 
+.table-content tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.table-content tbody tr:hover {
+  background-color: rgba(254, 217, 161, 0.537);
+}
+
 .table-content tbody tr.hide {
   display: none;
 }
@@ -432,36 +462,14 @@ footer p {
   min-width: 150px;
 }
 
-.table-content thead th:where(.email, .name) {
-  min-width: 300px;
+
+.table-content thead th:where(.email, .name, .desc, .date-long) {
+  min-width: 280px;
 }
 
 .table-content thead th:where(.stt) {
   min-width: 100px;
 }
-
-/* .table-content .status {
-  border-radius: 2rem;
-  text-align: center;
-}
-
-.table-content .status.delivered {
-  background-color: #86e49d;
-  color: #006b21;
-}
-
-.table-content .status.cancelled {
-  background-color: #d893a3;
-  color: #b30021;
-}
-
-.table-content .status.pending {
-  background-color: #ebc474;
-}
-
-.table-content .status.shipped {
-  background-color: #6fcaea;
-} */
 
 .table-content thead th i {
   width: 20px;

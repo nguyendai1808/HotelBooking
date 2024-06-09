@@ -63,10 +63,10 @@ class PaymentVnpay extends Controller
             'code' => '00', 'message' => 'success', 'data' => $vnp_Url
         );
 
-
         if (isset($_POST['paynow']) || isset($_POST['bookroom'])) {
-            
+
             header('Location: ' . $vnp_Url);
+
             die();
         } else {
             echo json_encode($returnData);

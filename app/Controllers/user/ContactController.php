@@ -1,61 +1,41 @@
 <?php
 class Contact extends Controller
 {
-    protected $HotelModel;
-    protected $ServiceModel;
+    private $ContactModel;
+    private $HotelModel;
 
     public function __construct()
     {
-        //gọi model User
-        // $this->AccountModel = $this->model('AccountModel');
-        // $this->HotelModel = $this->model('HotelModel');
-        // $this->RoomModel = $this->model('RoomModel');
-        // $this->ServiceModel = $this->model('ServiceModel');
+        $this->HotelModel = $this->model('HotelModel');
+        $this->ContactModel = $this->model('ContactModel');
     }
 
     public function index()
     {
-        //gọi method
-        // $Account  = $this->AccountModel->findAccountById();
+        $Hotel = $this->HotelModel->getHotel();
 
-        //gọi và show dữ liệu ra view
-        $this->view('user', 'contact.php', []);
+        $this->view('user', 'contact.php', [
+            'hotel' => $Hotel
+        ]);
     }
 
-    // public function create()
-    // {
-    //     if (isset($_POST['submit'])) {
-    //         $result = $this->AccountModel->createUser($_POST['Name'], $_POST['Email'], $_POST['Address']);
-    //         if ($result) {
-    //             header('location:' . URLROOT . '/views/index');
-    //         }
-    //     }
-    //     $this->view('create');
-    // }
+    public function send()
+    {
+        if (isset($_POST['send'])) {
 
-    // public function update($id)
-    // {
-
-    //     $findUser = $this->AccountModel->findUserById($id);
-
-    //     if (isset($_POST['submit'])) {
-    //         $update = $this->AccountModel->updateUser($id, $_POST['Name'], $_POST['Email'], $_POST['Address']);
-    //         if ($update) {
-    //             header('location:' . URLROOT . '/views/index');
-    //         }
-    //     }
-
-    //     $this->view('update', [
-    //         'findUser' => $findUser
-    //     ]);
-    // }
-
-    // public function delete($id)
-    // {
-    //     $delete = $this->AccountModel->deleteUser($id);
-    //     if ($delete) {
-    //         header('location:' . URLROOT . '/views/index');
-    //     }
-    //     $this->view('index');
-    // }
+            $result = $this->ContactModel->createContact($_POST['fullname'], $_POST['email'], $_POST['subject'], $_POST['message']);
+            if ($result) {
+                echo "<script> alert('Gửi thành công');
+                        window.location.href = '" . URLROOT . "/contact';
+                    </script>";
+                exit();
+            } else {
+                echo "<script> alert('Gửi thất bại');
+                        window.location.href = '" . URLROOT . "/contact';
+                    </script>";
+                exit();
+            };
+        }
+        header('location:' . URLROOT . '/contact');
+    }
 }

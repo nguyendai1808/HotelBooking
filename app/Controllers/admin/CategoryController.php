@@ -1,11 +1,11 @@
 <?php
 class Category extends Controller
 {
-    protected $CategoryModel;
+    private $CategoryModel;
     public function __construct()
     {
         //gọi model
-        $this->CategoryModel = $this->model('Categorys');
+        $this->CategoryModel = $this->model('CategoryModel');
     }
 
     public function index()

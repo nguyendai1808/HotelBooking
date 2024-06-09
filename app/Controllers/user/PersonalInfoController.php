@@ -7,9 +7,9 @@ class PersonalInfo extends Controller
 
     public function __construct()
     {
-        $this->AccountModel = $this->model('Accounts');
-        $this->BookingModel = $this->model('Bookings');
-        $this->RoomModel = $this->model('Rooms');
+        $this->AccountModel = $this->model('AccountModel');
+        $this->BookingModel = $this->model('BookingModel');
+        $this->RoomModel = $this->model('RoomModel');
     }
 
     public function index()
@@ -19,79 +19,81 @@ class PersonalInfo extends Controller
 
     public function account()
     {
-        $account = null;
-        if (!empty(Session::get('user_id'))) {
-            $account = $this->AccountModel->findAccountById(Session::get('user_id'));
-        }
+        if (isset($_POST['save'])) {
+            if ($this->AccountModel->updateAccount($_POST['save'], $_POST['surname'], $_POST['name'], $_POST['phone'], $_FILES['image']['name'], $_POST['address'])) {
 
+                if (!empty($_FILES['image'])) {
+                    $image = $_FILES['image']['name'];
+                    $tmp_img = $_FILES['image']['tmp_name'];
+                    $dir_img =  PUBLIC_PATH . '/user/images/avatars/';
+                    move_uploaded_file($tmp_img, $dir_img . $image);
+                }
+                echo '<script>alert("Lưu thành công");</script>';
+            } else {
+                echo '<script>alert("Lưu thất bại");</script>';
+            }
+        }
+        $account = $this->AccountModel->findAccountById(Session::get('user_id'));
         if ($this->isAjaxRequest()) {
             ob_start();
+            extract(['account' => $account]);
             require_once APPROOT . '/views/user/pages/account_infor.php';
-            $display = ob_get_clean();
+            $page = ob_get_clean();
 
             $response = [
-                'display' => $display,
-                'account' => $account
+                'page' => $page
             ];
 
             // Trả về dữ liệu dưới dạng JSON
             header('Content-Type: application/json');
             echo json_encode($response);
             exit;
-        } else {
-
-            $this->view('user', 'personal_infor.php', [
-                'display' => 'account_infor.php',
-                'account' => $account
-            ]);
         }
+        $this->view('user', 'personal_infor.php', [
+            'page' => 'account_infor.php',
+            'account' => $account
+        ]);
     }
-
-
 
     public function password()
     {
-        $account = null;
-        if (!empty(Session::get('user_id'))) {
-            $account = $this->AccountModel->findAccountById(Session::get('user_id'));
+        if (isset($_POST['changPass'])) {
+            if ($this->AccountModel->checkAccount($_POST['email'], $_POST['passOld'])) {
+                if ($this->AccountModel->changePass($_POST['email'], $_POST['passNew'])) {
+                    echo '<script>alert("Cập nhật thành công");</script>';
+                } else {
+                    echo '<script>alert("Cập nhật thất bại");</script>';
+                }
+            } else {
+                echo '<script>alert("Mật khẩu không đúng");</script>';
+            }
         }
-
+        $account = $this->AccountModel->findAccountById(Session::get('user_id'));
         if ($this->isAjaxRequest()) {
             ob_start();
+            extract(['account' => $account]);
             require_once APPROOT . '/views/user/pages/change_pass.php';
-            $display = ob_get_clean();
+            $page = ob_get_clean();
 
             $response = [
-                'display' => $display,
-                'account' => $account,
+                'page' => $page
             ];
 
             // Trả về dữ liệu dưới dạng JSON
             header('Content-Type: application/json');
             echo json_encode($response);
             exit;
-        } else {
-
-            $this->view('user', 'personal_infor.php', [
-                'display' => 'change_pass.php',
-                'account' => $account
-            ]);
         }
+        $this->view('user', 'personal_infor.php', [
+            'page' => 'change_pass.php',
+            'account' => $account
+        ]);
     }
 
     public function booked()
     {
-
-        $booked = null;
-        if (!empty(Session::get('user_id'))) {
-            $idtaikhoan = Session::get('user_id');
-        } else {
-            echo '<script>alert("vui lòng đăng nhập!")</script>';
-            $this->view('user', 'login.php');
-            exit();
-        }
-
-        $booked = $this->BookingModel->getBookedRoom($idtaikhoan);
+        $idtaikhoan = Session::get('user_id');
+        $booked = $this->BookingModel->getBookingHistoryByStatus($idtaikhoan, 'Hoàn tất');
 
         if ($booked) {
             foreach ($booked as $key => $item) {
@@ -125,28 +127,28 @@ class PersonalInfo extends Controller
                 }
                 $booked[$key]['songay'] = $soNgay;
             }
+        } else {
+            $booked = null;
         }
 
         if ($this->isAjaxRequest()) {
             ob_start();
-            require_once APPROOT . '/views/user/pages/list_booked.php';
-            $display = ob_get_clean();
+            extract(['list_booking' => $booked]);
+            require_once APPROOT . '/views/user/pages/list_booking.php';
+            $page = ob_get_clean();
 
             $response = [
-                'display' => $display,
-                'booked' => $booked
+                'page' => $page
             ];
 
             // Trả về dữ liệu dưới dạng JSON
             header('Content-Type: application/json');
             echo json_encode($response);
             exit;
-        } else {
-
-            $this->view('user', 'personal_infor.php', [
-                'display' => 'list_booked.php',
-                'booked' => $booked
-            ]);
         }
+        $this->view('user', 'personal_infor.php', [
+            'page' => 'list_booking.php',
+            'list_booking' => $booked
+        ]);
     }
 }

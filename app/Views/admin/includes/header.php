@@ -8,7 +8,8 @@
     <title>Admin</title>
 
     <link rel="stylesheet" href="<?= ADMIN_PATH ?>/css/style.css" />
-    <link rel="stylesheet" href="<?= ADMIN_PATH ?>/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="<?= ADMIN_PATH ?>/css/main.css" />
+    <link rel="stylesheet" href="<?= URLROOT ?>/public/bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
@@ -21,21 +22,21 @@
             <img src="<?= ADMIN_PATH ?>/images/logo-white.png" alt="logo">
             <span class="logo_name">HotelBooking</span>
         </div>
-        <ul class="sidebar-item m-0 p-0">
+        <ul class="sidebar-item m-0 p-0" id="sidebar">
             <li>
-                <a href="<?= URLROOT ?>/admin" class="active">
-                    <i class="fa-solid fa-coins"></i>
-                    <span class="item-name">thống kê doanh thu</span>
+                <a href="<?= URLROOT ?>/admin">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span class="item-name">Thống kê doanh thu</span>
                 </a>
             </li>
             <li>
-                <a href="<?= URLROOT ?>/admin">
+                <a href="<?= URLROOT ?>/admin/hotel">
                     <i class="fa-solid fa-hotel"></i>
                     <span class="item-name">Khách sạn</span>
                 </a>
             </li>
             <li>
-                <a href="<?= URLROOT ?>/admin">
+                <a href="<?= URLROOT ?>/admin/service">
                     <i class="fa-solid fa-cart-flatbed-suitcase"></i>
                     <span class="item-name">Dịch vụ</span>
                 </a>
@@ -50,39 +51,53 @@
 
             <li>
                 <a href="<?= URLROOT ?>/admin/room">
-                    <i class="fa-solid fa-list"></i>
-                    <span class="item-name">phòng</span>
+                    <i class="fa-solid fa-door-open"></i>
+                    <span class="item-name">Phòng</span>
                 </a>
             </li>
 
             <li>
-                <a href="<?= URLROOT ?>/admin">
+                <a href="<?= URLROOT ?>/admin/amenity">
                     <i class="fa-solid fa-person-booth"></i>
                     <span class="item-name">Tiện nghi phòng</span>
                 </a>
             </li>
+
             <li>
-                <a href="<?= URLROOT ?>/admin">
-                    <i class="fa-regular fa-credit-card"></i>
-                    <span class="item-name">Đặt phòng</span>
+                <a href="<?= URLROOT ?>/admin/offers">
+                    <i class="fa-solid fa-money-check-dollar"></i>
+                    <span class="item-name">Khuyến mãi & LHTT</span>
+                </a>
+            </li>
+            <li>
+                <a href="<?= URLROOT ?>/admin/maintenance">
+                    <i class="fa-regular fa-hourglass-half"></i>
+                    <span class="item-name">Bảo trì phòng</span>
                 </a>
             </li>
 
             <li>
-                <a href="<?= URLROOT ?>/admin">
+                <a href="<?= URLROOT ?>/admin/booking">
+                    <i class="fa-regular fa-credit-card"></i>
+                    <span class="item-name">Đơn đặt phòng</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="<?= URLROOT ?>/admin/account">
                     <i class="fa-solid fa-address-card"></i>
                     <span class="item-name">Tài khoản</span>
                 </a>
             </li>
             <li>
-                <a href="<?= URLROOT ?>/admin">
+                <a href="<?= URLROOT ?>/admin/rating">
                     <i class="fa-regular fa-comment"></i>
                     <span class="item-name">Đánh giá</span>
                 </a>
             </li>
             <li>
-                <a href="<?= URLROOT ?>/admin">
-                    <i class="fa-regular fa-envelope"></i>
+                <a href="<?= URLROOT ?>/admin/contact">
+                    <i class="fa-solid fa-envelope"></i>
                     <span class="item-name">Liên hệ</span>
                 </a>
             </li>
@@ -97,10 +112,12 @@
             <input type="search" placeholder="Tìm..." />
         </div>
         <div class="profile-details">
+
             <a href="#" class="dropdown-toggle" id="accountDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <img src="<?= ADMIN_PATH ?>/images/user.png" alt="img" />
-                <span class="admin_name">Admin</span>
+                <img src="<?= USER_PATH ?>/images/avatars/<?= $data['header'][0]['anh'] ?? 'user.png' ?>" alt="img" />
+                <span class="admin_name"><?= $data['header'][0]['ten'] ?? '' ?></span>
             </a>
+
             <ul class="dropdown-menu" aria-labelledby="accountDropdown">
                 <li>
                     <a class="dropdown-item" href="<?= URLROOT ?>/home">
@@ -109,7 +126,7 @@
                     </a>
                 </li>
                 <li>
-                    <a class="dropdown-item" href="?logout">
+                    <a class="dropdown-item" href="<?= URLROOT ?>/admin/loginAdmin/logout">
                         <i class="fa-solid fa-arrow-right-from-bracket"></i>
                         <span>Đăng xuất</span>
                     </a>

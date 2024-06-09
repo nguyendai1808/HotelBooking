@@ -1,7 +1,7 @@
 <Main class="container-fluid">
 
     <section class="banner-image banner-gray mb-5">
-        <img src="<?= USER_PATH ?>/images/bg-img.jpg" alt="banner">
+        <img src="<?= USER_PATH ?>/images/<?= $data['display']['baner'] ?? 'notbg.jpg' ?>" alt="banner">
         <div class="banner-content">
             <h3 class="section-title text-uppercase">Thanh toán</h3>
             <div class="banner-item">
@@ -38,6 +38,10 @@
                                 <input type="email" class="form-control" id="email" value="<?= $account[0]['email'] ?? '' ?>" placeholder="Email">
                             </div>
                             <div class="form-group col-lg-12">
+                                <label>Địa chỉ</label>
+                                <textarea id="address" class="form-control" rows="3" placeholder="Địa chỉ"><?= $account[0]['diachi'] ?? '' ?></textarea>
+                            </div>
+                            <div class="form-group col-lg-12">
                                 <small><span>(*)</span> bắt buộc</small>
                             </div>
                         </div>
@@ -47,14 +51,18 @@
                         <h5 class="pb-3">Thông tin quan trọng</h5>
                         <ul>
                             <li>
-                                <p><span>Hủy đặt phòng</span> trước: <span>24h</span> kể từ khi đặt phòng, xem chi tiết <a href="<?= URLROOT ?>/information"><span>chính sách hủy</span></a></p>
+                                <p>Khách sạn sẽ thu <span>50% tiền giữ phòng</span> với những đơn <span>đặt phòng trả sau</span>.</p>
+                            </li>
+                            <li>
+                                <p>Khi khách hàng <span>hủy đặt phòng</span> với những đơn <span>đặt phòng trả sau</span>, khách sạn sẽ <span>thu 50% giá trị tiền đặt phòng trước đó</span>.</p>
+                            </li>
+                            <li>
+                                <p>Khi khách hàng <span>hủy đặt phòng</span> với những đơn <span>đã thanh toán</span>, khách sạn sẽ <span>thu 25% giá trị tiền đã thanh toán</span>, xem chi tiết <a href="<?= URLROOT ?>/information"><span>chính sách hủy và hoàn trả tiền</span></a></p>
                             </li>
                             <li>
                                 <p>Sẽ không hoàn lại tiền nếu nhận phòng trễ hoặc trả phòng sớm.</p>
                             </li>
-                            <li>
-                                <p>Với những phòng có chính sách <span>trả sau</span>, khách sạn sẽ thu <span>tiền giữ phòng</span> cho khách hàng trị giá <span>20%</span> của đơn đặt phòng đó.</p>
-                            </li>
+
                             <li>
                                 <p>Tuân theo <a href="<?= URLROOT ?>/information"><span>điều khoản sử dụng</span></a> và <a href="<?= URLROOT ?>/information"><span>chính sách bảo mật</span></a> của khách sạn.</p>
                             </li>
@@ -76,13 +84,13 @@
                                         foreach ($data['booking'] as $item) :
                                             if (count($data['booking']) > 1) {
                                                 if (strpos($item['loaihinhtt'], 'trả sau')) {
-                                                    $sotiendatphong += (intval($item['tonggia']) * 0.2);
+                                                    $sotiendatphong += (intval($item['tonggia']) * 0.5);
                                                 } else {
                                                     $sotiendatphong += intval($item['tonggia']);
                                                 }
                                             } else {
                                                 if (strpos($item['loaihinhtt'], 'trả sau')) {
-                                                    $sotiendatphong += (intval($item['tonggia']) * 0.2);
+                                                    $sotiendatphong += (intval($item['tonggia']) * 0.5);
                                                 }
                                             }
                                             $tongsotien += $item['tonggia']; ?>

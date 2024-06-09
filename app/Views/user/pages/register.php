@@ -28,11 +28,13 @@
             <div class="input-layout" id="form-pass">
                 <label>Mật khẩu</label>
                 <input id="pass" name="pass" type="password" placeholder="Mật khẩu" required />
+                <img class="eye-toggle" src="<?= USER_PATH ?>/icon/eye-hidden.png" data-visible="false">
             </div>
 
             <div class="input-layout" id="form-pass">
                 <label>Nhập lại mật khẩu</label>
                 <input type="password" id="rtpass" name="rtpass" placeholder="Nhập lại mật khẩu" required />
+                <img class="eye-toggle" src="<?= USER_PATH ?>/icon/eye-hidden.png" data-visible="false">
             </div>
             <button class="btn-layout" id="register" type="submit" name="register">Đăng ký</button>
             <a href="<?= URLROOT ?>/login">Bạn đã có tài khoản? - Đăng Nhập</a>
