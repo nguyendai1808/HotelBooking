@@ -3,11 +3,28 @@ class History extends Controller
 {
     private $BookingModel;
     private $RoomModel;
+    private $RatingModel;
+    private $pagination;
+    private $per_page = 3;
+
 
     public function __construct()
     {
         $this->BookingModel = $this->model('BookingModel');
         $this->RoomModel = $this->model('RoomModel');
+        $this->RatingModel = $this->model('RatingModel');
+
+        if (!empty(Session::get('history'))) {
+            $history = Session::get('history');
+            $this->pagination = new Pagination($history, $this->per_page);
+        } else {
+            $idtaikhoan = Session::get('user_id');
+            $history = $this->BookingModel->getBookingHistoryByStatus($idtaikhoan);
+            if ($history) {
+                $this->pagination = new Pagination($history, $this->per_page);
+                Session::set('history', $history, 1800);
+            }
+        }
     }
 
     public function index()
@@ -15,15 +32,78 @@ class History extends Controller
         header('location:' . URLROOT . '/history/all');
     }
 
+
+    public function page($current_page = 1)
+    {
+        $criteria = $this->RatingModel->getCriteria();
+        if ($this->isAjaxRequest()) {
+            $list_booking = $this->pagination->getItemsbyCurrentPage($current_page);
+            $response = [
+                'bookings' => $this->getInforBooking($list_booking),
+                'criteria' => $criteria,
+                'pagination' => [
+                    'total_pages' => $this->pagination->getTotalPages(),
+                    'current_page' => $this->pagination->getcurrentPage()
+                ],
+                'view' => 'history/page'
+            ];
+
+            // Trả về dữ liệu dưới dạng JSON
+            header('Content-Type: application/json');
+            echo json_encode($response);
+            exit;
+        } else {
+            if (!empty($current_page) && filter_var($current_page, FILTER_VALIDATE_INT)) {
+                $list_booking = $this->pagination->getItemsbyCurrentPage($current_page);
+                $pag = [
+                    'total_pages' => $this->pagination->getTotalPages(),
+                    'current_page' => $this->pagination->getcurrentPage(),
+                    'view' => 'history'
+                ];
+
+                $this->view('user', 'history.php', [
+                    'page' => 'list_booking.php',
+                    'list_booking' => $this->getInforBooking($list_booking),
+                    'criteria' => $criteria,
+                    'pagination' => $pag
+                ]);
+            } else {
+                header('location:' . URLROOT . '/history/all');
+            }
+        }
+    }
+
+
     public function all()
     {
         $idtaikhoan = Session::get('user_id');
         $history = $this->BookingModel->getBookingHistoryByStatus($idtaikhoan);
 
+        if ($history) {
+            $this->pagination = new Pagination($history, $this->per_page);
+            Session::set('history', $history, 1800);
+            $list_booking = $this->pagination->getItemsbyCurrentPage(1);
+            $pag = [
+                'total_pages' => $this->pagination->getTotalPages(),
+                'current_page' => $this->pagination->getcurrentPage(),
+                'view' => 'history'
+            ];
+            $criteria = $this->RatingModel->getCriteria();
+        } else {
+            $list_booking = null;
+            $pag = null;
+            $criteria = null;
+        }
+
         if ($this->isAjaxRequest()) {
             ob_start();
-            extract(['list_booking' => $this->getInforBooking($history)]);
+            extract([
+                'list_booking' => $this->getInforBooking($list_booking),
+                'criteria' => $criteria,
+                'pagination' => $pag
+            ]);
             require_once APPROOT . '/views/user/pages/list_booking.php';
+            require_once APPROOT . '/views/user/pages/rating.php';
             $page = ob_get_clean();
 
             $response = [
@@ -37,7 +117,9 @@ class History extends Controller
         } else {
             $this->view('user', 'history.php', [
                 'page' => 'list_booking.php',
-                'list_booking' => $this->getInforBooking($history)
+                'list_booking' => $this->getInforBooking($list_booking),
+                'criteria' => $criteria,
+                'pagination' => $pag
             ]);
         }
     }
@@ -46,10 +128,27 @@ class History extends Controller
     {
         $idtaikhoan = Session::get('user_id');
         $booking = $this->BookingModel->getBookingHistoryByStatus($idtaikhoan, 'Đã cọc tiền');
+        if ($booking) {
+            $this->pagination = new Pagination($booking, $this->per_page);
+            Session::set('history', $booking, 1800);
+            $list_booking = $this->pagination->getItemsbyCurrentPage(1);
+
+            $pag = [
+                'total_pages' => $this->pagination->getTotalPages(),
+                'current_page' => $this->pagination->getcurrentPage(),
+                'view' => 'history'
+            ];
+        } else {
+            $list_booking = null;
+            $pag = null;
+        }
 
         if ($this->isAjaxRequest()) {
             ob_start();
-            extract(['list_booking' => $this->getInforBooking($booking)]);
+            extract([
+                'list_booking' => $this->getInforBooking($list_booking),
+                'pagination' => $pag
+            ]);
             require_once APPROOT . '/views/user/pages/list_booking.php';
             $page = ob_get_clean();
 
@@ -65,7 +164,8 @@ class History extends Controller
 
             $this->view('user', 'history.php', [
                 'page' => 'list_booking.php',
-                'list_booking' => $this->getInforBooking($booking)
+                'list_booking' => $this->getInforBooking($list_booking),
+                'pagination' => $pag
             ]);
         }
     }
@@ -74,10 +174,26 @@ class History extends Controller
     {
         $idtaikhoan = Session::get('user_id');
         $booking = $this->BookingModel->getBookingHistoryByStatus($idtaikhoan, 'Đã thanh toán');
+        if ($booking) {
+            $this->pagination = new Pagination($booking, $this->per_page);
+            Session::set('history', $booking, 1800);
+            $list_booking = $this->pagination->getItemsbyCurrentPage(1);
 
+            $pag = [
+                'total_pages' => $this->pagination->getTotalPages(),
+                'current_page' => $this->pagination->getcurrentPage(),
+                'view' => 'history'
+            ];
+        } else {
+            $list_booking = null;
+            $pag = null;
+        }
         if ($this->isAjaxRequest()) {
             ob_start();
-            extract(['list_booking' => $this->getInforBooking($booking)]);
+            extract([
+                'list_booking' => $this->getInforBooking($list_booking),
+                'pagination' => $pag
+            ]);
             require_once APPROOT . '/views/user/pages/list_booking.php';
             $page = ob_get_clean();
 
@@ -93,7 +209,8 @@ class History extends Controller
 
             $this->view('user', 'history.php', [
                 'page' => 'list_booking.php',
-                'list_booking' => $this->getInforBooking($booking)
+                'list_booking' => $this->getInforBooking($list_booking),
+                'pagination' => $pag
             ]);
         }
     }
@@ -101,12 +218,33 @@ class History extends Controller
     public function booked()
     {
         $idtaikhoan = Session::get('user_id');
-        $booking = $this->BookingModel->getBookingHistoryByStatus($idtaikhoan, 'Hoàn tất');
+        $booking = $this->BookingModel->getBookingHistoryByStatus($idtaikhoan, 'Hoàn tất, Đã đánh giá');
+        if ($booking) {
+            $this->pagination = new Pagination($booking, $this->per_page);
+            Session::set('history', $booking, 1800);
+            $list_booking = $this->pagination->getItemsbyCurrentPage(1);
+
+            $pag = [
+                'total_pages' => $this->pagination->getTotalPages(),
+                'current_page' => $this->pagination->getcurrentPage(),
+                'view' => 'history'
+            ];
+            $criteria = $this->RatingModel->getCriteria();
+        } else {
+            $list_booking = null;
+            $pag = null;
+            $criteria = null;
+        }
 
         if ($this->isAjaxRequest()) {
             ob_start();
-            extract(['list_booking' => $this->getInforBooking($booking)]);
+            extract([
+                'list_booking' => $this->getInforBooking($list_booking),
+                'criteria' => $criteria,
+                'pagination' => $pag
+            ]);
             require_once APPROOT . '/views/user/pages/list_booking.php';
+            require_once APPROOT . '/views/user/pages/rating.php';
             $page = ob_get_clean();
 
             $response = [
@@ -118,10 +256,11 @@ class History extends Controller
             echo json_encode($response);
             exit;
         } else {
-
             $this->view('user', 'history.php', [
                 'page' => 'list_booking.php',
-                'list_booking' => $this->getInforBooking($booking)
+                'list_booking' => $this->getInforBooking($list_booking),
+                'criteria' => $criteria,
+                'pagination' => $pag
             ]);
         }
     }
@@ -132,9 +271,26 @@ class History extends Controller
         $idtaikhoan = Session::get('user_id');
         $booking = $this->BookingModel->getBookingHistoryByStatus($idtaikhoan, 'Đã Hủy');
 
+        if ($booking) {
+            $this->pagination = new Pagination($booking, $this->per_page);
+            Session::set('history', $booking, 1800);
+            $list_booking = $this->pagination->getItemsbyCurrentPage(1);
+
+            $pag = [
+                'total_pages' => $this->pagination->getTotalPages(),
+                'current_page' => $this->pagination->getcurrentPage(),
+                'view' => 'history'
+            ];
+        } else {
+            $list_booking = null;
+            $pag = null;
+        }
         if ($this->isAjaxRequest()) {
             ob_start();
-            extract(['list_booking' => $this->getInforBooking($booking)]);
+            extract([
+                'list_booking' => $this->getInforBooking($list_booking),
+                'pagination' => $pag
+            ]);
             require_once APPROOT . '/views/user/pages/list_booking.php';
             $page = ob_get_clean();
 
@@ -147,10 +303,10 @@ class History extends Controller
             echo json_encode($response);
             exit;
         } else {
-
             $this->view('user', 'history.php', [
                 'page' => 'list_booking.php',
-                'list_booking' => $this->getInforBooking($booking)
+                'list_booking' => $this->getInforBooking($list_booking),
+                'pagination' => $pag
             ]);
         }
     }
@@ -175,7 +331,9 @@ class History extends Controller
                     $history[$key]['anhphong'] = $mainImg;
 
                     $paymentMethod = $this->RoomModel->findPaymentMethod($room['idphong']);
-                    $history[$key]['loaihinhtt'] = implode(" & ", array_column($paymentMethod, 'loaihinhthanhtoan'));
+                    if ($paymentMethod) {
+                        $history[$key]['loaihinhtt'] = implode(" & ", array_column($paymentMethod, 'loaihinhthanhtoan'));
+                    }
 
                     $history[$key]['tenphong'] = $room['tenphong'];
                     $history[$key]['giaphong'] = $room['giaphong'];
@@ -219,5 +377,38 @@ class History extends Controller
             }
         }
         header('location:' . URLROOT . '/history/all');
+    }
+
+    public function rating()
+    {
+        if (isset($_POST['rating'])) {
+            if (!empty($_POST['criteria'])) {
+                $tongdiem = 0;
+                $dem = 0;
+                foreach ($_POST['criteria'] as $idtieuchi => $value) {
+                    $tongdiem += $value;
+                    $dem++;
+                }
+                $tongdiem = $tongdiem == 0 ? 0 : $tongdiem / $dem;
+
+                if ($this->RatingModel->createRating($_POST['content'], $tongdiem, $_POST['idtaikhoan'], $_POST['idphong'])) {
+                    $iddanhgia =  $this->RatingModel->getRatingByIdUserRoom($_POST['idtaikhoan'], $_POST['idphong']);
+                    foreach ($_POST['criteria'] as $idtieuchi => $value) {
+                        $this->RatingModel->createDetailRating($idtieuchi, $iddanhgia, $value);
+                    }
+                    $this->RatingModel->updateStatusBooking($_POST['iddatphong']);
+                    $this->RatingModel->updateScoreAccount($_POST['idtaikhoan']);
+                    echo "<script> alert('Đánh giá thành công');
+                        window.location.href = '" . URLROOT . "/history/all';
+                    </script>";
+                    exit();
+                }
+            }
+            echo "<script> alert('Lỗi');
+            </script>";
+            exit();
+        } else {
+            header('location:' . URLROOT . '/history/all');
+        }
     }
 }

@@ -12,11 +12,11 @@
                 <div class="column">
                     <div class="input-box">
                         <label>Ngày bắt đầu</label>
-                        <input type="date" name="dateStart" value="<?= $item['ngaybatdau'] ?>" required />
+                        <input type="date" name="dateStart" value="<?= $item['ngaybatdau'] ?>" id="dateStart"  required />
                     </div>
                     <div class="input-box">
                         <label>Ngày kết thúc</label>
-                        <input type="date" name="dateEnd" value="<?= $item['ngayketthuc'] ?>" required />
+                        <input type="date" name="dateEnd" value="<?= $item['ngayketthuc'] ?>" id="dateEnd" required />
                     </div>
                 </div>
 

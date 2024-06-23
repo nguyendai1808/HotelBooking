@@ -8,6 +8,7 @@
                         <th class="stt"> Stt <i class="fa-solid fa-arrow-up"></i></th>
                         <th class="name"> Họ tên <i class="fa-solid fa-arrow-up"></i></th>
                         <th class="email"> Email <i class="fa-solid fa-arrow-up"></i></th>
+                        <th class="number"> Điểm <i class="fa-solid fa-arrow-up"></i></th>
                         <th class="date"> Ngày tạo <i class="fa-solid fa-arrow-up"></i></th>
                         <th class="status"> Trạng thái <i class="fa-solid fa-arrow-up"></i></th>
                         <th class="method"><a href="<?= URLROOT . '/admin/account/create' ?>" class="btn btn-success"><small class="fa-solid fa-circle-plus pe-1"></small>Thêm</a></th>
@@ -20,8 +21,9 @@
 
                             <tr>
                                 <td class="stt"><?= $stt ?></td>
-                                <td class="name"><img src="<?= USER_PATH ?>/images/avatar/<?= !empty($item['anh']) ? $item['anh'] : 'user.png' ?>" alt="img"><?= trim($item['ho'] . ' ' . $item['ten']) ?></td>
+                                <td class="name"><img src="<?= USER_PATH ?>/images/avatars/<?= !empty($item['anh']) ? $item['anh'] : 'user.png' ?>" alt="img"><?= trim($item['ho'] . ' ' . $item['ten']) ?></td>
                                 <td class="email"><?= $item['email'] ?></td>
+                                <td class="number"><?= $item['diemtichluy'] ?? 0 ?></td>
                                 <td class="date"><?= date('d-m-Y', strtotime($item['ngaytao'])) ?></td>
                                 <td class="status">
                                     <p class="status"><?= $item['trangthai'] ?></p>

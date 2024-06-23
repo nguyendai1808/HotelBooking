@@ -154,7 +154,9 @@ class Payment extends Controller
             $Rooms[$key]['tengiuong'] = $nameBed;
 
             $paymentMethod = $this->RoomModel->findPaymentMethod($room['idphong']);
-            $Rooms[$key]['loaihinhtt'] = implode(" & ", array_column($paymentMethod, 'loaihinhthanhtoan'));
+            if ($paymentMethod) {
+                $Rooms[$key]['loaihinhtt'] = implode(" & ", array_column($paymentMethod, 'loaihinhthanhtoan'));
+            }
         }
         return $Rooms;
     }

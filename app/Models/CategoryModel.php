@@ -14,9 +14,9 @@ class CategoryModel
         return $result;
     }
 
-    public function createCategory($name)
+    public function createCategory($name, $desc)
     {
-        $sql = "INSERT INTO danhmuc VALUES (null,'$name')";
+        $sql = "INSERT INTO danhmuc VALUES (null,'$name','$desc')";
         $result = $this->db->execute($sql);
         if ($result) {
             return true;
@@ -32,9 +32,9 @@ class CategoryModel
         return $result;
     }
 
-    public function updateCategory($id, $name)
+    public function updateCategory($id, $name, $desc)
     {
-        $sql = "UPDATE danhmuc SET tendanhmuc = '$name' WHERE iddanhmuc = '$id'";
+        $sql = "UPDATE danhmuc SET tendanhmuc = '$name', mota = '$desc' WHERE iddanhmuc = '$id'";
         $result = $this->db->execute($sql);
         if ($result) {
             return true;
@@ -52,12 +52,5 @@ class CategoryModel
         } else {
             return false;
         }
-    }
-
-    public function getNumberRoom($id)
-    {
-        $sql = "SELECT * FROM phong where id_danhmuc = $id";
-        $result = $this->db->rowCount($sql);
-        return $result;
     }
 }

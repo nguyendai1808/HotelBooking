@@ -1,7 +1,7 @@
-<Main class="container-fluid">
+<Main class="container-fluid" id="history-page">
 
     <section class="banner-image banner-gray mb-5">
-        <img src="<?= USER_PATH ?>/images/<?= $data['display']['baner'] ?? 'notbg.jpg'?>" alt="banner">
+        <img src="<?= USER_PATH ?>/images/<?= $data['display']['baner'] ?? 'notbg.jpg' ?>" alt="banner">
         <div class="banner-content">
             <h3 class="section-title text-uppercase">Lịch sử đặt phòng</h3>
             <div class="banner-item">
@@ -22,17 +22,17 @@
             </div>
         </div>
 
-        <div class="history-wrapper">
+        <div class="history-wrapper" id="booking-move">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-3">
                         <div class="sidebar pb-5" id="sidebar">
                             <ul class="list-group">
                                 <li data-url="<?= URLROOT ?>/history/all">
-                                   <span><i class="fa-solid fa-caret-right pe-3"></i>Tất cả</span>
+                                    <span><i class="fa-solid fa-caret-right pe-3"></i>Tất cả</span>
                                 </li>
                                 <li data-url="<?= URLROOT ?>/history/checkoutLounge">
-                                   <span><i class="fa-solid fa-caret-right pe-3"></i>Chờ thanh toán</span>
+                                    <span><i class="fa-solid fa-caret-right pe-3"></i>Chờ thanh toán</span>
                                 </li>
                                 <li data-url="<?= URLROOT ?>/history/paidBooking">
                                     <span><i class="fa-solid fa-caret-right pe-3"></i>Đã thanh toán</span>

@@ -8,7 +8,7 @@ if (!empty($account)) :
 
         <div class="change-pass">
             <h2 class="title">Đổi mật khẩu</h2>
-            <form action="<?= URLROOT ?>/personalInfo/password" method="post" class="form-layout" id="passwordForm">
+            <form action="<?= URLROOT ?>/personalInfo/password" method="post" class="form-layout" id="passwordForm" onsubmit="return confirmAction(this, 'Bạn có chắc chắn muốn cập nhật mật khẩu mới?');">
                 <div class="input-layout">
                     <label>Tài khoản - Email</label>
                     <input type="text" placeholder="Email" name="email" value="<?= $item['email'] ?>" readonly />
@@ -29,7 +29,7 @@ if (!empty($account)) :
                     <img class="eye-toggle" src="<?= USER_PATH ?>/icon/eye-hidden.png" data-visible="false">
                 </div>
                 <div>
-                    <button class="btn-save" name="changPass" type="submit" onclick="return confirmAction(this, 'Bạn có chắc chắn muốn cập nhật mật khẩu mới?')">
+                    <button class="btn-save" name="changPass" type="submit">
                         Cập nhật
                     </button>
                     <a href="<?= URLROOT ?>/personalInfo/password" class="btn-cancel">Hủy</a>
@@ -58,4 +58,27 @@ endif; ?>
             return;
         }
     });
+
+    function eyePass() {
+        var form = document.querySelectorAll('#form-pass .eye-toggle');
+          
+        form.forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                const input = this.previousElementSibling;
+                const visible = this.getAttribute('data-visible') === 'true';
+
+                if (visible) {
+                    input.type = 'password';
+                    this.src = USER_PATH + '/icon/eye-hidden.png';
+                    this.setAttribute('data-visible', 'false');
+                } else {
+                    input.type = 'text';
+                    this.src = USER_PATH + '/icon/eye.png';
+                    this.setAttribute('data-visible', 'true');
+                }
+            });
+        });
+    }
+
+    eyePass();
 </script>

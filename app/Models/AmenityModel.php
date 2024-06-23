@@ -34,7 +34,12 @@ class AmenityModel
 
     public function updateAmenity($idtiennghi, $nameNew, $iconNew)
     {
-        $sql = "UPDATE tiennghi SET tentiennghi = '$nameNew', icon = '$iconNew' Where idtiennghi = '$idtiennghi'";
+        if (empty($iconNew)) {
+            $sql = "UPDATE tiennghi SET tentiennghi = '$nameNew' Where idtiennghi = '$idtiennghi'";
+        } else {
+            $sql = "UPDATE tiennghi SET tentiennghi = '$nameNew', icon = '$iconNew' Where idtiennghi = '$idtiennghi'";
+        }
+
         $result = $this->db->execute($sql);
         if ($result) {
             return true;

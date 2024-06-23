@@ -57,12 +57,14 @@
                                 <p>Khi khách hàng <span>hủy đặt phòng</span> với những đơn <span>đặt phòng trả sau</span>, khách sạn sẽ <span>thu 50% giá trị tiền đặt phòng trước đó</span>.</p>
                             </li>
                             <li>
-                                <p>Khi khách hàng <span>hủy đặt phòng</span> với những đơn <span>đã thanh toán</span>, khách sạn sẽ <span>thu 25% giá trị tiền đã thanh toán</span>, xem chi tiết <a href="<?= URLROOT ?>/information"><span>chính sách hủy và hoàn trả tiền</span></a></p>
+                                <p>Khi khách hàng <span>hủy đặt phòng</span> với những đơn <span>đã thanh toán</span>, khách sạn sẽ <span>thu 25% giá trị tiền đã thanh toán</span>, xem chi tiết <a href="<?= URLROOT ?>/information"><span>chính sách hủy và hoàn trả tiền</span></a>.</p>
+                            </li>
+                            <li>
+                                <p><span>Thời gian hủy</span> sẽ là trước <span>ngày nhận phòng 1 tuần</span>.</p>
                             </li>
                             <li>
                                 <p>Sẽ không hoàn lại tiền nếu nhận phòng trễ hoặc trả phòng sớm.</p>
                             </li>
-
                             <li>
                                 <p>Tuân theo <a href="<?= URLROOT ?>/information"><span>điều khoản sử dụng</span></a> và <a href="<?= URLROOT ?>/information"><span>chính sách bảo mật</span></a> của khách sạn.</p>
                             </li>
@@ -83,13 +85,13 @@
                                     if (!empty($data['booking'])) :
                                         foreach ($data['booking'] as $item) :
                                             if (count($data['booking']) > 1) {
-                                                if (strpos($item['loaihinhtt'], 'trả sau')) {
+                                                if (strpos($item['loaihinhtt'], 'Trả sau')) {
                                                     $sotiendatphong += (intval($item['tonggia']) * 0.5);
                                                 } else {
                                                     $sotiendatphong += intval($item['tonggia']);
                                                 }
                                             } else {
-                                                if (strpos($item['loaihinhtt'], 'trả sau')) {
+                                                if (strpos($item['loaihinhtt'], 'Trả sau')) {
                                                     $sotiendatphong += (intval($item['tonggia']) * 0.5);
                                                 }
                                             }
@@ -103,24 +105,24 @@
                                 </ul>
                             </div>
 
-                            <input type="hidden" name="booking" value="<?= htmlspecialchars(json_encode($data['booking'])) ?>">
-                            <input type="hidden" name="tongsotien" value="<?= $tongsotien ?>">
-                            <input type="hidden" name="sotiendatphong" value="<?= $sotiendatphong ?>">
-
                             <div class="col-lg-12">
-                                <p class="fw-bold mb-2">Tổng số tiền:</p>
-                                <ul class="ps-3">
+                                <p class="fw-bold m-0">Tổng số tiền:</p>
 
+                                <input type="hidden" name="booking" value="<?= htmlspecialchars(json_encode($data['booking'])) ?>">
+                                <input type="hidden" name="tongsotien" value="<?= $tongsotien ?>">
+                                <input type="hidden" name="sotiendatphong" value="<?= $sotiendatphong ?>">
+
+                                <ul class="ps-3">
                                     <?php if ($sotiendatphong != 0) : ?>
                                         <li class="mb-2">
-                                            Đặt phòng <small class="text-muted">(Thanh toán nốt khi nhận phòng)</small>:
-                                            <span class="fw-bold ms-2"><?= number_format($sotiendatphong, 0, ',', '.') ?>đ</span>
+                                            Đặt phòng <small class="text-muted me-2">(Thanh toán nốt khi nhận phòng)</small>
+                                            <span class="fw-bold"><?= number_format($sotiendatphong, 0, ',', '.') ?>đ</span>
                                         </li>
                                     <?php endif; ?>
 
                                     <li class="mb-2">
-                                        Thanh toán ngay <small class="text-muted">(Hoàn tất đặt phòng)</small>:
-                                        <span class="fw-bold ms-2"><?= number_format($tongsotien, 0, ',', '.') ?>đ</span>
+                                        Thanh toán ngay <small class="text-muted me-2">(Hoàn tất đặt phòng)</small>
+                                        <span class="fw-bold"><?= number_format($tongsotien, 0, ',', '.') ?>đ</span>
                                     </li>
                                 </ul>
                             </div>

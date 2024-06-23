@@ -14,11 +14,11 @@ class AccountModel
         return $result ?? null;
     }
 
-    public function createAccount($Surname, $name, $email, $pass, $accountType = 'user', $date)
+
+    public function createAccount2($Surname, $name, $email, $phone, $pass, $accountType)
     {
         $password = password_hash($pass, PASSWORD_DEFAULT);
-        $sql = "INSERT INTO taikhoan (ho, ten, email, matkhau, trangthai, loaitk, ngaytao) VALUES ('$Surname','$name','$email','$password', 'Hoạt động', '$accountType', '$date')";
-
+        $sql = "INSERT INTO taikhoan (ho, ten, email, sdt, matkhau, trangthai, loaitk, ngaytao) VALUES ('$Surname','$name','$email','$phone','$password', 'Hoạt động', '$accountType', NOW())";
         $result = $this->db->execute($sql);
         if ($result) {
             return true;
@@ -26,6 +26,50 @@ class AccountModel
             return false;
         }
     }
+
+
+    public function createAccount($Surname, $name, $email, $pass, $accountType = 'user')
+    {
+        $password = password_hash($pass, PASSWORD_DEFAULT);
+        $sql = "INSERT INTO taikhoan (ho, ten, email, matkhau, trangthai, loaitk, ngaytao) VALUES ('$Surname','$name','$email','$password', 'Hoạt động', '$accountType', NOW())";
+        $result = $this->db->execute($sql);
+        if ($result) {
+            $idkhachhang = $this->getIdCustomerByEmail($email);
+            $idtaikhoan = $this->getIdAccountByEmail($email);
+            if ($idkhachhang && $idtaikhoan) {
+                $list_id =  $this->getListIdInvoice($idkhachhang);
+                foreach ($list_id as $id) {
+                    $this->updateIdInvoice($id, $idtaikhoan);
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function getIdCustomerByEmail($email)
+    {
+        $sql = "SELECT idkhachhang FROM khachhang where email = '$email'";
+        $result = $this->db->selectFirstColumnValue($sql, 'idkhachhang');
+        return $result;
+    }
+
+    public function getListIdInvoice($idkhachhang)
+    {
+        $sql = "SELECT id_dondat FROM thanhtoan where id_khachhang = '$idkhachhang' GROUP BY id_dondat";
+        $result = $this->db->selectColumnValues($sql, 'id_dondat');
+        return $result;
+    }
+
+    public function updateIdInvoice($idondat, $idtaikhoan)
+    {
+        $sql = "UPDATE datphong set id_taikhoan = '$idtaikhoan' where id_dondat = '$idondat' and id_taikhoan is null";
+        $result = $this->db->execute($sql);
+        return $result;
+    }
+
+
 
     public function findAccountById($id)
     {

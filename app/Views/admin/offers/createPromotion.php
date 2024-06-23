@@ -6,14 +6,15 @@
                 <label>Phần trăm khuyến mãi</label>
                 <input type="number" name="promotion" placeholder="Nhập phần trăm khuyến mãi. VD: 20" required />
             </div>
+
             <div class="column">
                 <div class="input-box">
                     <label>Ngày bắt đầu</label>
-                    <input type="date" name="dateStart" required />
+                    <input type="date" name="dateStart" id="dateStart" required />
                 </div>
                 <div class="input-box">
                     <label>Ngày kết thúc</label>
-                    <input type="date" name="dateEnd" required />
+                    <input type="date" name="dateEnd" id="dateEnd" required />
                 </div>
             </div>
 

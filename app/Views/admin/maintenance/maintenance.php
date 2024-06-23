@@ -26,7 +26,11 @@
                                 <td class="method">
                                     <div class="d-flex justify-content-center">
                                         <a href="<?= URLROOT ?>/admin/maintenance/detail/<?= $item['idbaotri'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-eye"></i></a>
-                                        <a href="<?= URLROOT ?>/admin/maintenance/update/<?= $item['idbaotri'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-pen-to-square"></i></a>
+
+                                        <?php if (strtotime($item['thoigianketthuc']) > time()) : ?>
+                                            <a href="<?= URLROOT ?>/admin/maintenance/update/<?= $item['idbaotri'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-pen-to-square"></i></a>
+                                        <?php endif; ?>
+
                                         <a href="<?= URLROOT ?>/admin/maintenance/delete/<?= $item['idbaotri'] ?>" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></a>
                                     </div>
                                 </td>

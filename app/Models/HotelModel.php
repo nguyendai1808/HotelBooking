@@ -9,14 +9,26 @@ class HotelModel
 
     public function getHotel()
     {
-        $sql = "SELECT * FROM khachsan";
+        $sql = "SELECT * FROM khachsan where idkhachsan = '1'";
         $result = $this->db->select($sql);
         return $result;
     }
 
+    public function updateHotel($name, $email, $address, $phone, $info, $desc, $video)
+    {
+        $sql = "UPDATE khachsan SET tenkhachsan='$name',email='$email',diachi='$address',sdt='$phone',thongtin='$info',mota='$desc',video='$video' where idkhachsan = '1'";
+        $result = $this->db->execute($sql);
+        if ($result) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
     public function getMainImageHotel()
     {
-        $sql = "SELECT * FROM anhks WHERE id_khachsan = '1' AND tenanh LIKE '%main%'";
+        $sql = "SELECT * FROM anhks WHERE id_khachsan = '1' ORDER BY idanhks LIMIT 1";
         $result = $this->db->select($sql);
 
         if ($result) {
@@ -29,52 +41,12 @@ class HotelModel
         }
     }
 
-    // public function createHotel($name, $mail, $add)
-    // {
-    //     $sql = "INSERT INTO taikhoan (name,email,address)
-    //             VALUES ('$name','$mail','$add')";
-    //     $result = $this->db->execute($sql);
-    //     if ($result) {
-    //         return true;
-    //     } else {
-    //         return false;
-    //     }
-    // }
-
-    // public function findHotelById($id)
-    // {
-    //     $sql = "SELECT * FROM taikhoan WHERE idtaikhoan = '$id'";
-    //     $result = $this->db->select($sql);
-    //     return $result;
-    // }
-
-    // public function updateHotel($id, $name, $mail, $add)
-    // {
-    //     $sql = "UPDATE taikhoan SET name = '$name',
-    //                                 email = '$mail',
-    //                                 address = '$add'
-    //                             WHERE id = '$id'";
-    //     $result = $this->db->execute($sql);
-    //     if ($result) {
-    //         return true;
-    //     } else {
-    //         return false;
-    //     }
-    // }
-
-
-
-    // public function deleteHotel($id)
-    // {
-    //     $sql = "DELETE FROM taikhoan WHERE id = '$id'";
-    //     $result = $this->db->execute($sql);
-    //     if ($result) {
-    //         return true;
-    //     } else {
-    //         return false;
-    //     }
-    // }
-
+    public function getVideoHotel()
+    {
+        $sql = "SELECT video FROM khachsan WHERE idkhachsan = '1'";
+        $result = $this->db->selectFirstColumnValue($sql, 'video');
+        return $result;
+    }
 
     public function getNumberRoom()
     {
@@ -108,11 +80,45 @@ class HotelModel
     public function getImagesHotel($num = null)
     {
         if (!empty($num)) {
-            $sql = "SELECT CONCAT(duongdan, '/', tenanh) as anh FROM anhks WHERE id_khachsan = '1' LIMIT $num";
+            $sql = "SELECT CONCAT(duongdan, '/', tenanh) as anh, idanhks FROM anhks WHERE id_khachsan = '1' ORDER BY idanhks LIMIT $num";
         } else {
-            $sql = "SELECT CONCAT(duongdan, '/', tenanh) as anh FROM anhks WHERE id_khachsan = '1'";
+            $sql = "SELECT CONCAT(duongdan, '/', tenanh) as anh, idanhks FROM anhks WHERE id_khachsan = '1' ORDER BY idanhks";
         }
         $result = $this->db->select($sql);
         return $result;
+    }
+
+
+    public function deleteImage($id)
+    {
+        $sql = "DELETE From anhks where idanhks = '$id'";
+        $result = $this->db->execute($sql);
+        if ($result) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    public function getMaxIdImageHotel()
+    {
+        $sql = "SELECT MAX(idanhks) as max FROM anhks";
+        $result = $this->db->selectFirstColumnValue($sql, 'max');
+        return $result;
+    }
+
+
+    public function saveImage($name, $link)
+    {
+        $maxId = $this->getMaxIdImageHotel();
+        $maxId = intval($maxId) + 1;
+        $sql = "INSERT INTO anhks(idanhks, tenanh, duongdan, id_khachsan) VALUES ('$maxId' ,'$name','$link','1')";
+        $result = $this->db->execute($sql);
+        if ($result) {
+            return $maxId;
+        } else {
+            return null;
+        }
     }
 }

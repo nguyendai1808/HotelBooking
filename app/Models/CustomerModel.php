@@ -9,7 +9,14 @@ class CustomerModel
 
     public function getCustomers()
     {
-        $sql = "SELECT * FROM khachhang";
+        $sql = "SELECT * FROM khachhang GROUP BY email";
+        $result = $this->db->select($sql);
+        return $result ?? null;
+    }
+
+    public function getCustomerInvoice()
+    {
+        $sql = "SELECT *, COUNT(id_dondat) as sodon, SUM(sotienthanhtoan) as tongtien FROM khachhang join thanhtoan on khachhang.idkhachhang = thanhtoan.id_khachhang GROUP BY email";
         $result = $this->db->select($sql);
         return $result ?? null;
     }
@@ -25,6 +32,14 @@ class CustomerModel
             return false;
         }
     }
+
+    public function getInvoiceCustomerById($id)
+    {
+        $sql = "SELECT * FROM thanhtoan join dondat on thanhtoan.id_dondat = dondat.iddondat WHERE thanhtoan.id_khachhang = '$id'";
+        $result = $this->db->select($sql);
+        return $result ?? null;
+    }
+
 
     public function findCustomerById($id)
     {

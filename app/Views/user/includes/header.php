@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Document</title>
+    <title>HotelBooking</title>
     <link rel="stylesheet" href="<?= URLROOT ?>/public/bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="<?= USER_PATH ?>/css/style.css" />
     <link rel="stylesheet" href="<?= USER_PATH ?>/css/main.css" />
@@ -60,7 +60,7 @@
 
                             <li class="account">
                                 <a href="#" class="dropdown-toggle" id="accountDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <img src="<?= USER_PATH ?>/images/avatars/<?= $item['anh'] ?? 'user.png' ?>" alt="user" width="30px" height="30px">
+                                    <img style="object-fit: cover;" src="<?= USER_PATH ?>/images/avatars/<?= !empty($item['anh']) ? $item['anh'] : 'user.png' ?>" alt="user" width="30px" height="30px">
                                     <span><?= $item['ten'] ?></span>
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="accountDropdown">

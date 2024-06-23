@@ -29,18 +29,36 @@
                                 <td class="number"><?= number_format($item['tongsotien'], 0, ',', '.') ?></td>
                                 <td class="number"><?= number_format($item['sotiencoc'], 0, ',', '.') ?></td>
                                 <td class="number"><?= number_format($item['sotienconthieu'], 0, ',', '.') ?></td>
-                                <td class="status"><?= $item['trangthaidon'] ?></td>
+
+                                <?php $color = ($item['trangthaidon'] == 'Đã hủy') ? 'danger'  : (($item['trangthaidon'] == 'Đã cọc tiền') ? 'warning' : 'success'); ?>
+
+                                <td class="status text-<?= $color ?>"><?= $item['trangthaidon'] ?></td>
                                 <td class="method">
-                                    <div class="d-flex justify-content-center">
-                                        <a href="<?= URLROOT ?>/admin/booking/detail/<?= $item['iddondat'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-eye"></i></a>
+                                    <form class="d-flex justify-content-center" action="<?= URLROOT ?>/admin/booking/cancelInvoice" method="post">
 
-                                        <?php if ($item['trangthaidon'] != 'Thanh toán hoàn tất' && strtotime($item['ngaydi']) >= strtotime(date('Y-m-d'))) : ?>
+                                        <a href="<?= URLROOT ?>/admin/booking/detailInvoice/<?= $item['iddondat'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-eye"></i></a>
 
-                                            <a href="<?= URLROOT ?>/admin/booking/cancel/<?= $item['iddondat'] ?>" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-xmark"></i></a>
+                                        <?php if ($item['trangthaidon'] == 'Đã thanh toán') : ?>
+
+                                            <button type="submit" name="completedInvoice" value="<?= $item['iddondat'] ?>" onclick="return confirm('Bạn có chắc chắn muốn hoàn tắt đơn đặt <?= $item['iddondat'] ?>');" formaction="<?= URLROOT ?>/admin/booking/completedInvoice" class="btn btn-success text-white mx-1">
+                                                <i class="fa-solid fa-clipboard-check"></i>
+                                            </button>
 
                                         <?php endif; ?>
 
-                                    </div>
+                                        <?php if ($item['trangthaidon'] == 'Đã cọc tiền') : ?>
+
+                                            <button type="submit" name="paymentBooking" value="<?= $item['iddondat'] ?>" onclick="return confirm('Bạn có chắc chắn muốn xác nhận đã thanh toán đơn đặt <?= $item['iddondat'] ?>');" formaction="<?= URLROOT ?>/admin/booking/paymentBooking" class="btn btn-success text-white mx-1">
+                                                <i class="fa-solid fa-money-bill"></i>
+                                            </button>
+
+                                            <button type="submit" name="cancelInvoice" value="<?= $item['iddondat'] ?>" onclick="return confirm('Bạn có chắc chắn muốn hủy đơn đặt <?= $item['iddondat'] ?>');" class="btn btn-danger text-white mx-1">
+                                                <i class="fa-solid fa-xmark"></i>
+                                            </button>
+
+                                        <?php endif; ?>
+
+                                    </form>
                                 </td>
                             </tr>
 

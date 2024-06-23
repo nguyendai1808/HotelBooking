@@ -13,7 +13,7 @@
                 <div class="input-box">
                     <label>Ảnh Tiện Nghi:</label>
                     <img src="<?= USER_PATH ?>/images/amenities/<?= !empty($item['icon']) ? $item['icon'] : 'notImage.jpg' ?>" alt="img">
-                    <input type="file" name="image" accept="image/*" onchange="previewImage(this)" required />
+                    <input type="file" name="image" accept="image/*" onchange="previewImage(this)" />
                 </div>
                 <button class="btn-save" name="update" type="submit">Lưu lại</button>
                 <a class="btn-a btn-cancel" href="<?= URLROOT . '/admin/amenity' ?>">Hủy</a>

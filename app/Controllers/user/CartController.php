@@ -38,7 +38,9 @@ class Cart extends Controller
                     $CartItem[$key]['anhphong'] = $mainImg;
 
                     $paymentMethod = $this->RoomModel->findPaymentMethod($room['idphong']);
-                    $CartItem[$key]['loaihinhtt'] = implode(" & ", array_column($paymentMethod, 'loaihinhthanhtoan'));
+                    if ($paymentMethod) {
+                        $CartItem[$key]['loaihinhtt'] = implode(" & ", array_column($paymentMethod, 'loaihinhthanhtoan'));
+                    }
 
                     $CartItem[$key]['tenphong'] = $room['tenphong'];
                     $CartItem[$key]['giaphong'] = $room['giaphong'];
@@ -46,12 +48,16 @@ class Cart extends Controller
 
                 if (empty($item['ngayden']) || empty($item['ngaydi'])) {
                     $soNgay = 0;
+                    $quantityRoom = $this->RoomModel->getQuantityRoom($item['id_phong']);
                 } else {
                     $ngaydentmp = new DateTime($item['ngayden']);
                     $ngayditmp = new DateTime($item['ngaydi']);
                     $soNgay = intval($ngayditmp->diff($ngaydentmp)->format('%a'));
+
+                    $quantityRoom = $this->RoomModel->emptyRoom($item['ngayden'],  $item['ngaydi'], $item['id_phong']);
                 }
                 $CartItem[$key]['songay'] = $soNgay;
+                $CartItem[$key]['sophongtrong'] = $quantityRoom;
             }
         }
         //gọi và show dữ liệu ra view

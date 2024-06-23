@@ -20,6 +20,7 @@ class Amenity extends Controller
         ]);
     }
 
+
     public function create()
     {
         if (isset($_POST['create'])) {
@@ -87,6 +88,8 @@ class Amenity extends Controller
             header('location:' . URLROOT . '/admin/amenity');
         }
     }
+
+    //bed-------------------------------
     
     public function createBed()
     {

@@ -82,7 +82,12 @@
                     <span class="item-name">Đơn đặt phòng</span>
                 </a>
             </li>
-
+            <li>
+                <a href="<?= URLROOT ?>/admin/customer">
+                    <i class="fa-solid fa-users"></i>
+                    <span class="item-name">Khách hàng</span>
+                </a>
+            </li>
             <li>
                 <a href="<?= URLROOT ?>/admin/account">
                     <i class="fa-solid fa-address-card"></i>

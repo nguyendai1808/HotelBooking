@@ -24,22 +24,23 @@ class Home extends Controller
         //khách sạn
         $Hotel = $this->HotelModel->getHotel();
 
+        if ($Hotel) {
+            foreach ($Hotel as $key => $item) {
+                $numberRoom = $this->HotelModel->getNumberRoom();
+                $Hotel[$key]['sophong'] = $numberRoom;
 
-        foreach ($Hotel as $key => $item) {
-            $numberRoom = $this->HotelModel->getNumberRoom();
-            $Hotel[$key]['sophong'] = $numberRoom;
+                $numberService = $this->HotelModel->getNumberService();
+                $Hotel[$key]['sodichvu'] = $numberService;
 
-            $numberService = $this->HotelModel->getNumberService();
-            $Hotel[$key]['sodichvu'] = $numberService;
+                $numberRating = $this->HotelModel->getNumberRating();
+                $Hotel[$key]['sodanhgia'] = $numberRating;
 
-            $numberRating = $this->HotelModel->getNumberRating();
-            $Hotel[$key]['sodanhgia'] = $numberRating;
+                $scoreRating = $this->HotelModel->getScoreRating();
+                $Hotel[$key]['sodiem'] = $scoreRating;
 
-            $scoreRating = $this->HotelModel->getScoreRating();
-            $Hotel[$key]['sodiem'] = $scoreRating;
-
-            $imgsHotel = $this->HotelModel->getImagesHotel(2);
-            $Hotel[$key]['anhks'] = $imgsHotel;
+                $imgsHotel = $this->HotelModel->getImagesHotel(2);
+                $Hotel[$key]['anhks'] = $imgsHotel;
+            }
         }
 
         //dịch vụ
@@ -47,14 +48,14 @@ class Home extends Controller
 
         //gọi và show dữ liệu ra view
         $this->view('user', 'home.php', [
-            'roomshot' => $this->getRoomMore($RoomsHot),
-            'roomsSale' => $this->getRoomMore($RoomsSale),
+            'roomshot' => $this->getInforRoomMore($RoomsHot),
+            'roomsSale' => $this->getInforRoomMore($RoomsSale),
             'hotel' => $Hotel,
             'services' => $Services
         ]);
     }
 
-    public function getRoomMore($Rooms)
+    public function getInforRoomMore($Rooms)
     {
         if (!empty($Rooms)) {
             foreach ($Rooms as $key => $room) {
@@ -76,8 +77,20 @@ class Home extends Controller
                 $desc = $this->RoomModel->getDescRoom($room['idphong']);
                 $Rooms[$key]['mota'] = $desc;
 
+                $checkin = Session::get('checkin');
+                $checkout = Session::get('checkout');
+                if (!empty($checkin) && !empty($checkout)) {
+                    $quantityRoom = $this->RoomModel->emptyRoom($checkin,  $checkout, $room['idphong']);
+                } else {
+                    $quantityRoom = $this->RoomModel->getQuantityRoom($room['idphong']);
+                }
+
+                $Rooms[$key]['soluongphongtrong'] = $quantityRoom;
+
                 $paymentMethod = $this->RoomModel->findPaymentMethod($room['idphong']);
-                $Rooms[$key]['loaihinhtt'] = implode(" & ", array_column($paymentMethod, 'loaihinhthanhtoan'));
+                if($paymentMethod){
+                    $Rooms[$key]['loaihinhtt'] = implode(" & ", array_column($paymentMethod, 'loaihinhthanhtoan'));
+                }
             }
         }
         return $Rooms ?? null;

@@ -23,10 +23,10 @@ $(document).ready(function () {
 function previewImage(input) {
   var file = input.files[0];
   var reader = new FileReader();
-  
-  reader.onload = function(e) {
-      var imgElement = input.parentNode.querySelector('img');
-      imgElement.src = e.target.result;
+
+  reader.onload = function (e) {
+    var imgElement = input.parentNode.querySelector('img');
+    imgElement.src = e.target.result;
   }
   reader.readAsDataURL(file);
 }

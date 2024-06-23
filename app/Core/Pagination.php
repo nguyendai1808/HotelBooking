@@ -12,7 +12,7 @@ class Pagination
     public function __construct($listItems, $perPage)
     {
         $this->listItems = $listItems;
-        $this->totalItems = count($listItems);
+        $this->totalItems = count($listItems) ?? 0;
         $this->perPage = $perPage;
         $this->totalPages = ceil($this->totalItems / $this->perPage);
         $this->currentPage = 1;
@@ -43,6 +43,7 @@ class Pagination
         $start = ($this->currentPage - 1) * $this->perPage;
         $end = min($start + $this->perPage, $this->totalItems);
         $datas = array_slice($this->listItems, $start, $end - $start);
-        return $datas;
+
+        return $datas ?? null;
     }
 }

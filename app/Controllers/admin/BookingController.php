@@ -20,9 +20,6 @@ class Booking extends Controller
         foreach ($bookings as $key => $item) {
             $name = $this->CustomerModel->getNameCustomer($item['id_khachhang']);
             $bookings[$key]['tenkhachhang'] = $name;
-
-            $checkout = $this->BookingModel->getCheckoutMaxBooking($item['id_dondat']);
-            $bookings[$key]['ngaydi'] = $checkout;
         }
 
         $this->view('admin', 'booking/booking.php', [
@@ -30,13 +27,14 @@ class Booking extends Controller
         ]);
     }
 
-    public function cancel($iddondat)
+    public function cancelInvoice()
     {
-        if (!empty($iddondat) && filter_var($iddondat, FILTER_VALIDATE_INT)) {
-
-            $cancel = $this->BookingModel->updateCategory();
+        if (isset($_POST['cancelInvoice'])) {
+            $iddondat = $_POST['cancelInvoice'];
+            $cancel = $this->BookingModel->cancelInvoice($iddondat);
             if ($cancel) {
-                header('location:' . URLROOT . '/admin/booking');
+                echo '<script>alert("Hủy thành công đơn đặt " + ' . $iddondat . ')</script>';
+                $this->index();
             } else {
                 echo '<script>alert("lỗi")</script>';
                 exit();
@@ -46,7 +44,41 @@ class Booking extends Controller
         }
     }
 
-    public function detail($iddondat)
+    public function paymentBooking()
+    {
+        if (isset($_POST['paymentBooking'])) {
+            $iddondat = $_POST['paymentBooking'];
+            $update = $this->BookingModel->paymentBooking($iddondat);
+            if ($update) {
+                echo '<script>alert("cập nhật thành công đơn đặt " + ' . $iddondat . ')</script>';
+                $this->index();
+            } else {
+                echo '<script>alert("lỗi")</script>';
+                exit();
+            }
+        } else {
+            header('location:' . URLROOT . '/admin/booking');
+        }
+    }
+
+    public function completedInvoice()
+    {
+        if (isset($_POST['completedInvoice'])) {
+            $iddondat = $_POST['completedInvoice'];
+            $update = $this->BookingModel->completedInvoice($iddondat);
+            if ($update) {
+                echo '<script>alert("Cập nhật thành công đươn đặt " + ' . $iddondat . ')</script>';
+                $this->index();
+            } else {
+                echo '<script>alert("lỗi")</script>';
+                exit();
+            }
+        } else {
+            header('location:' . URLROOT . '/admin/booking');
+        }
+    }
+
+    public function detailInvoice($iddondat)
     {
         if (!empty($iddondat) && filter_var($iddondat, FILTER_VALIDATE_INT)) {
             $bookings = $this->BookingModel->getBookingsById($iddondat);

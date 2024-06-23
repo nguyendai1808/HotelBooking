@@ -1,15 +1,3 @@
-//login
-function showpass() {
-    document.getElementById('eye-open').style.display = "block";
-    document.getElementById('eye-close').style.display = "none";
-    document.getElementById('eye-pass').type = "text";
-}
-function hiddenpass() {
-    document.getElementById('eye-open').style.display = "none";
-    document.getElementById('eye-close').style.display = "block";
-    document.getElementById('eye-pass').type = "password";
-}
-
 
 let sidebar = document.querySelector(".sidebar");
 let sidebarBtn = document.querySelector(".sidebarBtn");
@@ -22,7 +10,6 @@ const search = document.querySelector('.search-box input'),
     table_rows = document.querySelectorAll('.table-content tbody tr'),
     table_headings = document.querySelectorAll('.table-content thead th');
 
-// 1. Searching for specific data of HTML table
 search.addEventListener('input', searchTable);
 
 function searchTable() {
@@ -39,7 +26,6 @@ function searchTable() {
     });
 }
 
-// 2. Sorting | Ordering data of HTML table
 
 table_headings.forEach((head, i) => {
     let sort_asc = false;
@@ -62,7 +48,6 @@ table_headings.forEach((head, i) => {
     }
 })
 
-
 function sortTable(column, sort_asc) {
     [...table_rows].sort((a, b) => {
         let first_row = a.querySelectorAll('.table-content td')[column].textContent.toLowerCase(),
@@ -77,12 +62,40 @@ document.addEventListener("DOMContentLoaded", function () {
     var links = document.querySelectorAll(".sidebar-item a");
     links.forEach(function (link) {
         link.addEventListener("click", function () {
-            // Remove active class from all links
             links.forEach(function (item) {
                 item.classList.remove("active");
             });
-            // Add active class to the clicked link
             this.classList.add("active");
         });
     });
+});
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    var dateStart = document.getElementById("dateStart");
+    var dateEnd = document.getElementById("dateEnd");
+
+    if (dateStart && dateEnd) {
+        // Thêm lắng nghe sự kiện cho input ngày bắt đầu
+        dateStart.addEventListener("input", function () {
+            if (dateStart.value >= dateEnd.value) {
+                if (dateStart.value) {
+                    var newEndDate = new Date(dateStart.value);
+                    newEndDate.setDate(newEndDate.getDate() + 1);
+                    dateEnd.value = newEndDate.toISOString().split("T")[0];
+                }
+            }
+        });
+
+        // Thêm lắng nghe sự kiện cho input ngày kết thúc
+        dateEnd.addEventListener("input", function () {
+            if (dateEnd.value <= dateStart.value) {
+                if (dateEnd.value) {
+                    var newStartDate = new Date(dateEnd.value);
+                    newStartDate.setDate(newStartDate.getDate() - 1);
+                    dateStart.value = newStartDate.toISOString().split("T")[0];
+                }
+            }
+        });
+    }
 });

@@ -14,34 +14,13 @@ class ImageModel
         return $result;
     }
 
-    // public function createRoomImage($name)
-    // {
-    //     $sql = "INSERT INTO danhmuc VALUES (null,'$name')";
-    //     $result = $this->db->execute($sql);
-    //     if ($result) {
-    //         return true;
-    //     } else {
-    //         return false;
-    //     }
-    // }
 
     public function findRoomImageById($id)
     {
-        $sql = "SELECT CONCAT(duongdan, '/', tenanh) as anh FROM anhphong WHERE id_phong = '$id'";
+        $sql = "SELECT CONCAT(duongdan, '/', tenanh) as anh, idanhphong FROM anhphong WHERE id_phong = '$id' ORDER BY idanhphong";
         $result = $this->db->select($sql);
         return $result;
     }
-
-    // public function updateRoomImage($id, $name)
-    // {
-    //     $sql = "UPDATE danhmuc SET tendanhmuc = '$name' WHERE iddanhmuc = '$id'";
-    //     $result = $this->db->execute($sql);
-    //     if ($result) {
-    //         return true;
-    //     } else {
-    //         return false;
-    //     }
-    // }
 
     public function deleteRoomImage($id)
     {

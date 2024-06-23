@@ -21,7 +21,7 @@
 
                             <tr>
                                 <td class="stt"><?= $stt ?></td>
-                                <td class="name"><img src="<?= USER_PATH ?>/images/avatar/<?= !empty($item['anh']) ? $item['anh'] : 'user.png' ?>" alt="img"><?= trim($item['ho'] . ' ' . $item['ten']) ?></td>
+                                <td class="name"><img src="<?= USER_PATH ?>/images/avatars/<?= !empty($item['anh']) ? $item['anh'] : 'user.png' ?>" alt="img"><?= trim($item['ho'] . ' ' . $item['ten']) ?></td>
                                 <td class="desc"><?= $item['noidung'] ?></td>
                                 <td class="date"><?= date('d-m-Y', strtotime($item['thoigian']))  ?></td>
                                 <td class="number"><?= round($item['tongdiem'], 1) ?></td>

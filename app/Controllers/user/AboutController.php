@@ -15,22 +15,26 @@ class About extends Controller
     public function index()
     {
         $Hotel = $this->HotelModel->getHotel();
-        foreach ($Hotel as $key => $item) {
-            $numberRoom = $this->HotelModel->getNumberRoom();
-            $Hotel[$key]['sophong'] = $numberRoom;
 
-            $numberService = $this->HotelModel->getNumberService();
-            $Hotel[$key]['sodichvu'] = $numberService;
+        if ($Hotel) {
+            foreach ($Hotel as $key => $item) {
+                $numberRoom = $this->HotelModel->getNumberRoom();
+                $Hotel[$key]['sophong'] = $numberRoom;
 
-            $numberRating = $this->HotelModel->getNumberRating();
-            $Hotel[$key]['sodanhgia'] = $numberRating;
+                $numberService = $this->HotelModel->getNumberService();
+                $Hotel[$key]['sodichvu'] = $numberService;
 
-            $scoreRating = $this->HotelModel->getScoreRating();
-            $Hotel[$key]['sodiem'] = $scoreRating;
+                $numberRating = $this->HotelModel->getNumberRating();
+                $Hotel[$key]['sodanhgia'] = $numberRating;
 
-            $imgsHotel = $this->HotelModel->getImagesHotel();
-            $Hotel[$key]['anhks'] = $imgsHotel;
+                $scoreRating = $this->HotelModel->getScoreRating();
+                $Hotel[$key]['sodiem'] = $scoreRating;
+
+                $imgsHotel = $this->HotelModel->getImagesHotel();
+                $Hotel[$key]['anhks'] = $imgsHotel;
+            }
         }
+
 
         $Services = $this->ServiceModel->getServices(6);
 
@@ -44,12 +48,15 @@ class About extends Controller
             }
         }
 
+        $video = $this->HotelModel->getVideoHotel();
+
         //gọi và show dữ liệu ra view
         $this->view('user', 'about.php', [
             'hotel' => $Hotel,
             'services' => $Services,
             'imgMainHotel' => $imgMainHotel,
-            'ratingHotel' => $ratingHotel
+            'ratingHotel' => $ratingHotel,
+            'video' => $video
         ]);
     }
 }

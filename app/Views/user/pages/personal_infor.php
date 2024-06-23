@@ -1,7 +1,7 @@
-<main class="container-fluid">
+<main class="container-fluid" id="personal_infor-page">
 
     <section class="banner-image banner-gray mb-5">
-        <img src="<?= USER_PATH ?>/images/<?= $data['display']['baner'] ?? 'notbg.jpg'?>" alt="banner">
+        <img src="<?= USER_PATH ?>/images/<?= $data['display']['baner'] ?? 'notbg.jpg' ?>" alt="banner">
         <div class="banner-content">
             <h3 class="section-title text-uppercase">Thông tin cá nhân</h3>
             <div class="banner-item">
@@ -13,7 +13,7 @@
         </div>
     </section>
 
-    <section class="personal-infor pb-5">
+    <section class="personal-infor pb-5" id="booking-move">
         <div class="container">
             <div class="row">
                 <div class="col-lg-4 mb-4">

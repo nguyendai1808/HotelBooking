@@ -15,14 +15,16 @@ class Register extends Controller
             $account = $this->AccountModel->checkEmail($_POST['email']);
             if ($account > 0) {
                 $this->view('user', 'register.php', [
-                    'error' => 'Tài khoản đã có người sử dụng.'
+                    'error' => 'Tài khoản đã có nsgười sử dụng.'
                 ]);
             } else {
-                if ($this->AccountModel->createAccount($_POST['surname'], $_POST['name'], $_POST['email'], $_POST['pass'], 'user', date('Y-m-d'))) {
-                    echo '<script>
-                        alert("Đăng ký thành công");
-                        location.href="' . URLROOT . '/login";' .
-                        '</script>';
+                if ($this->AccountModel->createAccount($_POST['surname'], $_POST['name'], $_POST['email'], $_POST['pass'], 'user')) {
+                    $user_id = $this->AccountModel->getIdAccountByEmail($_POST['email']);
+                    Session::set('user_id', $user_id);
+                    echo '<script> alert("Đăng ký thành công");
+                        location.href="' . URLROOT . '/home";
+                    </script>';
+                    exit();
                 }
             }
         }

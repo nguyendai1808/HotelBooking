@@ -1,302 +1,4 @@
-// const URLROOT = 'http://localhost/HotelBooking';
-// const USER_PATH = URLROOT + '/public/user';
-// const ADMIN_PATH = URLROOT + '/public/admin';
-
-//------------------------------------slider-wrapper-----------------------------------//
-document.addEventListener("DOMContentLoaded", function () {
-    const sliders = document.querySelectorAll(".slider-wrapper");
-
-    sliders.forEach(slider => {
-        const carousel = slider.querySelector(".carousel");
-
-        // Lấy chiều rộng của thẻ đầu tiên trong "carousel"
-        const firstCardWidth = carousel.querySelector(".card").offsetWidth;
-
-        // Lấy ra tất cả các nút mũi tên trong slider-wrapper
-        const arrowBtns = slider.querySelectorAll("i");
-
-        // Danh sách các thẻ con của "carousel" dưới dạng một mảng
-        const carouselChildren = Array.from(carousel.children);
-
-        // Biến để kiểm tra trạng thái kéo
-        let isDragging = false;
-
-        // Biến để lưu trữ tọa độ x khi bắt đầu kéo
-        let startX;
-
-        // Biến để lưu trữ vị trí scrollLeft khi bắt đầu kéo
-        let startScrollLeft;
-
-        // Số lượng thẻ hiển thị trên một dòng
-        let cardPerView = Math.round(carousel.offsetWidth / firstCardWidth);
-
-        // Biến lưu trữ ID của timeout
-        let timeoutId;
-
-        // Thêm các bản sao của một số thẻ cuối vào đầu "carousel" để tạo hiệu ứng cuộn vô tận
-        carouselChildren.slice(-cardPerView).reverse().forEach(card => {
-            carousel.insertAdjacentHTML("afterbegin", card.outerHTML);
-        });
-
-        // Thêm các bản sao của một số thẻ đầu vào cuối "carousel" để tạo hiệu ứng cuộn vô tận
-        carouselChildren.slice(0, cardPerView).forEach(card => {
-            carousel.insertAdjacentHTML("beforeend", card.outerHTML);
-        });
-
-        // Cuộn đến vị trí phù hợp để ẩn một số thẻ bản sao đầu tiên trên Firefox
-        carousel.classList.add("no-transition");
-        carousel.scrollLeft = carousel.offsetWidth;
-        carousel.classList.remove("no-transition");
-
-        // Thêm sự kiện click cho các nút mũi tên để cuộn "carousel" qua trái và phải
-        arrowBtns.forEach(btn => {
-            btn.addEventListener("click", () => {
-                carousel.scrollLeft += btn.id == "left" ? -firstCardWidth : firstCardWidth;
-            });
-        });
-
-        // Hàm xử lý sự kiện khi bắt đầu kéo
-        const dragStart = (e) => {
-            isDragging = true;
-            carousel.classList.add("dragging");
-            startX = e.pageX;
-            startScrollLeft = carousel.scrollLeft;
-        }
-
-        // Hàm xử lý sự kiện khi kéo
-        const dragging = (e) => {
-            if (!isDragging) return;
-            carousel.scrollLeft = startScrollLeft - (e.pageX - startX);
-        }
-
-        // Hàm xử lý sự kiện khi kết thúc kéo
-        const dragStop = () => {
-            isDragging = false;
-            carousel.classList.remove("dragging");
-        }
-
-        // Hàm xử lý sự kiện cuộn vô tận
-        const infiniteScroll = () => {
-            if (carousel.scrollLeft === 0) {
-                carousel.classList.add("no-transition");
-                carousel.scrollLeft = carousel.scrollWidth - (2 * carousel.offsetWidth);
-                carousel.classList.remove("no-transition");
-            } else if (Math.ceil(carousel.scrollLeft) === carousel.scrollWidth - carousel.offsetWidth) {
-                carousel.classList.add("no-transition");
-                carousel.scrollLeft = carousel.offsetWidth;
-                carousel.classList.remove("no-transition");
-            }
-            clearTimeout(timeoutId);
-            // Nếu slider-wrapper không hover thì tự động cuộn lại
-            if (window.innerWidth >= 768 && !slider.matches(":hover")) {
-                autoPlay();
-            }
-        }
-
-        // Hàm tự động cuộn
-        const autoPlay = () => {
-            timeoutId = setTimeout(() => {
-                carousel.scrollLeft += firstCardWidth;
-                autoPlay();
-            }, 2500);
-        }
-
-        // Gọi hàm tự động cuộn
-        autoPlay();
-
-        // Thêm các sự kiện cho "carousel"
-        carousel.addEventListener("mousedown", dragStart);
-        carousel.addEventListener("mousemove", dragging);
-        document.addEventListener("mouseup", dragStop);
-        carousel.addEventListener("scroll", infiniteScroll);
-        slider.addEventListener("mouseenter", () => clearTimeout(timeoutId));
-        slider.addEventListener("mouseleave", autoPlay);
-    });
-});
-
-
-// ----------------------------------------detail room -------------------------------------//
-document.addEventListener("DOMContentLoaded", function () {
-    // Lấy các phần tử DOM cần thiết
-    const mainImage = document.getElementById('main-img');
-    const carousel = document.querySelector('.wrapper-img .carousel');
-    const carouselImages = document.querySelectorAll('.wrapper-img .carousel img');
-    const leftArrow = document.querySelector('.wrapper-img .left');
-    const rightArrow = document.querySelector('.wrapper-img .right');
-    const arrowIcons = document.querySelectorAll(".wrapper-img i");
-
-    // Biến để kiểm tra trạng thái kéo chuột hoặc chạm màn hình
-    let isDragStart = false,
-        prevPageX, prevScrollLeft, positionDiff, currentIndex = 0;
-
-
-    // Hàm cập nhật hình ảnh chính và áp dụng kiểu highlight cho ảnh đầu tiên trong danh sách
-    function updateMainImageAndHighlight() {
-        if (carouselImages.length > 0) {
-            let firstImage = carouselImages[0];
-            let imagePath = firstImage.getAttribute('src');
-            mainImage.setAttribute('src', imagePath);
-            applyImageHighlight(0);
-        }
-    }
-
-    // Cập nhật hình ảnh chính và áp dụng kiểu highlight ngay sau khi tải trang lên
-    updateMainImageAndHighlight();
-
-    // Xử lý sự kiện khi người dùng click vào mũi tên điều hướng
-    arrowIcons.forEach(icon => {
-        icon.addEventListener("click", () => {
-            let firstImgWidth = carouselImages[0].clientWidth + 14;
-            // Kiểm tra xem mũi tên được nhấn là mũi tên trái hay phải
-            if (icon.classList.contains("left")) {
-                // Kiểm tra xem danh sách ảnh đã đến đầu chưa trước khi cuộn
-                if (carousel.scrollLeft !== 0) {
-                    carousel.scrollLeft -= firstImgWidth;
-                }
-            } else {
-                // Kiểm tra xem danh sách ảnh đã đến cuối chưa trước khi cuộn
-                if (carousel.scrollLeft !== (carousel.scrollWidth - carousel.offsetWidth)) {
-                    carousel.scrollLeft += firstImgWidth;
-                }
-            }
-        });
-    });
-
-    // Xử lý sự kiện khi bắt đầu kéo chuột hoặc chạm màn hình
-    const dragStart = (e) => {
-        isDragStart = true;
-        prevPageX = e.pageX || e.touches[0].pageX;
-        prevScrollLeft = carousel.scrollLeft;
-    }
-
-    // Xử lý sự kiện khi đang kéo chuột hoặc chạm màn hình
-    const dragging = (e) => {
-        if (!isDragStart) return;
-        e.preventDefault();
-        carousel.classList.add("dragging");
-        positionDiff = (e.pageX || e.touches[0].pageX) - prevPageX;
-        carousel.scrollLeft = prevScrollLeft - positionDiff;
-    }
-
-    // Xử lý sự kiện khi kết thúc kéo chuột hoặc chạm màn hình
-    const dragStop = () => {
-        isDragStart = false;
-        carousel.classList.remove("dragging");
-    }
-
-    // Thêm các sự kiện cho việc kéo chuột và chạm màn hình
-    carousel.addEventListener("mousedown", dragStart);
-    carousel.addEventListener("touchstart", dragStart);
-    document.addEventListener("mousemove", dragging);
-    carousel.addEventListener("touchmove", dragging);
-    document.addEventListener("mouseup", dragStop);
-    carousel.addEventListener("touchend", dragStop);
-
-    // Thêm sự kiện khi click vào mỗi ảnh trong carousel
-    carouselImages.forEach((image, index) => {
-        image.addEventListener('click', () => {
-            currentIndex = index;
-            let imagePath = carouselImages[currentIndex].getAttribute('src');
-            mainImage.setAttribute('src', imagePath);
-            applyImageHighlight(index);
-        });
-    });
-
-    // Thêm sự kiện khi click vào mũi tên trái
-    leftArrow.addEventListener('click', function () {
-        if (currentIndex !== 0) {
-            currentIndex = (currentIndex - 1 + carouselImages.length) % carouselImages.length;
-            let imagePath = carouselImages[currentIndex].getAttribute('src');
-            mainImage.setAttribute('src', imagePath);
-            applyImageHighlight(currentIndex);
-        }
-    });
-
-    // Thêm sự kiện khi click vào mũi tên phải
-    rightArrow.addEventListener('click', function () {
-        if (currentIndex !== carouselImages.length - 1) {
-            currentIndex = (currentIndex + 1) % carouselImages.length;
-            let imagePath = carouselImages[currentIndex].getAttribute('src');
-            mainImage.setAttribute('src', imagePath);
-            applyImageHighlight(currentIndex);
-        }
-    });
-
-    // Áp dụng kiểu highlight cho ảnh được chọn
-    function applyImageHighlight(selectedIndex) {
-        carouselImages.forEach((image, index) => {
-            image.classList.toggle('selected', index === selectedIndex);
-        });
-    }
-});
-
-// next tab reviews - amenities---------------------------------//
-document.addEventListener("DOMContentLoaded", setDefaultTab);
-
-function setDefaultTab() {
-    openTab('amenities');
-}
-
-function openTab(tabName) {
-    // Ẩn tất cả các tab content
-    var tabContents = document.getElementsByClassName('tab-content');
-    for (var i = 0; i < tabContents.length; i++) {
-        tabContents[i].style.display = 'none';
-    }
-
-    // Tìm tab content cần hiển thị và hiển thị nó
-    var selectedTab = document.getElementById(tabName);
-    if (selectedTab) {
-        selectedTab.style.display = 'block';
-
-        // Loại bỏ class 'active' từ tất cả các nút
-        var tabButtons = document.getElementsByClassName('tab-button');
-        for (var i = 0; i < tabButtons.length; i++) {
-            tabButtons[i].classList.remove('active');
-            // Reset màu cho tất cả các tab button
-            tabButtons[i].style.backgroundColor = '#f0f0f0';
-            tabButtons[i].style.color = '#000';
-        }
-
-        // Thêm class 'active' và đặt màu cho nút được chọn
-        var activeTabButton = document.getElementById('tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1));
-        if (activeTabButton) {
-            activeTabButton.classList.add('active');
-            activeTabButton.style.backgroundColor = '#3498db';
-            activeTabButton.style.color = '#fff';
-        }
-    }
-}
-
-
-//----------------------------------backtop----------------------------------//
-document.addEventListener("DOMContentLoaded", function () {
-    const backToTopButton = document.querySelector('.backtop');
-
-    // Hàm kiểm tra vị trí cuộn và hiển thị/ẩn nút quay lên top
-    const checkScrollPosition = () => {
-        if (window.scrollY > 0) {
-            backToTopButton.style.display = 'block';
-        } else {
-            backToTopButton.style.display = 'none';
-        }
-    };
-
-    // Thêm sự kiện cho việc cuộn trang
-    window.addEventListener('scroll', checkScrollPosition);
-
-    // Thêm sự kiện cho nút quay lên top
-    backToTopButton.addEventListener('click', function (e) {
-        e.preventDefault();
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    });
-});
-
-
-//------------------------------------------change-date--------------------------------------------/
+//------------------------------------------open change-date--------------------------------------------/
 function openChangDate(idphong) {
     var changedate = document.getElementById("change-date");
     changedate.style.display = "block";
@@ -332,7 +34,7 @@ function openChangDate(idphong) {
     }
     numberDate.innerText = gapBetweenDate(departureDate, arrivalDate);
 }
-
+//------------------------------------------open change-date in page cart--------------------------------------------/
 function openChangeCartDate(idform, idphong) {
     var changedate = document.getElementById("change-date");
     changedate.querySelector('#idphong').value = idphong;
@@ -374,6 +76,7 @@ function openChangeCartDate(idform, idphong) {
     numberDate.innerText = gapBetweenDate(formatDateYMD(departureDate), formatDateYMD(arrivalDate));
 }
 
+//------------------------------------------save change-date--------------------------------------------/
 function saveChangeDate() {
 
     var ngayden = document.getElementById("arrival-input").value;
@@ -389,7 +92,7 @@ function saveChangeDate() {
             return false;
         } else {
             var form = document.getElementById('change-date-form');
-            var phongtrong = document.getElementById("emptyRoom").textContent;
+            var phongtrong = form.querySelector('#emptyRoom').textContent;
 
             if (Number(phongtrong) <= 0) {
                 if (confirm("Với lịch hiện tại số phòng trống đã hết, Bạn vẫn muốn chọn lịch với những phòng khác chứ!")) {
@@ -400,28 +103,6 @@ function saveChangeDate() {
                     return false;
                 }
             } else {
-                if (mainContent.id == 'detailroom-page') {
-                    $.ajax({
-                        url: 'http://localhost/HotelBooking/home/changedate',
-                        type: 'POST',
-                        data: {
-                            checkin: ngayden,
-                            checkout: ngaydi
-                        },
-                        success: function (response) {
-
-                            document.getElementById('checkinDate').value = ngayden;
-                            document.getElementById('checkoutDate').value = ngaydi;
-                            closeChangeDate();
-                        },
-                        error: function (xhr, status, error) {
-                            console.error(error);
-                        }
-                    });
-
-                    return false;
-                }
-
                 form.action = 'http://localhost/HotelBooking/payment';
                 closeChangeDate();
             }
@@ -430,7 +111,7 @@ function saveChangeDate() {
         }
     }
 }
-
+//------------------------------------------save change-date in cart--------------------------------------------/
 function updateChangeCartDate() {
 
     var idform = document.getElementById("change-date").getAttribute("idform");
@@ -463,7 +144,7 @@ function updateChangeCartDate() {
 
     }
 }
-
+//------------------------------------------update cart--------------------------------------------/
 function updateCart(idform) {
 
     var form = document.getElementById(idform);
@@ -503,7 +184,7 @@ function updateCart(idform) {
     });
 }
 
-
+//------------------------------------------close change-date--------------------------------------------/
 function closeChangeDate() {
     document.getElementById("change-date").style.display = "none";
 }
@@ -513,56 +194,58 @@ document.addEventListener("DOMContentLoaded", function () {
     var arrivalInput = document.getElementById("arrival-input");
     var departureInput = document.getElementById("departure-input");
     var numberDate = document.getElementById("number-date");
+    if (arrivalInput && departureInput && numberDate) {
+        // Thêm lắng nghe sự kiện cho input ngày đến
+        arrivalInput.addEventListener("input", function () {
+            var currentDate = new Date();
+            currentDate.setDate(currentDate.getDate());
 
-    // Thêm lắng nghe sự kiện cho input ngày đến
-    arrivalInput.addEventListener("input", function () {
-        var currentDate = new Date();
-        currentDate.setDate(currentDate.getDate());
-
-        if (new Date(arrivalInput.value) < currentDate) {
-            alert("Ngày đến phải lớn hơn ngày hôm nay ít nhất 1 ngày.");
-            arrivalInput.value = null;
-            numberDate.innerText = 0;
-            return;
-        }
-
-        if (arrivalInput.value >= departureInput.value || !departureInput.value) {
-            if (arrivalInput.value) {
-                var newDepartureDate = new Date(arrivalInput.value);
-                newDepartureDate.setDate(newDepartureDate.getDate() + 1);
-                departureInput.value = newDepartureDate.toISOString().split("T")[0];
+            if (new Date(arrivalInput.value) < currentDate) {
+                alert("Ngày đến phải lớn hơn ngày hôm nay ít nhất 1 ngày.");
+                arrivalInput.value = null;
+                numberDate.innerText = 0;
+                return;
             }
 
-        }
+            if (arrivalInput.value >= departureInput.value || !departureInput.value) {
+                if (arrivalInput.value) {
+                    var newDepartureDate = new Date(arrivalInput.value);
+                    newDepartureDate.setDate(newDepartureDate.getDate() + 1);
+                    departureInput.value = newDepartureDate.toISOString().split("T")[0];
+                }
 
-        numberDate.innerText = gapBetweenDate(departureInput.value, arrivalInput.value);
-
-    });
-
-    // Thêm lắng nghe sự kiện cho input ngày đi
-    departureInput.addEventListener("input", function () {
-
-        var currentDate = new Date();
-        currentDate.setDate(currentDate.getDate() + 1);
-
-        if (new Date(departureInput.value) < currentDate) {
-            alert("Ngày đi phải lớn hơn ngày hôm nay ít nhất 2 ngày.");
-            departureInput.value = null;
-            numberDate.innerText = 0;
-            return;
-        }
-
-        if (departureInput.value <= arrivalInput.value || !arrivalInput.value) {
-            if (departureInput.value) {
-                var newArrivalDate = new Date(departureInput.value);
-                newArrivalDate.setDate(newArrivalDate.getDate() - 1);
-                arrivalInput.value = newArrivalDate.toISOString().split("T")[0];
             }
 
-        }
+            numberDate.innerText = gapBetweenDate(departureInput.value, arrivalInput.value);
+
+        });
+
+        // Thêm lắng nghe sự kiện cho input ngày đi
+        departureInput.addEventListener("input", function () {
+
+            var currentDate = new Date();
+            currentDate.setDate(currentDate.getDate() + 1);
+
+            if (new Date(departureInput.value) < currentDate) {
+                alert("Ngày đi phải lớn hơn ngày hôm nay ít nhất 2 ngày.");
+                departureInput.value = null;
+                numberDate.innerText = 0;
+                return;
+            }
+
+            if (departureInput.value <= arrivalInput.value || !arrivalInput.value) {
+                if (departureInput.value) {
+                    var newArrivalDate = new Date(departureInput.value);
+                    newArrivalDate.setDate(newArrivalDate.getDate() - 1);
+                    arrivalInput.value = newArrivalDate.toISOString().split("T")[0];
+                }
+
+            }
+        });
 
         numberDate.innerText = gapBetweenDate(departureInput.value, arrivalInput.value);
-    });
+    }
+
 });
 
 // -------------------------------Hàm chuyển định dạng ngày --------------------------------//
@@ -587,12 +270,13 @@ function gapBetweenDate(date2, date1) {
 }
 
 
-// ------------------------------------- checkbox CheckboxChange---------------------------------------//
+// ------------------------------------- checkbox CheckboxChange in cart---------------------------------------//
 function checkboxChange(checkbox, idform) {
     var form = document.getElementById(idform);
     var ngayden = form.querySelector('#ngayden').value;
     var ngaydi = form.querySelector('#ngaydi').value;
     var idphong = form.querySelector('#idphong').value;
+    var soluongdat = form.querySelector('#soluongdat').value;
 
     if (ngayden == "" || ngaydi == "") {
         alert("Bạn chưa chọn ngày !");
@@ -607,7 +291,6 @@ function checkboxChange(checkbox, idform) {
             checkbox.checked = false;
             return;
         } else {
-            var phongtrong = 0;
             $.ajax({
                 url: 'http://localhost/HotelBooking/home/checkRoom',
                 type: 'POST',
@@ -618,23 +301,21 @@ function checkboxChange(checkbox, idform) {
                     idphong: idphong
                 },
                 success: function (data) {
-                    phongtrong = data.emptyRoom;
+                    if (Number(data.emptyRoom) > 0 && soluongdat <= Number(data.emptyRoom)) {
+                        updateTotal();
+                    } else {
+                        alert("Số phòng trống hiện tại không đủ, vui lòng chọn lại lịch hoặc đặt phòng khác!");
+                        checkbox.checked = false;
+                    }
                 },
                 error: function (xhr, status, error) {
                     console.error(error);
                 }
             });
-
-            if (Number(phongtrong) > 0) {
-                updateTotal();
-            } else {
-                alert("Số phòng trống hiện tại đã hết, vui lòng chọn lại lịch hoặc đặt phòng khác!");
-                checkbox.checked = false;
-            }
         }
     }
 }
-
+// ------------------------------------- update total in cart---------------------------------------//
 function updateTotal() {
     var checkboxes = document.querySelectorAll('.form-check-input');
 
@@ -699,62 +380,53 @@ function bookingRoom() {
     }
 }
 
-
-
-function getListRoomByCategory(listIdPhong, iddanhmuc) {
-    if (listIdPhong != '') {
-        var url = 'category.php?listIdPhong=' + listIdPhong + '&iddanhmuc=' + iddanhmuc;
-        window.location.href = url;
-    } else {
-        return;
-    }
-}
-
-
 //------------------------------------BookingForm - checkin, checkout---------------------------------------//
 document.addEventListener("DOMContentLoaded", function () {
     var checkinDate = document.getElementById("checkinDate");
     var checkoutDate = document.getElementById("checkoutDate");
 
-    // Thêm lắng nghe sự kiện cho input ngày đến
-    checkinDate.addEventListener("input", function () {
-        var currentDate = new Date();
-        currentDate.setDate(currentDate.getDate());
+    if (checkinDate && checkoutDate) {
 
-        if (new Date(checkinDate.value) < currentDate) {
-            alert("Ngày đến phải lớn hơn ngày hôm nay ít nhất 1 ngày.");
-            checkinDate.value = null;
-            return;
-        }
+        // Thêm lắng nghe sự kiện cho input ngày đến
+        checkinDate.addEventListener("input", function () {
+            var currentDate = new Date();
+            currentDate.setDate(currentDate.getDate());
 
-        if (checkinDate.value >= checkoutDate.value || !checkoutDate.value) {
-            if (checkinDate.value) {
-                var newDepartureDate = new Date(checkinDate.value);
-                newDepartureDate.setDate(newDepartureDate.getDate() + 1);
-                checkoutDate.value = newDepartureDate.toISOString().split("T")[0];
+            if (new Date(checkinDate.value) < currentDate) {
+                alert("Ngày đến phải lớn hơn ngày hôm nay ít nhất 1 ngày.");
+                checkinDate.value = null;
+                return;
             }
-        }
-    });
 
-    // Thêm lắng nghe sự kiện cho input ngày đi
-    checkoutDate.addEventListener("input", function () {
-        var currentDate = new Date();
-        currentDate.setDate(currentDate.getDate() + 1);
-
-        if (new Date(checkoutDate.value) < currentDate) {
-            alert("Ngày đi phải lớn hơn ngày hôm nay ít nhất 2 ngày.");
-            checkoutDate.value = null;
-            return;
-        }
-
-        if (checkoutDate.value <= checkinDate.value || !checkinDate.value) {
-            if (checkoutDate.value) {
-                var newArrivalDate = new Date(checkoutDate.value);
-                newArrivalDate.setDate(newArrivalDate.getDate() - 1);
-                checkinDate.value = newArrivalDate.toISOString().split("T")[0];
+            if (checkinDate.value >= checkoutDate.value || !checkoutDate.value) {
+                if (checkinDate.value) {
+                    var newDepartureDate = new Date(checkinDate.value);
+                    newDepartureDate.setDate(newDepartureDate.getDate() + 1);
+                    checkoutDate.value = newDepartureDate.toISOString().split("T")[0];
+                }
             }
-        }
-    });
+        });
+
+        // Thêm lắng nghe sự kiện cho input ngày đi
+        checkoutDate.addEventListener("input", function () {
+            var currentDate = new Date();
+            currentDate.setDate(currentDate.getDate() + 1);
+
+            if (new Date(checkoutDate.value) < currentDate) {
+                alert("Ngày đi phải lớn hơn ngày hôm nay ít nhất 2 ngày.");
+                checkoutDate.value = null;
+                return;
+            }
+
+            if (checkoutDate.value <= checkinDate.value || !checkinDate.value) {
+                if (checkoutDate.value) {
+                    var newArrivalDate = new Date(checkoutDate.value);
+                    newArrivalDate.setDate(newArrivalDate.getDate() - 1);
+                    checkinDate.value = newArrivalDate.toISOString().split("T")[0];
+                }
+            }
+        });
+    }
 });
 
 
@@ -763,24 +435,39 @@ document.addEventListener("DOMContentLoaded", function () {
 
     var timphongButton = document.getElementById('search');
 
-    timphongButton.addEventListener('click', function (event) {
-        var checkinValue = document.getElementById('checkinDate').value;
-        var checkoutValue = document.getElementById('checkoutDate').value;
+    if (timphongButton) {
+        timphongButton.addEventListener('click', function (event) {
+            var checkinValue = document.getElementById('checkinDate').value;
+            var checkoutValue = document.getElementById('checkoutDate').value;
 
-        if (checkinValue === "" || checkoutValue === "") {
-            alert('Vui lòng nhập đầy đủ ngày đến và ngày đi.');
-            event.preventDefault();
-        }
-    });
+            if (checkinValue === "" || checkoutValue === "") {
+                alert('Vui lòng nhập đầy đủ ngày đến và ngày đi.');
+                event.preventDefault();
+            }
+        });
+    }
 });
 
 // -----------------------------------------------Booknow---------------------------------------------//
 function clickBooknow(event, idphong) {
     var ngayden = document.getElementById("checkinDate").value;
     var ngaydi = document.getElementById("checkoutDate").value;
-    if (ngayden == '' || ngaydi == '') {
+    var phongtrong = document.getElementById("sophongtrong").value;
+    var mainContent = document.body.querySelector('main');
+
+    if (mainContent.id == 'home-page') {
         event.preventDefault();
         openChangDate(idphong);
+    } else {
+        if (ngayden == '' || ngaydi == '') {
+            event.preventDefault();
+            openChangDate(idphong);
+        } else {
+            if (phongtrong <= 0) {
+                event.preventDefault();
+                alert("Số phòng trống hiện tại đã hết, vui lòng chọn lại lịch hoặc đổi phòng khác!");
+            }
+        }
     }
 }
 
@@ -789,175 +476,70 @@ document.addEventListener("DOMContentLoaded", function () {
 
     var form = document.getElementById("bookingForm");
 
-    form.addEventListener("change", function () {
-        var checkin = form.querySelector('#checkinDate').value;
-        var checkout = form.querySelector('#checkoutDate').value;
-        var adult = form.querySelector('#adult').value;
-        var child = form.querySelector('#child').value;
+    if (form) {
+        form.addEventListener("change", function () {
+            var checkin = form.querySelector('#checkinDate').value;
+            var checkout = form.querySelector('#checkoutDate').value;
+            var adult = form.querySelector('#adult').value;
+            var child = form.querySelector('#child').value;
 
-        // Gửi yêu cầu POST thông qua AJAX
-        $.ajax({
-            url: 'http://localhost/HotelBooking/home/bookingForm',
-            type: 'POST',
-            data: {
-                checkin: checkin,
-                checkout: checkout,
-                adult: adult,
-                child: child
-            },
-            success: function (response) {
-                // console.log(response);
-            },
-            error: function (xhr, status, error) {
-                console.error(error);
-            }
+            // Gửi yêu cầu POST thông qua AJAX
+            $.ajax({
+                url: 'http://localhost/HotelBooking/home/bookingForm',
+                type: 'POST',
+                data: {
+                    checkin: checkin,
+                    checkout: checkout,
+                    adult: adult,
+                    child: child
+                },
+                success: function (response) {
+                    var mainContent = document.body.querySelector('main');
+                    if (mainContent.id == 'detailroom-page') {
+                        location.reload();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                }
+            });
         });
-
-    });
+    }
 });
 
 // -----------------Bắt sự kiện khi thay đổi giá trị trong change-date kiểm tra phòng trống--------------------//
 document.addEventListener("DOMContentLoaded", function () {
 
     var changedate = document.getElementById("change-date");
-    changedate.addEventListener("change", function () {
-        var arrival = changedate.querySelector('#arrival-input').value;
-        var departure = changedate.querySelector('#departure-input').value;
-        var idphong = changedate.querySelector('#idphong').value;
+    if (changedate) {
+        changedate.addEventListener("change", function () {
+            var arrival = changedate.querySelector('#arrival-input').value;
+            var departure = changedate.querySelector('#departure-input').value;
+            var idphong = changedate.querySelector('#idphong').value;
 
-        // Gửi yêu cầu POST thông qua AJAX
-        $.ajax({
-            url: 'http://localhost/HotelBooking/home/checkRoom',
-            type: 'POST',
-            dataType: 'json',
-            data: {
-                arrival: arrival,
-                departure: departure,
-                idphong: idphong
-            },
-            success: function (data) {
-                changedate.querySelector('#emptyRoom').textContent = data.emptyRoom;
-            },
-            error: function (xhr, status, error) {
-                console.error(error);
-            }
+            // Gửi yêu cầu POST thông qua AJAX
+            $.ajax({
+                url: 'http://localhost/HotelBooking/home/checkRoom',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    arrival: arrival,
+                    departure: departure,
+                    idphong: idphong
+                },
+                success: function (data) {
+                    changedate.querySelector('#emptyRoom').textContent = data.emptyRoom;
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                }
+            });
+
         });
-
-    });
+    }
 });
 
-// -----------------------------------------------số lượng---------------------------------------------//
-document.addEventListener("DOMContentLoaded", function () {
-    const quantities = document.querySelectorAll(".quantity");
-
-    quantities.forEach((quantity) => {
-        const plus = quantity.querySelector(".plus"),
-            minus = quantity.querySelector(".minus"),
-            input = quantity.querySelector(".num"),
-            bookingForm = quantity.querySelector("#bookingForm .num"),
-            min = parseInt(input.min);
-
-        plus.addEventListener("click", () => {
-            input.stepUp();
-            input.dispatchEvent(new Event('change', { bubbles: true }));
-        });
-
-        minus.addEventListener("click", () => {
-            if (parseInt(input.value) == min) {
-                bookingForm.value = '';
-            } else {
-                input.stepDown();
-            }
-            input.dispatchEvent(new Event('change', { bubbles: true }));
-        });
-    });
-});
-
-// ------------------------------------- checkbox bed-quantity --------------------------------------------//
-const checkboxes = document.querySelectorAll('.bed-quantity');
-checkboxes.forEach(function (checkbox) {
-    checkbox.addEventListener('change', function () {
-        const quantity = this.closest('.bed-item').querySelector('.quantity');
-        if (this.checked) {
-            quantity.style.display = 'block';
-        } else {
-            quantity.style.display = 'none';
-        }
-    });
-});
-
-/* ----------------------------------------------range Price -------------------------------------------*/
-const rangeInput = document.querySelectorAll(".range-input input"),
-    priceInput = document.querySelectorAll(".price-input input"),
-    range = document.querySelector(".slider .progress");
-
-// Đặt giới hạn khoảng giá
-let priceGap = 100000;
-
-// Thêm bộ lắng nghe sự kiện cho các trường nhập giá
-priceInput.forEach(input => {
-    input.addEventListener("input", e => {
-        // Lấy giá tối thiểu và tối đa
-        let minPrice = parseInt(priceInput[0].value.replace(/[đ.]/g, '').replace(/,/g, '')),
-            maxPrice = parseInt(priceInput[1].value.replace(/[đ.]/g, '').replace(/,/g, ''));
-
-        // Kiểm tra xem khoảng giá có lớn hơn giới hạn không và giá tối đa có nhỏ hơn giá trị tối đa của dải không
-        if ((maxPrice - minPrice >= priceGap) && maxPrice <= rangeInput[1].max) {
-            // Nếu sự kiện là nhập giá tối thiểu
-            if (e.target.className === "input-min") {
-                rangeInput[0].value = minPrice;
-                // Cập nhật vị trí của dải trượt dựa trên giá tối thiểu
-                range.style.left = ((minPrice - rangeInput[0].min) / (rangeInput[0].max - rangeInput[0].min)) * 100 + "%";
-            } else {
-                rangeInput[1].value = maxPrice;
-                // Cập nhật vị trí của dải trượt dựa trên giá tối đa
-                range.style.right = ((rangeInput[1].max - maxPrice) / (rangeInput[1].max - rangeInput[1].min)) * 100 + "%";
-            }
-        }
-    });
-});
-
-// Thêm bộ lắng nghe sự kiện cho các input của dải giá
-rangeInput.forEach(input => {
-    input.addEventListener("input", e => {
-        // Lấy giá trị tối thiểu và tối đa
-        let minVal = parseInt(rangeInput[0].value),
-            maxVal = parseInt(rangeInput[1].value);
-
-        // Kiểm tra xem khoảng giá có nhỏ hơn giới hạn không
-        if ((maxVal - minVal) < priceGap) {
-            // Nếu sự kiện là nhập giá trượt tối thiểu
-            if (e.target.className === "range-min") {
-                rangeInput[0].value = maxVal - priceGap;
-            } else {
-                rangeInput[1].value = minVal + priceGap;
-            }
-        } else {
-            // Cập nhật giá trị của trường nhập giá
-            priceInput[0].value = formatCurrency(minVal);
-            priceInput[1].value = formatCurrency(maxVal);
-            // Cập nhật vị trí của dải trượt dựa trên giá trị tối thiểu và tối đa
-            range.style.left = ((minVal - rangeInput[0].min) / (rangeInput[0].max - rangeInput[0].min)) * 100 + "%";
-            range.style.right = ((rangeInput[1].max - maxVal) / (rangeInput[1].max - rangeInput[1].min)) * 100 + "%";
-        }
-    });
-});
-
-function formatCurrency(number) {
-    return number.toLocaleString('vi-VN') + 'đ';
-}
-
-// document.addEventListener('DOMContentLoaded', function () {
-//     const priceRangeInput = document.getElementById('priceRange');
-//     const selectedPriceElement = document.getElementById('selectedPrice');
-
-//     priceRangeInput.addEventListener('input', function () {
-//         const selectedPrice = Number(priceRangeInput.value).toLocaleString('vi-VN');
-//         selectedPriceElement.textContent = selectedPrice;
-//     });
-// });
-
-
+// ------------------------------------- Submit Form Customer---------------------------------------//
 function SubmitFormCustomer() {
     var form = document.getElementById("form-customer");
     var fullname = form.querySelector('#fullname').value;
@@ -984,8 +566,8 @@ function SubmitFormCustomer() {
     });
 }
 
+// -----------------------------------------------check form payment---------------------------------------------//
 function checkFormCustomer() {
-
     var fullname = document.getElementById('fullname').value.trim();
     var phone = document.getElementById('phone').value.trim();
     var email = document.getElementById('email').value.trim();
@@ -1042,24 +624,7 @@ function checkFormCustomer() {
     return valid;
 }
 
-//eye -pass
-document.querySelectorAll('#form-pass .eye-toggle').forEach(toggle => {
-    toggle.addEventListener('click', function () {
-        const input = this.previousElementSibling;
-        const visible = this.getAttribute('data-visible') === 'true';
-
-        if (visible) {
-            input.type = 'password';
-            this.src = USER_PATH + '/icon/eye-hidden.png';
-            this.setAttribute('data-visible', 'false');
-        } else {
-            input.type = 'text';
-            this.src = USER_PATH + '/icon/eye.png';
-            this.setAttribute('data-visible', 'true');
-        }
-    });
-});
-
+// --------------------------------------------preview Image------------------------------------------------//
 function previewImage(input) {
     var file = input.files[0];
     var reader = new FileReader();
@@ -1071,11 +636,22 @@ function previewImage(input) {
     reader.readAsDataURL(file);
 }
 
-
+// -----------------------------------------------confirm Action---------------------------------------------//
 function confirmAction(button, message) {
     const isConfirmed = confirm(message);
 
     if (!isConfirmed) {
+        return false;
+    }
+    return true;
+}
+
+// -----------------------------------------------check phòng trống---------------------------------------------//
+function checkEmptyRoom() {
+    var phongtrong = document.getElementById('sophongtrong').value;
+    // var soluongdat = document.getElementById('soluongdat').value;
+    if (phongtrong <= 0) {
+        alert('Số phòng trống hiện tại đã hết, vui lòng chọn lại lịch hoặc đổi phòng khác!');
         return false;
     }
     return true;

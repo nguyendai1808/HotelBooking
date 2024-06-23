@@ -347,8 +347,23 @@ class BookingModel
     public function getBookingHistoryByStatus($idtaikhoan, $status = null)
     {
         if (!empty($status)) {
-            $sql = "SELECT * FROM dondat JOIN datphong ON dondat.iddondat = datphong.id_dondat 
-            WHERE datphong.trangthaidat = '$status' AND datphong.id_taikhoan = '$idtaikhoan' ORDER BY thoigiandat DESC";
+            $arr = explode(", ", $status);
+
+            if (count($arr) > 1) {
+                $sql = "SELECT * FROM dondat JOIN datphong ON dondat.iddondat = datphong.id_dondat WHERE (";
+                $dem = 0;
+                foreach ($arr as $i) {
+                    $sql .= "datphong.trangthaidat = '" . trim($i) . "'";
+                    $dem++;
+                    if (count($arr) > $dem) {
+                        $sql .= " OR ";
+                    }
+                }
+                $sql .= ") AND datphong.id_taikhoan = '$idtaikhoan' ORDER BY thoigiandat DESC";
+            } else {
+                $sql = "SELECT * FROM dondat JOIN datphong ON dondat.iddondat = datphong.id_dondat 
+                WHERE datphong.trangthaidat = '$status' AND datphong.id_taikhoan = '$idtaikhoan' ORDER BY thoigiandat DESC";
+            }
         } else {
             $sql = "SELECT * FROM dondat JOIN datphong ON dondat.iddondat = datphong.id_dondat 
             WHERE datphong.id_taikhoan = '$idtaikhoan' ORDER BY thoigiandat DESC";
@@ -361,8 +376,23 @@ class BookingModel
     public function getBookingInvoiceByStatus($iddondat, $status = null)
     {
         if (!empty($status)) {
-            $sql = "SELECT * FROM dondat JOIN datphong ON dondat.iddondat = datphong.id_dondat 
-            WHERE datphong.trangthaidat = '$status' AND dondat.iddondat = '$iddondat' ORDER BY thoigiandat DESC";
+            $arr = explode(", ", $status);
+
+            if (count($arr) > 1) {
+                $sql = "SELECT * FROM dondat JOIN datphong ON dondat.iddondat = datphong.id_dondat WHERE (";
+                $dem = 0;
+                foreach ($arr as $i) {
+                    $sql .= "datphong.trangthaidat = '" . trim($i) . "'";
+                    $dem++;
+                    if (count($arr) > $dem) {
+                        $sql .= " OR ";
+                    }
+                }
+                $sql .= ") AND dondat.iddondat = '$iddondat' ORDER BY thoigiandat DESC";
+            } else {
+                $sql = "SELECT * FROM dondat JOIN datphong ON dondat.iddondat = datphong.id_dondat 
+                WHERE datphong.trangthaidat = '$status' AND dondat.iddondat = '$iddondat' ORDER BY thoigiandat DESC";
+            }
         } else {
             $sql = "SELECT * FROM dondat JOIN datphong ON dondat.iddondat = datphong.id_dondat 
             WHERE dondat.iddondat = '$iddondat' ORDER BY thoigiandat DESC";
@@ -395,6 +425,48 @@ class BookingModel
         return $result;
     }
 
+    public function cancelInvoice($iddondat)
+    {
+        $sql = "UPDATE dondat set trangthaidon = 'Đã hủy', tongsotien = sotiencoc, sotiencoc = 0, sotienconthieu = 0 WHERE iddondat = '$iddondat'";
+        $kq1 = $this->db->execute($sql);
+        if ($kq1) {
+            $sql = "UPDATE datphong set trangthaidat = 'Đã hủy' WHERE id_dondat = '$iddondat'";
+            $kq2 =  $this->db->execute($sql);
+            if ($kq2) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function paymentBooking($iddondat)
+    {
+        $sql = "UPDATE dondat set trangthaidon = 'Đã thanh toán', sotiencoc = 0, sotienconthieu = 0 WHERE iddondat = '$iddondat'";
+        $kq1 = $this->db->execute($sql);
+        if ($kq1) {
+            $sql = "UPDATE datphong set trangthaidat = 'Đã thanh toán' WHERE id_dondat = '$iddondat' and trangthaidat != 'Đã hủy'";
+            $kq2 =  $this->db->execute($sql);
+            if ($kq2) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function completedInvoice($iddondat)
+    {
+        $sql = "UPDATE dondat set trangthaidon = 'Hoàn tất' WHERE iddondat = '$iddondat'";
+        $kq1 = $this->db->execute($sql);
+        if ($kq1) {
+            $sql = "UPDATE datphong set trangthaidat = 'Hoàn tất' WHERE id_dondat = '$iddondat' and trangthaidat != 'Đã hủy'";
+            $kq2 =  $this->db->execute($sql);
+            if ($kq2) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function getCheckoutMaxBooking($id)
     {
         $sql = "SELECT MAX(ngaydi) as MAX FROM datphong where id_dondat = $id";
@@ -418,7 +490,7 @@ class BookingModel
         WHERE  MONTH(ngaythanhtoan) = MONTH(CURRENT_DATE()) AND YEAR(ngaythanhtoan) = YEAR(CURRENT_DATE())
         AND dondat.trangthaidon = 'Hoàn tất'";
         $result = $this->db->selectFirstColumnValue($sql, 'tongsotien');
-        return $result;
+        return $result ?? 0;
     }
 
     //dự tính tháng này
@@ -427,7 +499,7 @@ class BookingModel
         $sql = "SELECT SUM(tongsotien) AS tongsotien FROM dondat
         WHERE MONTH(thoigiandat) = MONTH(CURRENT_DATE()) AND YEAR(thoigiandat) = YEAR(CURRENT_DATE())";
         $result = $this->db->selectFirstColumnValue($sql, 'tongsotien');
-        return $result;
+        return $result ?? 0;
     }
 
     //khoản trừ đơn hủy đặt tháng này
@@ -437,7 +509,7 @@ class BookingModel
         WHERE  MONTH(thoigiandat) = MONTH(CURRENT_DATE()) AND YEAR(thoigiandat) = YEAR(CURRENT_DATE())
         AND trangthaidon = 'Đã hủy'";
         $result = $this->db->selectFirstColumnValue($sql, 'tongsotien');
-        return $result;
+        return $result ?? 0;
     }
 
     //thực tế tháng trước
@@ -447,7 +519,7 @@ class BookingModel
         WHERE  MONTH(ngaythanhtoan) = MONTH(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH)) AND YEAR(ngaythanhtoan) = YEAR(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
         AND dondat.trangthaidon = 'Hoàn tất'";
         $result = $this->db->selectFirstColumnValue($sql, 'tongsotien');
-        return $result;
+        return $result ?? 0;
     }
 
     //dự tính tháng trước
@@ -456,7 +528,7 @@ class BookingModel
         $sql = "SELECT SUM(tongsotien) AS tongsotien FROM dondat
         WHERE MONTH(thoigiandat) = MONTH(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH)) AND YEAR(thoigiandat) = YEAR(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))";
         $result = $this->db->selectFirstColumnValue($sql, 'tongsotien');
-        return $result;
+        return $result ?? 0;
     }
 
     //khoản trừ đơn hủy đặt tháng trước
@@ -466,7 +538,7 @@ class BookingModel
         WHERE  MONTH(thoigiandat) = MONTH(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH)) AND YEAR(thoigiandat) = YEAR(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
         AND trangthaidon = 'Đã hủy'";
         $result = $this->db->selectFirstColumnValue($sql, 'tongsotien');
-        return $result;
+        return $result ?? 0;
     }
 
 
@@ -475,7 +547,7 @@ class BookingModel
         $sql = "SELECT COUNT(iddondat) AS sodon
         FROM dondat WHERE MONTH(thoigiandat) = '$month' AND YEAR(thoigiandat) = YEAR(CURRENT_DATE())";
         $result = $this->db->selectFirstColumnValue($sql, 'sodon');
-        return $result;
+        return $result ?? 0;
     }
 
     public function countTotalAmountBooking($month)
@@ -484,7 +556,7 @@ class BookingModel
         WHERE  MONTH(ngaythanhtoan) = '$month' AND YEAR(ngaythanhtoan) = YEAR(CURRENT_DATE())
         AND dondat.trangthaidon = 'Hoàn tất'";
         $result = $this->db->selectFirstColumnValue($sql, 'tongsotien');
-        return $result;
+        return $result ?? 0;
     }
 
     public function countTomountBooking($month)
@@ -493,9 +565,8 @@ class BookingModel
         WHERE  MONTH(ngaythanhtoan) = '$month' AND YEAR(ngaythanhtoan) = YEAR(CURRENT_DATE())
         AND dondat.trangthaidon = 'Hoàn tất'";
         $result = $this->db->selectFirstColumnValue($sql, 'tongsotien');
-        return $result;
+        return $result ?? 0;
     }
-
 
     public function countNumberBookingByStatus($status)
     {
@@ -503,6 +574,6 @@ class BookingModel
         WHERE  MONTH(thoigiandat) = MONTH(CURRENT_DATE()) AND YEAR(thoigiandat) = YEAR(CURRENT_DATE())
         AND trangthaidon = '$status'";
         $result = $this->db->selectFirstColumnValue($sql, 'sodon');
-        return $result;
+        return $result ?? 0;
     }
 }

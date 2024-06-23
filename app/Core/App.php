@@ -57,7 +57,7 @@ class App
             unset($url[0]);
         }
 
-        //nếu người dùng nhập controller ko tồn tại hoặc ko nhập controller thì mặc định controller = 'Home'
+
         require_once  $path . $this->controller . 'Controller.php';
 
         //khởi tạo controller mới
@@ -65,16 +65,13 @@ class App
 
         //lọc action
         if (isset($url[1])) {
-            //nếu action người dùng nhập vào có tồn tại trong controller thì
             if (method_exists($this->controller, $url[1])) {
-                //gán action đó
                 $this->action = $url[1];
             }
             unset($url[1]);
         }
 
         //get params
-        //nếu tồn tại tham số thì gán, ngược lại params = rỗng
         $this->params = $url ? array_values($url) : [];
 
         //khởi tại class từ controller

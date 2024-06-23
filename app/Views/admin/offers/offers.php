@@ -26,7 +26,11 @@
                                 <td class="method">
                                     <div class="d-flex justify-content-center">
                                         <a href="<?= URLROOT ?>/admin/offers/detailPromotion/<?= $item['idkhuyenmai'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-eye"></i></a>
-                                        <a href="<?= URLROOT ?>/admin/offers/updatePromotion/<?= $item['idkhuyenmai'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-pen-to-square"></i></a>
+
+                                        <?php if (strtotime($item['ngayketthuc']) > time()) : ?>
+                                            <a href="<?= URLROOT ?>/admin/offers/updatePromotion/<?= $item['idkhuyenmai'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-pen-to-square"></i></a>
+                                        <?php endif; ?>
+
                                         <a href="<?= URLROOT ?>/admin/offers/deletePromotion/<?= $item['idkhuyenmai'] ?>" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></a>
                                     </div>
                                 </td>
@@ -61,7 +65,6 @@
 
                                 <td class="method">
                                     <div class="d-flex justify-content-center">
-                                        <a href="<?= URLROOT ?>/admin/offers/detailPayType/<?= $item['idloaihinhtt'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-eye"></i></a>
                                         <a href="<?= URLROOT ?>/admin/offers/updatePayType/<?= $item['idloaihinhtt'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-pen-to-square"></i></a>
                                         <a href="<?= URLROOT ?>/admin/offers/deletePayType/<?= $item['idloaihinhtt'] ?>" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></a>
                                     </div>

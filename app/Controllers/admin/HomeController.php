@@ -21,21 +21,12 @@ class Home extends Controller
         $deductibleLM = $this->BookingModel->deductibleRevenueLastMonth();
 
 
-
-        // $dataPoints2 = array(
-        //     array("label" => "Đã cọc tiền", "y" => $this->BookingModel->countNumberBookingByStatus('Đã cọc tiền')),
-        //     array("label" => "Đã thanh toán", "y" => $this->BookingModel->countNumberBookingByStatus('Đã thanh toán')),
-        //     array("label" => "Đã hủy", "y" => $this->BookingModel->countNumberBookingByStatus('Đã hủy')),
-        //     array("label" => "Hoàn tất", "y" => $this->BookingModel->countNumberBookingByStatus('Hoàn tất'))
-        // );
-
         $dataPoints2 = array(
-            array("label" => "Đã cọc tiền", "y" => rand(10,100)),
-            array("label" => "Đã hủy", "y" => rand(10,50)),
-            array("label" => "Đã thanh toán", "y" => rand(10,100)),
-            array("label" => "Hoàn tất", "y" => rand(10,100))
+            array("label" => "Đã cọc tiền", "y" => $this->BookingModel->countNumberBookingByStatus('Đã cọc tiền')),
+            array("label" => "Đã hủy", "y" => $this->BookingModel->countNumberBookingByStatus('Đã hủy')),
+            array("label" => "Đã thanh toán", "y" => $this->BookingModel->countNumberBookingByStatus('Đã thanh toán')),
+            array("label" => "Hoàn tất", "y" => $this->BookingModel->countNumberBookingByStatus('Hoàn tất'))
         );
-
 
         $months = array(
             "Th 1", "Th 2", "Th 3", "Th 4",
@@ -44,18 +35,11 @@ class Home extends Controller
         );
 
         // Thêm dữ liệu vào $dataPoints1 và $dataPoints3
-        // for ($i = 0; $i < count($months); $i++) {
-        //     $tmp = $this->BookingModel->countNumberBooking($i + 1);
-        //     $tmp2 = $this->BookingModel->countTotalAmountBooking($i + 1);
-        //     $dataPoints1[] = array("y" => $tmp, "label" => $months[$i]);
-        //     $dataPoints3[] = array("y" => $tmp2, "label" => $months[$i]);
-        // }
-
         for ($i = 0; $i < count($months); $i++) {
             $tmp = $this->BookingModel->countNumberBooking($i + 1);
             $tmp2 = $this->BookingModel->countTotalAmountBooking($i + 1);
-            $dataPoints1[] = array("y" => rand(10,100), "label" => $months[$i]);
-            $dataPoints3[] = array("y" => rand(10,50000000), "label" => $months[$i]);
+            $dataPoints1[] = array("y" => $tmp, "label" => $months[$i]);
+            $dataPoints3[] = array("y" => $tmp2, "label" => $months[$i]);
         }
 
         //view - page

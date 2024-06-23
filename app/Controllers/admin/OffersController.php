@@ -2,11 +2,13 @@
 class Offers extends Controller
 {
     private $OffersModel;
+    private $RoomModel;
 
     public function __construct()
     {
         //gọi model User
         $this->OffersModel = $this->model('OffersModel');
+        $this->RoomModel = $this->model('RoomModel');
     }
 
     public function index()
@@ -19,6 +21,75 @@ class Offers extends Controller
             'paytypes' => $paytypes
         ]);
     }
+
+
+    public function detailPromotion($idkhuyenmai)
+    {
+        if (!empty($idkhuyenmai) && filter_var($idkhuyenmai, FILTER_VALIDATE_INT)) {
+
+            $rooms =  $this->OffersModel->getRoomPromotionById($idkhuyenmai);
+            $time = $this->OffersModel->findPromotionById($idkhuyenmai);
+
+            $this->view('admin', 'offers/detailPromotion.php', [
+                'rooms' => $this->getInforRoomMore($rooms),
+                'idkhuyenmai' => $idkhuyenmai,
+                'time' => $time
+            ]);
+        } else {
+            header('location:' . URLROOT . '/admin/offers');
+        }
+    }
+
+    public function getInforRoomMore($Rooms)
+    {
+        if ($Rooms) {
+            foreach ($Rooms as $key => $room) {
+                $mainImg = $this->RoomModel->getMainImageRoom($room['idphong']);
+                $Rooms[$key]['anhphong'] = $mainImg;
+
+                $nameBed = $this->RoomModel->getNameBed($room['idphong']);
+                $Rooms[$key]['tengiuong'] = $nameBed;
+            }
+        } else {
+            $Rooms = null;
+        }
+        return $Rooms;
+    }
+
+
+    public function createPromotionRoom($idkhuyenmai = null)
+    {
+        $rooms = $this->OffersModel->getRoomNoPromotion($idkhuyenmai);
+
+        if (isset($_POST['createPromotionRoom'])) {
+            $result = $this->OffersModel->createPromotionCT($_POST['idphong'], $_POST['idkhuyenmai']);
+            if ($result) {
+                header('location:' . URLROOT . '/admin/offers/detailPromotion/' . $idkhuyenmai);
+            } else {
+                echo '<script>alert("lỗi")</script>';
+                exit();
+            }
+        }
+
+        $this->view('admin', 'offers/createPromotionRoom.php', [
+            'rooms' => $rooms,
+            'idkhuyenmai' => $idkhuyenmai
+        ]);
+    }
+
+    public function deletePromotionRoom($idphong, $idkhuyenmai)
+    {
+        $delete = $this->OffersModel->deletePromotionCT($idphong, $idkhuyenmai);
+        if ($delete) {
+            $this->detailPromotion($idkhuyenmai);
+        } else {
+            echo '<script>alert("lỗi")</script>';
+            exit();
+        }
+        header('location:' . URLROOT . '/admin/offers');
+    }
+
+
 
     public function createPromotion()
     {
@@ -83,6 +154,21 @@ class Offers extends Controller
         }
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //loại hình thanh toán
     public function createPayType()
     {
         if (isset($_POST['createPayType'])) {

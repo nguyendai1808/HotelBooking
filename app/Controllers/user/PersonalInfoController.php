@@ -4,12 +4,29 @@ class PersonalInfo extends Controller
     private $BookingModel;
     private $RoomModel;
     private $AccountModel;
+    private $RatingModel;
+
+    private $pagination;
+    private $per_page = 3;
 
     public function __construct()
     {
         $this->AccountModel = $this->model('AccountModel');
         $this->BookingModel = $this->model('BookingModel');
         $this->RoomModel = $this->model('RoomModel');
+        $this->RatingModel = $this->model('RatingModel');
+
+        if (!empty(Session::get('history'))) {
+            $history = Session::get('history');
+            $this->pagination = new Pagination($history, $this->per_page);
+        } else {
+            $idtaikhoan = Session::get('user_id');
+            $history = $this->BookingModel->getBookingHistoryByStatus($idtaikhoan);
+            if ($history) {
+                $this->pagination = new Pagination($history, $this->per_page);
+                Session::set('history', $history, 1800);
+            }
+        }
     }
 
     public function index()
@@ -90,51 +107,78 @@ class PersonalInfo extends Controller
         ]);
     }
 
+    public function page($current_page = 1)
+    {
+        $criteria = $this->RatingModel->getCriteria();
+        if ($this->isAjaxRequest()) {
+            $list_booking = $this->pagination->getItemsbyCurrentPage($current_page);
+            $response = [
+                'bookings' => $this->getInforBooking($list_booking),
+                'criteria' => $criteria,
+                'pagination' => [
+                    'total_pages' => $this->pagination->getTotalPages(),
+                    'current_page' => $this->pagination->getcurrentPage()
+                ],
+                'view' => 'personalinfo/page'
+            ];
+
+            // Trả về dữ liệu dưới dạng JSON
+            header('Content-Type: application/json');
+            echo json_encode($response);
+            exit;
+        } else {
+            if (!empty($current_page) && filter_var($current_page, FILTER_VALIDATE_INT)) {
+                $list_booking = $this->pagination->getItemsbyCurrentPage($current_page);
+                $pag = [
+                    'total_pages' => $this->pagination->getTotalPages(),
+                    'current_page' => $this->pagination->getcurrentPage(),
+                    'view' => 'personalinfo'
+                ];
+
+                $this->view('user', 'personal_infor.php', [
+                    'page' => 'list_booking.php',
+                    'list_booking' => $this->getInforBooking($list_booking),
+                    'criteria' => $criteria,
+                    'pagination' => $pag
+                ]);
+            } else {
+                header('location:' . URLROOT . '/personal_infor/booked');
+            }
+        }
+    }
+
+
     public function booked()
     {
         $idtaikhoan = Session::get('user_id');
-        $booked = $this->BookingModel->getBookingHistoryByStatus($idtaikhoan, 'Hoàn tất');
+        $booking = $this->BookingModel->getBookingHistoryByStatus($idtaikhoan, 'Hoàn tất, Đã đánh giá');
+        if ($booking) {
+            $this->pagination = new Pagination($booking, $this->per_page);
+            Session::set('history', $booking, 1800);
+            $list_booking = $this->pagination->getItemsbyCurrentPage(1);
 
-        if ($booked) {
-            foreach ($booked as $key => $item) {
-
-                $Room =  $this->RoomModel->findRoomById($item['id_phong']);
-
-                foreach ($Room as $room) {
-
-                    $nameBed = $this->RoomModel->getNameBed($room['idphong']);
-                    $booked[$key]['tengiuong'] = $nameBed;
-
-                    $promotion = $this->RoomModel->getPromotionRoom($room['idphong']);
-                    $booked[$key]['khuyenmai'] = $promotion;
-
-                    $mainImg = $this->RoomModel->getMainImageRoom($room['idphong']);
-                    $booked[$key]['anhphong'] = $mainImg;
-
-                    $paymentMethod = $this->RoomModel->findPaymentMethod($room['idphong']);
-                    $booked[$key]['loaihinhtt'] = implode(" & ", array_column($paymentMethod, 'loaihinhthanhtoan'));
-
-                    $booked[$key]['tenphong'] = $room['tenphong'];
-                    $booked[$key]['giaphong'] = $room['giaphong'];
-                }
-
-                if (empty($item['ngayden']) || empty($item['ngaydi'])) {
-                    $soNgay = 0;
-                } else {
-                    $ngaydentmp = new DateTime($item['ngayden']);
-                    $ngayditmp = new DateTime($item['ngaydi']);
-                    $soNgay = intval($ngayditmp->diff($ngaydentmp)->format('%a'));
-                }
-                $booked[$key]['songay'] = $soNgay;
-            }
+            $pag = [
+                'total_pages' => $this->pagination->getTotalPages(),
+                'current_page' => $this->pagination->getcurrentPage(),
+                'view' => 'personalinfo'
+            ];
+            $criteria = $this->RatingModel->getCriteria();
         } else {
-            $booked = null;
+            $list_booking = null;
+            $pag = null;
+            $criteria = null;
         }
 
         if ($this->isAjaxRequest()) {
+
             ob_start();
-            extract(['list_booking' => $booked]);
+            extract([
+                'list_booking' => $this->getInforBooking($list_booking),
+                'criteria' => $criteria,
+                'pagination' => $pag
+            ]);
             require_once APPROOT . '/views/user/pages/list_booking.php';
+            require_once APPROOT . '/views/user/pages/rating.php';
             $page = ob_get_clean();
 
             $response = [
@@ -145,10 +189,56 @@ class PersonalInfo extends Controller
             header('Content-Type: application/json');
             echo json_encode($response);
             exit;
+        } else {
+            $this->view('user', 'personal_infor.php', [
+                'page' => 'list_booking.php',
+                'list_booking' => $this->getInforBooking($list_booking),
+                'criteria' => $criteria,
+                'pagination' => $pag
+            ]);
         }
-        $this->view('user', 'personal_infor.php', [
-            'page' => 'list_booking.php',
-            'list_booking' => $booked
-        ]);
+    }
+
+    public function getInforBooking($history)
+    {
+        if ($history) {
+            foreach ($history as $key => $item) {
+
+                $Room =  $this->RoomModel->findRoomById($item['id_phong']);
+
+                foreach ($Room as $room) {
+
+                    $nameBed = $this->RoomModel->getNameBed($room['idphong']);
+                    $history[$key]['tengiuong'] = $nameBed;
+
+                    $promotion = $this->RoomModel->getPromotionRoom($room['idphong']);
+                    $history[$key]['khuyenmai'] = $promotion;
+
+                    $mainImg = $this->RoomModel->getMainImageRoom($room['idphong']);
+                    $history[$key]['anhphong'] = $mainImg;
+
+                    $paymentMethod = $this->RoomModel->findPaymentMethod($room['idphong']);
+                    if($paymentMethod){
+                        $history[$key]['loaihinhtt'] = implode(" & ", array_column($paymentMethod, 'loaihinhthanhtoan'));
+                    }
+
+                    $history[$key]['tenphong'] = $room['tenphong'];
+                    $history[$key]['giaphong'] = $room['giaphong'];
+                }
+
+                if (empty($item['ngayden']) || empty($item['ngaydi'])) {
+                    $soNgay = 0;
+                } else {
+                    $ngaydentmp = new DateTime($item['ngayden']);
+                    $ngayditmp = new DateTime($item['ngaydi']);
+                    $soNgay = intval($ngayditmp->diff($ngaydentmp)->format('%a'));
+                }
+                $history[$key]['songay'] = $soNgay;
+            }
+        } else {
+            $history = null;
+        }
+
+        return $history;
     }
 }

@@ -13,7 +13,7 @@
                         <th class="number"> Giá phòng <i class="fa-solid fa-arrow-up"></i></th>
                         <th class="number"> Tổng giá <i class="fa-solid fa-arrow-up"></i></th>
                         <th class="status"> Trạng thái <i class="fa-solid fa-arrow-up"></i></th>
-                        <th class="method"><a href="<?= URLROOT . '/admin/booking/create' ?>" class="btn btn-success"><small class="fa-solid fa-circle-plus pe-1"></small>Thêm</a></th>
+
                     </tr>
                 </thead>
                 <tbody>
@@ -29,13 +29,9 @@
                                 <td class="number"><?= $item['soluongdat'] ?></td>
                                 <td class="number"><?= number_format($item['giaphong'], 0, ',', '.') ?></td>
                                 <td class="number"><?= number_format($item['tonggia'], 0, ',', '.') ?></td>
-                                <td class="status"><?= $item['trangthaidat'] ?></td>
-                                <td class="method">
-                                    <div class="d-flex justify-content-center">
-                                        <a href="<?= URLROOT ?>/admin/booking/update/<?= $item['iddatphong'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-pen-to-square"></i></a>
-                                        <a href="<?= URLROOT ?>/admin/booking/cancel_booking/<?= $item['iddatphong'] ?>" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-xmark"></i></a>
-                                    </div>
-                                </td>
+
+                                <?php $color = ($item['trangthaidat'] == 'Đã hủy') ? 'danger'  : (($item['trangthaidat'] == 'Đã cọc tiền') ? 'warning' : 'success'); ?>
+                                <td class="status text-<?= $color ?>"><?= $item['trangthaidat'] ?></td>
                             </tr>
 
                     <?php $stt++;

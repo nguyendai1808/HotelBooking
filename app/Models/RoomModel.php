@@ -7,7 +7,8 @@ class RoomModel
         $this->db = new Database();
     }
 
-    public function getRooms($LIMIT = null)
+
+    public function getRoomsAdmin($LIMIT = null)
     {
         if (empty($LIMIT)) {
             $sql = "SELECT * FROM phong order by tenphong";
@@ -18,34 +19,39 @@ class RoomModel
         return $result;
     }
 
-
-    public function searchRooms($checkin, $checkout, $adult, $child)
+    public function getRooms($LIMIT = null)
     {
-        $sql = "SELECT phong.* FROM phong WHERE idphong NOT IN (
-            SELECT id_phong FROM datphong join dondat on datphong.id_dondat = dondat.iddondat
-                WHERE ('$checkin' BETWEEN ngayden AND ngaydi)
-                OR ('$checkout' BETWEEN ngayden AND ngaydi)
-                OR (ngayden BETWEEN '$checkin' AND '$checkout')
-                OR (ngaydi BETWEEN '$checkin' AND '$checkout')
-            )";
-
-        if (!empty($adult)) {
-            $sql .= " and (nguoilon = $adult or nguoilon = $adult + 1)";
-            if (empty($child)) {
-                $sql .= " and (trenho is null or trenho = 0)";
-            }
+        if (empty($LIMIT)) {
+            $sql = "SELECT * FROM phong where trangthai != 'Tạm dừng' order by tenphong";
+        } else {
+            $sql = "SELECT * FROM phong where trangthai != 'Tạm dừng' order by tenphong LIMIT $LIMIT";
         }
-
-        if (!empty($child)) {
-            $sql .= " and (trenho = $child or trenho = $child + 1)";
-        }
-
-        $sql .= " GROUP BY idphong ORDER BY tenphong";
-
         $result = $this->db->select($sql);
         return $result;
     }
 
+    public function searchRooms($adult, $child)
+    {
+        $sql = "SELECT * FROM phong ";
+
+        if (!empty($adult)) {
+            $sql .= "where (nguoilon = $adult or nguoilon = $adult + 1) ";
+            if (!empty($child)) {
+                $sql .= " and (trenho = $child or trenho = $child + 1) ";
+            } else {
+                $sql .= " and (trenho is null or trenho = 0)";
+            }
+        } else {
+            if (!empty($child)) {
+                $sql .= "where (trenho = $child or trenho = $child + 1) ";
+            }
+        }
+
+        $sql .= " ORDER BY tenphong";
+
+        $result = $this->db->select($sql);
+        return $result;
+    }
 
     public function emptyRoom($checkin, $checkout, $idphong)
     {
@@ -54,14 +60,14 @@ class RoomModel
             OR ('$checkout' BETWEEN ngayden AND ngaydi)
             OR (ngayden BETWEEN '$checkin' AND '$checkout')
             OR (ngaydi BETWEEN '$checkin' AND '$checkout')
-        )";
+        ) AND (datphong.trangthaidat = 'Đã cọc tiền' OR datphong.trangthaidat = 'Đã thanh toán')";
+
         $sophongban = $this->db->selectFirstColumnValue($sql, 'sophongban');
         $sophongban = !empty($sophongban) ? intval($sophongban) : 0;
 
         $soluongphong = $this->getQuantityRoom($idphong);
-        $soluongphong = !empty($soluongphong) ? intval($soluongphong) : 0;
 
-        return ($soluongphong - $sophongban);
+        return (intval($soluongphong) - $sophongban);
     }
 
 
@@ -76,9 +82,8 @@ class RoomModel
 
         $sql = "SELECT soluong FROM phong WHERE idphong = '$idphong'";
         $sophong = $this->db->selectFirstColumnValue($sql, 'soluong');
-        $sophong = !empty($sophong) ? intval($sophong) : 0;
 
-        return ($sophong - $sophongbaotri);
+        return (intval($sophong) - $sophongbaotri);
     }
 
 
@@ -97,20 +102,21 @@ class RoomModel
 
     public function getUserRating($idphong)
     {
-        $sql = "SELECT ho, ten, anh, noidung, thoigian, id_taikhoan FROM danhgia JOIN taikhoan on danhgia.id_taikhoan = taikhoan.idtaikhoan 
-        WHERE danhgia.id_phong = '$idphong' and danhgia.trangthai != 'Ẩn'";
+        $sql = "SELECT ho, ten, anh, noidung, thoigian, id_taikhoan, iddanhgia FROM danhgia JOIN taikhoan on danhgia.id_taikhoan = taikhoan.idtaikhoan 
+        WHERE danhgia.id_phong = '$idphong' and danhgia.trangthai != 'Ẩn' ORDER BY danhgia.thoigian DESC, danhgia.tongdiem DESC, danhgia.iddanhgia DESC";
         $result = $this->db->select($sql);
         return $result;
     }
 
-    public function getRatingUserByAmenity($idphong, $idtaikhoan)
+    public function getRatingUserByAmenity($idphong, $idtaikhoan, $iddanhgia)
     {
-        $sql = "SELECT (SUM(chitietdanhgia.sodiem) / COUNT(*)) as sodiem, tieuchidanhgia.tentieuchi 
-        FROM danhgia join chitietdanhgia on danhgia.iddanhgia = chitietdanhgia.id_danhgia 
-        join tieuchidanhgia on chitietdanhgia.id_tieuchi = tieuchidanhgia.idtieuchi 
-        where danhgia.id_phong = '$idphong' and danhgia.trangthai != 'Ẩn' AND danhgia.id_taikhoan = '$idtaikhoan' 
-        GROUP BY tieuchidanhgia.idtieuchi;";
-
+        $sql = "SELECT chitietdanhgia.sodiem, tieuchidanhgia.tentieuchi
+        FROM danhgia JOIN chitietdanhgia ON danhgia.iddanhgia = chitietdanhgia.id_danhgia
+        JOIN tieuchidanhgia ON chitietdanhgia.id_tieuchi = tieuchidanhgia.idtieuchi
+        WHERE danhgia.iddanhgia = '$iddanhgia'
+        AND danhgia.id_phong = '$idphong' 
+        AND danhgia.trangthai != 'Ẩn' 
+        AND danhgia.id_taikhoan = '$idtaikhoan'";
         $result = $this->db->select($sql);
         return $result;
     }
@@ -142,7 +148,19 @@ class RoomModel
                 $namebed[] = $item['soluong'] . ' ' . $item['tengiuong'];
             }
         }
-        return implode(", ", $namebed) ?? null;
+        if ($namebed) {
+            return implode(", ", $namebed) ?? null;
+        } else {
+            return null;
+        }
+    }
+
+
+    public function getRoomsByBed($idgiuong, $soluong)
+    {
+        $sql = "SELECT id_phong FROM chitietgiuong WHERE id_giuong = '$idgiuong' AND soluong >= '$soluong' GROUP BY id_phong;";
+        $result = $this->db->select($sql);
+        return $result;
     }
 
     public function getquantityBed($id)
@@ -167,6 +185,76 @@ class RoomModel
         return $result;
     }
 
+
+    public function deleteAmenitiesByRoom($idphong)
+    {
+        $sql = "DELETE FROM `chitiettiennghi` WHERE id_phong = '$idphong'";
+        $result = $this->db->execute($sql);
+        if ($result) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function addAmenityByRoom($idtiennghi, $idphong)
+    {
+        $sql = "INSERT INTO `chitiettiennghi`(`id_tiennghi`, `id_phong`) VALUES ('$idtiennghi','$idphong')";
+        $result = $this->db->execute($sql);
+        if ($result) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    public function deletePayTypeByRoom($idphong)
+    {
+        $sql = "DELETE FROM `chitietloaihinhtt` WHERE id_phong = '$idphong'";
+        $result = $this->db->execute($sql);
+        if ($result) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function addPayTypeByRoom($idloaihinhtt, $idphong)
+    {
+        $sql = "INSERT INTO `chitietloaihinhtt`(`id_loaihinhtt`, `id_phong`) VALUES ('$idloaihinhtt','$idphong')";
+        $result = $this->db->execute($sql);
+        if ($result) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function deleteBedsByRoom($idphong)
+    {
+        $sql = "DELETE FROM chitietgiuong WHERE id_phong = '$idphong'";
+        $result = $this->db->execute($sql);
+        if ($result) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function addBedByRoom($idgiuong, $idphong,  $soluong)
+    {
+        $sql = "INSERT INTO chitietgiuong(id_giuong, id_phong, soluong) VALUES ('$idgiuong','$idphong','$soluong')";
+        $result = $this->db->execute($sql);
+        if ($result) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+
     public function getRatingRoom($id)
     {
         $sql = "SELECT (SUM(tongdiem) / COUNT(*)) as tongdiem FROM danhgia WHERE id_phong = '$id' and danhgia.trangthai != 'Ẩn'";
@@ -176,7 +264,7 @@ class RoomModel
 
     public function getMainImageRoom($id)
     {
-        $sql = "SELECT duongdan, tenanh FROM anhphong WHERE id_phong = $id AND tenanh LIKE '%main%'";
+        $sql = "SELECT duongdan, tenanh FROM anhphong WHERE id_phong = $id ORDER BY idanhphong LIMIT 1";
         $result = $this->db->select($sql);
 
         if ($result) {
@@ -229,29 +317,96 @@ class RoomModel
     }
 
 
-    // public function createRoom($name)
-    // {
-    //     $sql = "INSERT INTO danhmuc VALUES (null,'$name')";
-    //     $result = $this->db->execute($sql);
-    //     if ($result) {
-    //         return true;
-    //     } else {
-    //         return false;
-    //     }
-    // }
+
+    public function getMaxIdRoom()
+    {
+        $sql = "SELECT Max(idphong) as max FROM phong";
+        $result = $this->db->selectFirstColumnValue($sql,'max');
+        return intval($result) + 1;
+    }
 
 
+    public function createRoom($idphong, $tenphong, $kichthuoc, $nguoilon, $trenho, $gia, $soluong, $id_danhmuc)
+    {
+        $sql = "INSERT INTO phong(idphong,tenphong, kichthuoc, nguoilon, trenho, giaphong, soluong, trangthai, id_danhmuc, id_khachsan) 
+        VALUES ('$idphong','$tenphong','$kichthuoc','$nguoilon','$trenho','$gia','$soluong','Hoạt động','$id_danhmuc','1')";
+        $result = $this->db->execute($sql);
+        if ($result) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-    // public function updateRoom($id, $name)
-    // {
-    //     $sql = "UPDATE danhmuc SET tendanhmuc = '$name' WHERE iddanhmuc = '$id'";
-    //     $result = $this->db->execute($sql);
-    //     if ($result) {
-    //         return true;
-    //     } else {
-    //         return false;
-    //     }
-    // }
+
+    public function getBedByIdRoom($idphong)
+    {
+        $sql = "SELECT * FROM chitietgiuong join giuong on chitietgiuong.id_giuong = giuong.idgiuong
+        WHERE chitietgiuong.id_phong = '$idphong'";
+        $result = $this->db->select($sql);
+        return $result;
+    }
+
+    public function getPayTypeByIdRoom($idphong)
+    {
+        $sql = "SELECT * FROM chitietloaihinhtt join loaihinhtt on chitietloaihinhtt.id_loaihinhtt = loaihinhtt.idloaihinhtt
+        WHERE chitietloaihinhtt.id_phong = '$idphong'";
+        $result = $this->db->select($sql);
+        return $result;
+    }
+
+    public function getAmenitiesByIdRoom($idphong)
+    {
+        $sql = "SELECT * FROM chitiettiennghi join tiennghi on chitiettiennghi.id_tiennghi = tiennghi.idtiennghi
+        WHERE chitiettiennghi.id_phong = '$idphong'";
+        $result = $this->db->select($sql);
+        return $result;
+    }
+
+
+    public function deleteImage($id)
+    {
+        $sql = "DELETE From anhphong where idanhphong = '$id'";
+        $result = $this->db->execute($sql);
+        if ($result) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function getMaxIdImageRoom()
+    {
+        $sql = "SELECT MAX(idanhphong) as max FROM anhphong";
+        $result = $this->db->selectFirstColumnValue($sql, 'max');
+        return $result;
+    }
+
+    public function saveImage($name, $link, $idphong)
+    {
+        $maxId = $this->getMaxIdImageRoom();
+        $maxId = intval($maxId) + 1;
+        $sql = "INSERT INTO anhphong(idanhphong, tenanh, duongdan, id_phong) VALUES ('$maxId' ,'$name','$link','$idphong')";
+        $result = $this->db->execute($sql);
+        if ($result) {
+            return $maxId;
+        } else {
+            return null;
+        }
+    }
+
+
+    public function updateRoom($idphong, $tenphong, $kichthuoc, $nguoilon, $trenho, $gia, $soluong, $id_danhmuc)
+    {
+        $sql = "UPDATE phong SET tenphong = '$tenphong',kichthuoc = '$kichthuoc',nguoilon = '$nguoilon',trenho = '$trenho', giaphong = '$gia',soluong = '$soluong', id_danhmuc = '$id_danhmuc'
+        WHERE idphong = '$idphong'";
+        $result = $this->db->execute($sql);
+        if ($result) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     public function deleteRoom($id)
     {
@@ -280,11 +435,13 @@ class RoomModel
         if (!empty($num)) {
             $sql = "SELECT phong.* FROM phong join chitietkhuyenmai on phong.idphong = chitietkhuyenmai.id_phong
             join khuyenmai on chitietkhuyenmai.id_khuyenmai = khuyenmai.idkhuyenmai
-            where phong.trangthai = 'Hoạt động' and DATE(khuyenmai.ngayketthuc) >= CURDATE() ORDER BY khuyenmai.khuyenmai DESC LIMIT $num";
+            where phong.trangthai = 'Hoạt động' and CURDATE() BETWEEN khuyenmai.ngaybatdau AND khuyenmai.ngayketthuc 
+            ORDER BY khuyenmai.khuyenmai DESC LIMIT $num";
         } else {
             $sql = "SELECT phong.* FROM phong join chitietkhuyenmai on phong.idphong = chitietkhuyenmai.id_phong
             join khuyenmai on chitietkhuyenmai.id_khuyenmai = khuyenmai.idkhuyenmai
-            where phong.trangthai = 'Hoạt động' and DATE(khuyenmai.ngayketthuc) >= CURDATE() ORDER BY khuyenmai.khuyenmai DESC";
+            where phong.trangthai = 'Hoạt động' and CURDATE() BETWEEN khuyenmai.ngaybatdau AND khuyenmai.ngayketthuc 
+            ORDER BY khuyenmai.khuyenmai DESC";
         }
         $result = $this->db->select($sql);
         return $result;

@@ -13,11 +13,6 @@ class Category extends Controller
         //gọi method
         $category  = $this->CategoryModel->getCategorys();
 
-        foreach ($category as $key => $cate) {
-            $tmp = $this->CategoryModel->getNumberRoom($cate['iddanhmuc']);
-            $category[$key]['sophong'] = $tmp;
-        }
-
         //view - page
         $this->view('admin', 'category/category.php', [
             'category' => $category
@@ -28,7 +23,7 @@ class Category extends Controller
     {
         if (isset($_POST['create'])) {
 
-            $result = $this->CategoryModel->createCategory($_POST['name']);
+            $result = $this->CategoryModel->createCategory(null,$_POST['name']);
             if ($result) {
                 header('location:' . URLROOT . '/admin/category');
             }
@@ -42,7 +37,7 @@ class Category extends Controller
         if (!empty($iddanhmuc) && filter_var($iddanhmuc, FILTER_VALIDATE_INT)) {
 
             if (isset($_POST['update'])) {
-                $update = $this->CategoryModel->updateCategory($iddanhmuc, $_POST['name']);
+                $update = $this->CategoryModel->updateCategory($iddanhmuc, $_POST['name'], $_POST['desc']);
                 if ($update) {
                     header('location:' . URLROOT . '/admin/category');
                 } else {

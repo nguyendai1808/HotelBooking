@@ -130,7 +130,7 @@
                                                 <div class="room-img p-3">
                                                     <img class="img-fluid" src="<?= USER_PATH ?>/<?= !empty($item['anhphong']) ? $item['anhphong'] : 'images/notImage.jpg'; ?>" alt="image" draggable="false">
                                                     <small class="item-price"><?= number_format($giaphong, 0, ',', '.') ?> đ/đêm</small>
-                                                    <small class="item-payment"><?= $item['loaihinhtt'] ?></small>
+                                                    <small class="item-payment"><?= $item['loaihinhtt'] ?? '' ?></small>
                                                     <?php if (!empty($item['khuyenmai'])) : ?>
                                                         <small class="item-sale"><i class="fa-solid fa-tags"></i> -<?= $item['khuyenmai'] ?>%</small>
                                                     <?php endif; ?>
@@ -139,7 +139,7 @@
                                                 <div class="room-infor p-3">
                                                     <div class="d-flex justify-content-between mb-2">
                                                         <h5 class="item-name mb-0"><?= $item['tenphong'] ?> - <?= $item['tengiuong'] ?></h5>
-                                                        <span class="ps-3 fw-bold text-success"><?= !empty($item['danhgia']) ?  $item['danhgia'] . '/10' : ''; ?></span>
+                                                        <span class="ps-3 fw-bold text-success"><?= !empty($item['danhgia']) ?  round($item['danhgia'], 1) . '/10' : ''; ?></span>
                                                     </div>
                                                     <div class="d-flex mb-2">
                                                         <small class="border-end me-2 pe-2"><i class="fa fa-bed text-warning pe-2"></i><?= $item['sogiuong'] ?> giường</small>
@@ -150,7 +150,8 @@
 
                                                     <input type="hidden" name="idphong" value="<?= $item['idphong'] ?>">
                                                     <input type="hidden" name="giaphong" value="<?= $giaphong ?>">
-
+                                                    <input type="hidden" id="sophongtrong" value="<?= $item['soluongphongtrong'] ?>">
+                                                    
                                                     <div class="d-flex justify-content-between">
                                                         <a class="btn btn-sm btn-warning rounded fw-bold py-2 px-3" href="<?= URLROOT ?>/room/detailroom/<?= $item['idphong'] ?>">Xem chi tiết</a>
                                                         <button type="submit" name="booknow" onclick="clickBooknow(event, '<?= $item['idphong'] ?>');" class="btn btn-sm btn-dark rounded py-2 px-4 fw-bold">Đặt ngay</button>
@@ -191,7 +192,7 @@
                                                 <div class="room-img p-3">
                                                     <img class="img-fluid" src="<?= USER_PATH ?>/<?= !empty($item['anhphong']) ? $item['anhphong'] : 'images/notImage.jpg'; ?>" alt="image" draggable="false">
                                                     <small class="item-price"><?= number_format($giaphong, 0, ',', '.') ?> đ/đêm</small>
-                                                    <small class="item-payment"><?= $item['loaihinhtt'] ?></small>
+                                                    <small class="item-payment"><?= $item['loaihinhtt'] ?? '' ?></small>
                                                     <?php if (!empty($item['khuyenmai'])) : ?>
                                                         <small class="item-sale"><i class="fa-solid fa-tags"></i> -<?= $item['khuyenmai'] ?>%</small>
                                                     <?php endif; ?>
@@ -200,7 +201,7 @@
                                                 <div class="room-infor p-3">
                                                     <div class="d-flex justify-content-between mb-2">
                                                         <h5 class="item-name mb-0"><?= $item['tenphong'] ?> - <?= $item['tengiuong'] ?></h5>
-                                                        <span class="ps-3 fw-bold text-success"><?= !empty($item['danhgia']) ? $item['danhgia'] . '/10' : ''; ?></span>
+                                                        <span class="ps-3 fw-bold text-success"><?= !empty($item['danhgia']) ? round($item['danhgia'], 1) . '/10' : ''; ?></span>
                                                     </div>
                                                     <div class="d-flex mb-2">
                                                         <small class="border-end me-2 pe-2"><i class="fa fa-bed text-warning pe-2"></i><?= $item['sogiuong'] ?> giường</small>
@@ -211,6 +212,7 @@
 
                                                     <input type="hidden" name="idphong" value="<?= $item['idphong'] ?>">
                                                     <input type="hidden" name="giaphong" value="<?= $giaphong ?>">
+                                                    <input type="hidden" id="sophongtrong" value="<?= $item['soluongphongtrong'] ?>">
 
                                                     <div class="d-flex justify-content-between">
                                                         <a class="btn btn-sm btn-warning rounded fw-bold py-2 px-3" href="<?= URLROOT ?>/room/detailroom/<?= $item['idphong'] ?>">Xem chi tiết</a>

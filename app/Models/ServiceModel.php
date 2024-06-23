@@ -39,7 +39,11 @@ class ServiceModel
 
     public function updateServices($iddichvu, $name, $desc, $icon)
     {
-        $sql = "UPDATE dichvu SET tendichvu = '$name', mota = '$desc', icon = '$icon' Where iddichvu = $iddichvu";
+        if (empty($icon)) {
+            $sql = "UPDATE dichvu SET tendichvu = '$name', mota = '$desc' Where iddichvu = $iddichvu";
+        } else {
+            $sql = "UPDATE dichvu SET tendichvu = '$name', mota = '$desc', icon = '$icon' Where iddichvu = $iddichvu";
+        }
         $result = $this->db->execute($sql);
         if ($result) {
             return true;

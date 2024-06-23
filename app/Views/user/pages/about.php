@@ -1,7 +1,7 @@
 <Main class="container-fluid">
 
     <section class="banner-image banner-gray mb-5">
-        <img src="<?= USER_PATH ?>/images/<?= $data['display']['baner'] ?? 'notbg.jpg'?>" alt="banner">
+        <img src="<?= USER_PATH ?>/images/<?= $data['display']['baner'] ?? 'notbg.jpg' ?>" alt="banner">
         <div class="banner-content">
             <h3 class="section-title text-uppercase">Giới thiệu</h3>
             <div class="banner-item">
@@ -131,7 +131,7 @@
                 <div class="col-lg-6 pb-5">
                     <div class="video-img">
                         <div class="image-play">
-                            <a href="javascript:void(0);" onclick="playVideo('https://www.youtube.com/embed/eEY50BOF0wM')">
+                            <a href="javascript:void(0);" onclick="playVideo('<?= $data['video'] ?? '' ?>')">
                                 <img src="<?= USER_PATH ?>/<?= !empty($data['imgMainHotel']) ? $data['imgMainHotel'] : 'images/notImage.jpg'; ?>" alt="Image">
                                 <span class="icon-wrap">
                                     <span class="icon-play bi bi-play-fill"></span>
@@ -172,23 +172,25 @@
                         ?>
 
                             <div class="rating-title">
-                                <h4><?= $rating[0]['tongdiem'] ?? '' ?>/10 <?= $tmp ?></h4>
+                                <h4><?= round($rating[0]['tongdiem'], 1) ?? '' ?>/10 <?= $tmp ?></h4>
                                 <span class="text-secondary">(<?= $rating[0]['sodanhgia'] ?? '' ?> bài đánh giá)</span>
                             </div>
 
-                            <?php foreach ($rating[0]['diemtheotieuchi'] as $item) : ?>
+                            <?php if ($rating[0]['diemtheotieuchi']) :
+                                foreach ($rating[0]['diemtheotieuchi'] as $item) : ?>
 
-                                <div class="rating-box">
-                                    <div class="rating-text">
-                                        <span class="title"><?= $item['tentieuchi'] ?? '' ?></span>
-                                        <span class="score"><?= round($item['sodiem'], 1)  ?? '' ?> điểm</span>
+                                    <div class="rating-box">
+                                        <div class="rating-text">
+                                            <span class="title"><?= $item['tentieuchi'] ?? '' ?></span>
+                                            <span class="score"><?= round($item['sodiem'], 1)  ?? '' ?> điểm</span>
+                                        </div>
+                                        <div class="rating-bar">
+                                            <span class="score-bar" style="width: <?= intval($item['sodiem']) * 10 ?? 0 ?>%;"></span>
+                                        </div>
                                     </div>
-                                    <div class="rating-bar">
-                                        <span class="score-bar" style="width: <?= intval($item['sodiem']) * 10 ?? 0 ?>%;"></span>
-                                    </div>
-                                </div>
 
-                            <?php endforeach; ?>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
 
                         <?php else : ?>
 

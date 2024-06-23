@@ -20,7 +20,6 @@
 
                                 <td class="method">
                                     <div class="d-flex justify-content-center">
-                                        <a href="<?= URLROOT ?>/admin/amenity/detail/<?= $item['idtiennghi'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-eye"></i></a>
                                         <a href="<?= URLROOT ?>/admin/amenity/update/<?= $item['idtiennghi'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-pen-to-square"></i></a>
                                         <a href="<?= URLROOT ?>/admin/amenity/delete/<?= $item['idtiennghi'] ?>" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></a>
                                     </div>
@@ -56,7 +55,6 @@
 
                                 <td class="method">
                                     <div class="d-flex justify-content-center">
-                                        <a href="<?= URLROOT ?>/admin/amenity/detail/<?= $item['idgiuong'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-eye"></i></a>
                                         <a href="<?= URLROOT ?>/admin/amenity/updateBed/<?= $item['idgiuong'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-pen-to-square"></i></a>
                                         <a href="<?= URLROOT ?>/admin/amenity/deleteBed/<?= $item['idgiuong'] ?>" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></a>
                                     </div>

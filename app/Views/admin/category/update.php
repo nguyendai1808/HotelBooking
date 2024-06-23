@@ -9,8 +9,12 @@
                     <label for="name">Tên Danh Mục:</label>
                     <input type="text" name="name" value="<?= $item['tendanhmuc'] ?>" placeholder="Nhập tên danh mục" required />
                 </div>
+                <div class="input-box">
+                    <label for="name">Mô tả:</label>
+                    <textarea name="desc" placeholder="Mô tả" rows="3"><?= $item['mota'] ?></textarea>
+                </div>
                 <button class="btn-save" name="update" type="submit">Lưu lại</button>
-                <a class="btn-a btn-cancel" href="<?= URLROOT . '/admin/category' ?>" >Hủy</a>
+                <a class="btn-a btn-cancel" href="<?= URLROOT . '/admin/category' ?>">Hủy</a>
             </form>
         </div>
 

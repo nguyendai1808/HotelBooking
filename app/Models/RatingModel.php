@@ -15,22 +15,54 @@ class RatingModel
         return $result;
     }
 
-    // public function createRating($name, $mail, $add)
-    // {
-    //     $sql = "INSERT INTO taikhoan (name,email,address)
-    //             VALUES ('$name','$mail','$add')";
-    //     $result = $this->db->execute($sql);
-    //     if ($result) {
-    //         return true;
-    //     } else {
-    //         return false;
-    //     }
-    // }
+    public function getCriteria()
+    {
+        $sql = "SELECT * FROM tieuchidanhgia ORDER BY idtieuchi";
+        $result = $this->db->select($sql);
+        return $result;
+    }
+
+    public function createRating($content, $tongdiem, $idtaikhoan, $idphong)
+    {
+        $sql = "INSERT INTO danhgia (noidung, thoigian, tongdiem, trangthai, id_taikhoan, id_phong) 
+        VALUES ('$content', CURDATE(), '$tongdiem', 'Hiển thị', '$idtaikhoan', '$idphong')";
+        $result = $this->db->execute($sql);
+        return $result;
+    }
+
+    public function updateStatusBooking($iddatphong)
+    {
+        $sql = "UPDATE datphong set trangthaidat = 'Đã đánh giá' where iddatphong = '$iddatphong'";
+        $result = $this->db->execute($sql);
+        return $result;
+    }
+
+    public function updateScoreAccount($idtaikhoan)
+    {
+        $sql = "UPDATE taikhoan set diemtichluy = diemtichluy + 100 where idtaikhoan = '$idtaikhoan'";
+        $result = $this->db->execute($sql);
+        return $result;
+    }
+
+    public function createDetailRating($idtieuchi, $iddanhgia, $score)
+    {
+        $sql = "INSERT INTO chitietdanhgia(id_tieuchi, id_danhgia, sodiem) 
+        VALUES ('$idtieuchi','$iddanhgia','$score')";
+        $result = $this->db->execute($sql);
+        return $result;
+    }
 
     public function findRatingById($id)
     {
         $sql = "SELECT * FROM danhgia WHERE iddanhgia = '$id'";
         $result = $this->db->select($sql);
+        return $result;
+    }
+
+    public function getRatingByIdUserRoom($idtaikhoan, $idphong)
+    {
+        $sql = "SELECT iddanhgia FROM danhgia WHERE id_taikhoan = '$idtaikhoan' and id_phong = '$idphong' ORDER BY thoigian DESC, iddanhgia DESC LIMIT 1";
+        $result = $this->db->selectFirstColumnValue($sql, 'iddanhgia');
         return $result;
     }
 

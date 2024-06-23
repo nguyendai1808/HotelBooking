@@ -26,8 +26,12 @@ class Maintenance extends Controller
         if (!empty($idbaotri) && filter_var($idbaotri, FILTER_VALIDATE_INT)) {
 
             $rooms = $this->MaintenanceModel->getRoomMaintenanceById($idbaotri);
+
+            $time = $this->MaintenanceModel->findMaintenanceById($idbaotri);
             $this->view('admin', 'maintenance/detail.php', [
-                'rooms' => $this->getRoomMore($rooms)
+                'rooms' => $this->getRoomMore($rooms),
+                'idbaotri' => $idbaotri,
+                'time' => $time
             ]);
         } else {
             header('location:' . URLROOT . '/admin/maintenance');
@@ -64,6 +68,61 @@ class Maintenance extends Controller
         }
         $this->view('admin', 'maintenance/create.php');
     }
+
+
+    public function createRoom($idbaotri = null)
+    {
+        $rooms = $this->MaintenanceModel->getRoomNoMaintenance($idbaotri);
+
+        if (isset($_POST['createRoom'])) {
+
+            $result = $this->MaintenanceModel->createMaintenanceCT($_POST['idphong'], $_POST['idbaotri'], $_POST['soluong']);
+            if ($result) {
+                header('location:' . URLROOT . '/admin/maintenance/detail/' . $idbaotri);
+            } else {
+                echo '<script>alert("lỗi")</script>';
+                exit();
+            }
+        }
+        $this->view('admin', 'maintenance/createRoom.php', [
+            'rooms' => $rooms,
+            'idbaotri' => $idbaotri
+        ]);
+    }
+
+
+    public function updateRoom($idphong, $idbaotri)
+    {
+        $room = $this->MaintenanceModel->getRoomMaintenance($idphong, $idbaotri);
+
+        if (isset($_POST['updateRoom'])) {
+            $result = $this->MaintenanceModel->updateMaintenanceROom($_POST['idphong'], $_POST['idbaotri'], $_POST['soluong']);
+            if ($result) {
+                $this->detail($idbaotri);
+            } else {
+                echo '<script>alert("lỗi")</script>';
+                exit();
+            }
+        }
+
+        $this->view('admin', 'maintenance/updateRoom.php', [
+            'room' => $room,
+            'idbaotri' => $idbaotri
+        ]);
+    }
+
+    public function deleteRoom($idphong, $idbaotri)
+    {
+        $delete = $this->MaintenanceModel->deleteMaintenanceCT($idphong, $idbaotri);
+        if ($delete) {
+            $this->detail($idbaotri);
+        } else {
+            echo '<script>alert("lỗi")</script>';
+            exit();
+        }
+        header('location:' . URLROOT . '/admin/maintenance');
+    }
+
 
 
     public function update($idbaotri = null)

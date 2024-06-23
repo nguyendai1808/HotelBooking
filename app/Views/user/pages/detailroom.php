@@ -2,7 +2,7 @@
 
     <!-- banner image Start -->
     <section class="banner-image">
-        <img src="<?= USER_PATH ?>/images/<?= $data['display']['baner'] ?? 'notbg.jpg'?>" alt="banner">
+        <img src="<?= USER_PATH ?>/images/<?= $data['display']['baner'] ?? 'notbg.jpg' ?>" alt="banner">
     </section>
     <!-- banner image end -->
 
@@ -18,7 +18,7 @@
             <div class="detailroom-content">
                 <div class="row">
                     <div class="col-lg-5">
-                        <div class="detail-image">
+                        <div class="detail-image" id="detail-image">
                             <div class="wrapper-img">
                                 <img id="main-img" src="#" alt="img">
                                 <div class="list-img">
@@ -47,11 +47,11 @@
                     <div class="col-lg-7">
                         <?php if (!empty($data['room'])) :
                             foreach ($data['room'] as $item) : ?>
-                                <form class="detail-form" method="post" action="<?= URLROOT ?>/room/addcart">
+                                <form class="detail-form" method="post" action="<?= URLROOT ?>/room/addcart" onsubmit="return checkEmptyRoom()">
                                     <div class="detail-desc pb-3">
                                         <div class="d-flex justify-content-between mb-3">
                                             <h4 class="m-0"><?= $item['tenphong'] ?> - <?= $item['tengiuong'] ?></h4>
-                                            <span class="fw-bold text-success h5"> <?= !empty($item['danhgia']) ? $item['danhgia'] . '/10' : ''; ?></span>
+                                            <span class="fw-bold text-success h5"> <?= !empty($item['danhgia']) ?  round($item['danhgia'], 1) . '/10' : ''; ?></span>
                                         </div>
 
                                         <?php $giaphong = $item['giaphong'];
@@ -80,18 +80,21 @@
                                                 <p class="text-body">Người lớn: <?= $item['nguoilon'] ?> - Trẻ nhỏ: <?= $item['trenho'] ?></p>
                                             <?php endif ?>
 
-                                            <p>Phòng trống: 12</p>
+                                            <?php $color_r = intval($item['soluongphongtrong']) < 5 ? 'danger' : 'secondary'; ?>
+
+                                            <p class="text-<?= $color_r ?>">Phòng trống: <span><?= $item['soluongphongtrong'] ?></span></p>
+
                                         </div>
 
                                         <div class="quantity-cd">
                                             <span class="me-2">Số lượng: </span>
                                             <div class="quantity">
                                                 <span class="minus">-</span>
-                                                <input type="number" class="num" name="soluongdat" value="1" min="1" max="100">
+                                                <input type="number" class="num" name="soluongdat" value="1" min="1" max="<?= $item['soluongphongtrong'] ?>" readonly>
                                                 <span class="plus">+</span>
                                             </div>
                                         </div>
-
+                                        <input type="hidden" id="sophongtrong" value="<?= $item['soluongphongtrong'] ?>">
                                         <input type="hidden" name="idphong" value="<?= $item['idphong'] ?>">
                                         <input type="hidden" name="giaphong" value="<?= $giaphong ?>">
                                     </div>
@@ -156,7 +159,7 @@
                             <div class="row">
                                 <div class="rating-title mb-3 col-12">
 
-                                    <h4 class="m-0 pe-3"><?= $rating[0]['tongdiem'] ?? '' ?>/10 Tuyệt vời</h4>
+                                    <h4 class="m-0 pe-3"><?= round($rating[0]['tongdiem'], 1) ?? '' ?>/10 Tuyệt vời</h4>
 
                                     <span class="text-secondary">(<?= $rating[0]['sodanhgia'] ?? '' ?> đánh giá)</span>
                                 </div>
@@ -180,7 +183,8 @@
                             </div>
 
                         </div>
-                        <div class="review-box mt-4">
+
+                        <div class="review-box mt-4" id="ratingUser">
 
                             <?php foreach ($data['ratingUser'] as $item) : ?>
 
@@ -215,6 +219,37 @@
                         <p class="h6">Chưa có đánh giá nào!</p>
 
                     <?php endif; ?>
+
+
+                    <!-- Start Pagination -->
+                    <div class="page-pagination mt-5" id="pagination-links">
+
+                        <?php if (isset($data['pagination'])) : extract($data['pagination']);
+                            $start = max($current_page - 1, 1);
+                            $end = min($start + 2, $total_pages);
+
+                            if ($current_page == $total_pages && $start > 1) :
+                                $start--;
+                            endif; ?>
+
+                            <ul>
+                                <?php if ($current_page > 1) : ?>
+                                    <li><a href="<?= URLROOT ?>/room/ratingP/1"><i class="fa-solid fa-angles-left"></i></a></li>
+                                <?php endif; ?>
+
+                                <?php for ($i = $start; $i <= $end; $i++) : ?>
+                                    <li><a <?= $i == $current_page ? 'class="active"' : '' ?> href="<?= URLROOT ?>/room/ratingP/<?= $i ?>"><?= $i ?></a></li>
+                                <?php endfor; ?>
+
+                                <?php if ($current_page < $total_pages) : ?>
+                                    <li><a href="<?= URLROOT ?>/room/ratingP/<?= $total_pages ?>"><i class="fa-solid fa-angles-right"></i></a></li>
+                                <?php endif; ?>
+                            </ul>
+
+                        <?php endif; ?>
+
+                    </div>
+                    <!-- End Pagination -->
 
                 </div>
             </div>
@@ -255,7 +290,7 @@
                                             <div class="room-infor p-3">
                                                 <div class="d-flex justify-content-between mb-2">
                                                     <h5 class="item-name mb-0"><a href="<?= URLROOT ?>/room/detailroom/<?= $item['idphong'] ?>"><?= $item['tenphong'] ?> - <?= $item['tengiuong'] ?></a></h5>
-                                                    <span class="ps-3 fw-bold text-success"><?= !empty($item['danhgia']) ? $item['danhgia'] . '/10' : ''; ?></span>
+                                                    <span class="ps-3 fw-bold text-success"><?= !empty($item['danhgia']) ? round($item['danhgia'], 1) . '/10' : ''; ?></span>
                                                 </div>
                                                 <div class="d-flex mb-2">
                                                     <small class="border-end me-2 pe-2"><i class="fa fa-bed text-warning pe-2"></i><?= $item['sogiuong'] ?> giường</small>

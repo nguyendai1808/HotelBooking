@@ -7,7 +7,7 @@
                     <tr>
                         <th class="stt"> Stt <i class="fa-solid fa-arrow-up"></i></th>
                         <th class="name"> Tên danh mục <i class="fa-solid fa-arrow-up"></i></th>
-                        <th class="number"> Số phòng <i class="fa-solid fa-arrow-up"></i></th>
+                        <th class="desc"> Mô tả <i class="fa-solid fa-arrow-up"></i></th>
                         <th class="method"><a href="<?= URLROOT ?>/admin/category/create" class="btn btn-success"><small class="fa-solid fa-circle-plus"></small>Thêm</a></th>
                     </tr>
                 </thead>
@@ -20,7 +20,7 @@
                             <tr>
                                 <td class="stt"><?= $count ?></td>
                                 <td class="name"><?= $item['tendanhmuc'] ?></td>
-                                <td class="number"><?= $item['sophong'] ?></td>
+                                <td class="desc"><?= $item['mota'] ?></td>
                                 <td class="method">
                                     <div class="d-flex justify-content-center">
                                         <a href="<?= URLROOT ?>/admin/category/update/<?= $item['iddanhmuc'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-pen-to-square"></i></a>
