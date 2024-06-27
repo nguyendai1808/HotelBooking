@@ -194,7 +194,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var arrivalInput = document.getElementById("arrival-input");
     var departureInput = document.getElementById("departure-input");
     var numberDate = document.getElementById("number-date");
-    if (arrivalInput && departureInput && numberDate) {
+    if (arrivalInput && departureInput) {
         // Thêm lắng nghe sự kiện cho input ngày đến
         arrivalInput.addEventListener("input", function () {
             var currentDate = new Date();
@@ -241,9 +241,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
             }
+            
+            numberDate.innerText = gapBetweenDate(departureInput.value, arrivalInput.value);
         });
 
-        numberDate.innerText = gapBetweenDate(departureInput.value, arrivalInput.value);
+       
     }
 
 });

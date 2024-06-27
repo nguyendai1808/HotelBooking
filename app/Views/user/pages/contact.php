@@ -84,25 +84,25 @@
                                     <div class="col-lg-6">
                                         <div class="contact-box mb-20">
                                             <label for="contact-name">Họ tên</label>
-                                            <input name="fullname" type="text" id="contact-name" placeholder="Nhập tên của bạn">
+                                            <input name="fullname" type="text" id="contact-name" placeholder="Nhập tên của bạn" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="contact-box mb-20">
                                             <label for="contact-email">Email</label>
-                                            <input name="email" type="email" id="contact-email" placeholder="Nhập email của bạn">
+                                            <input name="email" type="email" id="contact-email" placeholder="Nhập email của bạn" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="contact-box mb-20">
                                             <label for="contact-subject">Chủ đề</label>
-                                            <input name="subject" type="text" id="contact-subject" placeholder="Nhập chủ đề bạn muốn">
+                                            <input name="subject" type="text" id="contact-subject" placeholder="Nhập chủ đề bạn muốn" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="contact-box mb-20">
                                             <label for="contact-message">Tin nhắn của bạn</label>
-                                            <textarea name="message" id="contact-message" cols="10" rows="4" placeholder="Nội dung tin nhắn"></textarea>
+                                            <textarea name="message" id="contact-message" cols="10" rows="4" placeholder="Nội dung tin nhắn" required></textarea>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
