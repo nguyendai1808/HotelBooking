@@ -34,7 +34,10 @@ class Amenity extends Controller
             $result = $this->AmenityModel->createAmenity($name, $image);
 
             if ($result) {
-                header('location:' . URLROOT . '/admin/amenity');
+                echo "<script> alert('thêm thành công');
+                    window.location.href = '" . URLROOT . "/admin/amenity';
+                </script>";
+                exit();
             } else {
                 echo '<script>alert("lỗi")</script>';
                 exit();
@@ -58,7 +61,10 @@ class Amenity extends Controller
 
                 $update = $this->AmenityModel->updateAmenity($idtiennghi, $name, $image);
                 if ($update) {
-                    header('location:' . URLROOT . '/admin/amenity');
+                    echo "<script> alert('cập nhật thành công');
+                        window.location.href = '" . URLROOT . "/admin/amenity';
+                    </script>";
+                    exit();
                 } else {
                     echo '<script>alert("lỗi")</script>';
                     exit();
@@ -79,7 +85,10 @@ class Amenity extends Controller
         if (!empty($idtiennghi) && filter_var($idtiennghi, FILTER_VALIDATE_INT)) {
             $delete = $this->AmenityModel->deleteAmenity($idtiennghi);
             if ($delete) {
-                header('location:' . URLROOT . '/admin/amenity');
+                echo "<script> alert('xóa thành công');
+                        window.location.href = '" . URLROOT . "/admin/amenity';
+                    </script>";
+                exit();
             } else {
                 echo '<script>alert("lỗi")</script>';
                 exit();
@@ -90,14 +99,17 @@ class Amenity extends Controller
     }
 
     //bed-------------------------------
-    
+
     public function createBed()
     {
         if (isset($_POST['createBed'])) {
             $name = $_POST["nameBed"];
             $result = $this->AmenityModel->createBed($name);
             if ($result) {
-                header('location:' . URLROOT . '/admin/amenity');
+                echo "<script> alert('thêm thành công');
+                        window.location.href = '" . URLROOT . "/admin/amenity';
+                    </script>";
+                exit();
             } else {
                 echo '<script>alert("lỗi")</script>';
                 exit();
@@ -116,7 +128,10 @@ class Amenity extends Controller
 
                 $update = $this->AmenityModel->updateBed($idgiuong, $name);
                 if ($update) {
-                    header('location:' . URLROOT . '/admin/amenity');
+                    echo "<script> alert('cập nhật thành công');
+                        window.location.href = '" . URLROOT . "/admin/amenity';
+                    </script>";
+                    exit();
                 } else {
                     echo '<script>alert("lỗi")</script>';
                     exit();
@@ -137,7 +152,10 @@ class Amenity extends Controller
         if (!empty($idgiuong) && filter_var($idgiuong, FILTER_VALIDATE_INT)) {
             $delete = $this->AmenityModel->deleteBed($idgiuong);
             if ($delete) {
-                header('location:' . URLROOT . '/admin/amenity');
+                echo "<script> alert('xóa thành công');
+                        window.location.href = '" . URLROOT . "/admin/amenity';
+                    </script>";
+                exit();
             } else {
                 echo '<script>alert("lỗi")</script>';
                 exit();

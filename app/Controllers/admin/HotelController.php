@@ -25,7 +25,10 @@ class Hotel extends Controller
     {
         $update = $this->HotelModel->updateHotel($_POST['name'], $_POST['email'], $_POST['address'], $_POST['phone'], $_POST['info'], $_POST['desc'], $_POST['video']);
         if ($update) {
-            header('location:' . URLROOT . '/admin/hotel');
+            echo "<script> alert('Cập nhật thành công');
+            window.location.href = '" . URLROOT . "/admin/hotel';
+            </script>";
+            exit();
         } else {
             echo "<script>alert('lỗi')</script>";
         }

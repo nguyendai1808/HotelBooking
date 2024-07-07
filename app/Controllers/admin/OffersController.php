@@ -64,7 +64,8 @@ class Offers extends Controller
         if (isset($_POST['createPromotionRoom'])) {
             $result = $this->OffersModel->createPromotionCT($_POST['idphong'], $_POST['idkhuyenmai']);
             if ($result) {
-                header('location:' . URLROOT . '/admin/offers/detailPromotion/' . $idkhuyenmai);
+                echo "<script> alert('Thêm thành công'); </script>";
+                $this->detailPromotion($idkhuyenmai);
             } else {
                 echo '<script>alert("lỗi")</script>';
                 exit();
@@ -81,6 +82,7 @@ class Offers extends Controller
     {
         $delete = $this->OffersModel->deletePromotionCT($idphong, $idkhuyenmai);
         if ($delete) {
+            echo "<script> alert('Xóa thành công'); </script>";
             $this->detailPromotion($idkhuyenmai);
         } else {
             echo '<script>alert("lỗi")</script>';
@@ -88,8 +90,6 @@ class Offers extends Controller
         }
         header('location:' . URLROOT . '/admin/offers');
     }
-
-
 
     public function createPromotion()
     {
@@ -101,7 +101,10 @@ class Offers extends Controller
 
             $result = $this->OffersModel->createPromotion($promotion, $desc, $dateStart, $dateEnd);
             if ($result) {
-                header('location:' . URLROOT . '/admin/offers');
+                echo "<script> alert('Thêm thành công');
+                        window.location.href = '" . URLROOT . "/admin/offers';
+                    </script>";
+                exit();
             } else {
                 echo '<script>alert("lỗi")</script>';
                 exit();
@@ -123,7 +126,10 @@ class Offers extends Controller
 
                 $update = $this->OffersModel->updatePromotion($idkhuyenmai, $promotion, $desc, $dateStart, $dateEnd);
                 if ($update) {
-                    header('location:' . URLROOT . '/admin/offers');
+                    echo "<script> alert('Cập nhật thành công');
+                        window.location.href = '" . URLROOT . "/admin/offers';
+                    </script>";
+                    exit();
                 } else {
                     echo '<script>alert("lỗi")</script>';
                     exit();
@@ -144,7 +150,10 @@ class Offers extends Controller
         if (!empty($idkhuyenmai) && filter_var($idkhuyenmai, FILTER_VALIDATE_INT)) {
             $delete = $this->OffersModel->deletePromotion($idkhuyenmai);
             if ($delete) {
-                header('location:' . URLROOT . '/admin/offers');
+                echo "<script> alert('Xóa thành công');
+                        window.location.href = '" . URLROOT . "/admin/offers';
+                    </script>";
+                exit();
             } else {
                 echo '<script>alert("lỗi")</script>';
                 exit();
@@ -155,19 +164,6 @@ class Offers extends Controller
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     //loại hình thanh toán
     public function createPayType()
     {
@@ -175,7 +171,10 @@ class Offers extends Controller
             $name = $_POST["namePayType"];
             $result = $this->OffersModel->createPaytype($name);
             if ($result) {
-                header('location:' . URLROOT . '/admin/offers');
+                echo "<script> alert('Thêm thành công');
+                        window.location.href = '" . URLROOT . "/admin/offers';
+                    </script>";
+                exit();
             } else {
                 echo '<script>alert("lỗi")</script>';
                 exit();
@@ -194,7 +193,10 @@ class Offers extends Controller
 
                 $update = $this->OffersModel->updatePayType($idloaihinhtt, $name);
                 if ($update) {
-                    header('location:' . URLROOT . '/admin/offers');
+                    echo "<script> alert('cập nhật thành công');
+                        window.location.href = '" . URLROOT . "/admin/offers';
+                    </script>";
+                    exit();
                 } else {
                     echo '<script>alert("lỗi")</script>';
                     exit();
@@ -215,7 +217,10 @@ class Offers extends Controller
         if (!empty($idloaihinhtt) && filter_var($idloaihinhtt, FILTER_VALIDATE_INT)) {
             $delete = $this->OffersModel->deletePayType($idloaihinhtt);
             if ($delete) {
-                header('location:' . URLROOT . '/admin/offers');
+                echo "<script> alert('Xóa thành công');
+                        window.location.href = '" . URLROOT . "/admin/offers';
+                    </script>";
+                exit();
             } else {
                 echo '<script>alert("lỗi")</script>';
                 exit();

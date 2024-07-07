@@ -1,6 +1,6 @@
 <section class="main-section">
     <div class="table-warpper">
-        <h4 class="table-title">Danh sách danh mục phòng</h4>
+        <h4 class="table-title">Danh sách liên hệ</h4>
         <div class="table-content">
             <table>
                 <thead>
@@ -38,7 +38,7 @@
                                             <a href="<?= URLROOT ?>/admin/contact/feedback/<?= $item['idlienhe'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-reply"></i></a>
                                         <?php endif; ?>
 
-                                        <a href="<?= URLROOT ?>/admin/contact/delete/<?= $item['idlienhe'] ?>" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></a>
+                                        <a href="<?= URLROOT ?>/admin/contact/delete/<?= $item['idlienhe'] ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa liên hệ này');" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></a>
                                     </div>
                                 </td>
                             </tr>

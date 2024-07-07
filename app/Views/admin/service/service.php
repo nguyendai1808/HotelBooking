@@ -22,7 +22,7 @@
                                 <td class="method">
                                     <div class="d-flex justify-content-center">
                                         <a href="<?= URLROOT ?>/admin/service/update/<?= $item['iddichvu'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-pen-to-square"></i></a>
-                                        <a href="<?= URLROOT ?>/admin/service/delete/<?= $item['iddichvu'] ?>" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></a>
+                                        <a href="<?= URLROOT ?>/admin/service/delete/<?= $item['iddichvu'] ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa');" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></a>
                                     </div>
                                 </td>
                             </tr>

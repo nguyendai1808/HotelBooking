@@ -4,7 +4,7 @@
 
         <?php foreach ($data['room'] as $item) : ?>
 
-            <form action="<?= URLROOT ?>/admin/maintenance/updateRoom/<?= $item['idphong'] . '/' . $data['idbaotri'] ?>" method="post" class="form">
+            <form action="<?= URLROOT ?>/admin/maintenance/updateRoom/<?= $item['idphong'] . '/' . $data['idbaotri'] ?>" method="post" class="form" onsubmit="return confirm('Bạn có chắc chắn muốn cập nhật');">
                 <div class="input-box">
                     <label>Thông tin phòng</label>
                     <input type="hidden" name="idbaotri" value="<?= $data['idbaotri'] ?>">

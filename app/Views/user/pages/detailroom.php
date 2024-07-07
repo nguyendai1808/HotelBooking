@@ -86,17 +86,21 @@
 
                                         </div>
 
-                                        <div class="quantity-cd">
-                                            <span class="me-2">Số lượng: </span>
-                                            <div class="quantity">
-                                                <span class="minus">-</span>
-                                                <input type="number" class="num" name="soluongdat" value="1" min="1" max="<?= $item['soluongphongtrong'] ?>" readonly>
-                                                <span class="plus">+</span>
+                                        <?php if ($item['soluongphongtrong'] > 0) : ?>
+                                            <div class="quantity-cd">
+                                                <span class="me-2">Số lượng: </span>
+                                                <div class="quantity">
+                                                    <span class="minus">-</span>
+                                                    <input type="number" class="num" name="soluongdat" value="1" min="1" max="<?= $item['soluongphongtrong'] ?>" readonly>
+                                                    <span class="plus">+</span>
+                                                </div>
                                             </div>
-                                        </div>
+                                        <?php endif; ?>
+                                        
                                         <input type="hidden" id="sophongtrong" value="<?= $item['soluongphongtrong'] ?>">
                                         <input type="hidden" name="idphong" value="<?= $item['idphong'] ?>">
                                         <input type="hidden" name="giaphong" value="<?= $giaphong ?>">
+
                                     </div>
                                     <div class="d-flex justify-content-between">
                                         <button type="submit" name="addcart" class="btn btn-sm btn-warning rounded py-2 px-4 fw-bold">Thêm vào giỏ hàng</button>

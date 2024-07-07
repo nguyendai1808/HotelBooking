@@ -4,7 +4,7 @@
 
         <div class="form-layout">
             <h3>Cập Nhật Danh Mục Phòng</h3>
-            <form action="<?= URLROOT ?>/admin/category/update/<?= $item['iddanhmuc'] ?>" method="POST" class="form">
+            <form action="<?= URLROOT ?>/admin/category/update/<?= $item['iddanhmuc'] ?>" method="POST" class="form" onsubmit="return confirm('Bạn có chắc chắn muốn cập nhật');">
                 <div class="input-box">
                     <label for="name">Tên Danh Mục:</label>
                     <input type="text" name="name" value="<?= $item['tendanhmuc'] ?>" placeholder="Nhập tên danh mục" required />

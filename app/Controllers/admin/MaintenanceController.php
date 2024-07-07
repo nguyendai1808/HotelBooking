@@ -60,7 +60,10 @@ class Maintenance extends Controller
             $desc = $_POST['desc'];
             $result = $this->MaintenanceModel->createMaintenance($name, $start, $end, $desc);
             if ($result) {
-                header('location:' . URLROOT . '/admin/maintenance');
+                echo "<script> alert('Thêm thành công');
+                        window.location.href = '" . URLROOT . "/admin/maintenance';
+                    </script>";
+                exit();
             } else {
                 echo '<script>alert("lỗi")</script>';
                 exit();
@@ -68,62 +71,6 @@ class Maintenance extends Controller
         }
         $this->view('admin', 'maintenance/create.php');
     }
-
-
-    public function createRoom($idbaotri = null)
-    {
-        $rooms = $this->MaintenanceModel->getRoomNoMaintenance($idbaotri);
-
-        if (isset($_POST['createRoom'])) {
-
-            $result = $this->MaintenanceModel->createMaintenanceCT($_POST['idphong'], $_POST['idbaotri'], $_POST['soluong']);
-            if ($result) {
-                header('location:' . URLROOT . '/admin/maintenance/detail/' . $idbaotri);
-            } else {
-                echo '<script>alert("lỗi")</script>';
-                exit();
-            }
-        }
-        $this->view('admin', 'maintenance/createRoom.php', [
-            'rooms' => $rooms,
-            'idbaotri' => $idbaotri
-        ]);
-    }
-
-
-    public function updateRoom($idphong, $idbaotri)
-    {
-        $room = $this->MaintenanceModel->getRoomMaintenance($idphong, $idbaotri);
-
-        if (isset($_POST['updateRoom'])) {
-            $result = $this->MaintenanceModel->updateMaintenanceROom($_POST['idphong'], $_POST['idbaotri'], $_POST['soluong']);
-            if ($result) {
-                $this->detail($idbaotri);
-            } else {
-                echo '<script>alert("lỗi")</script>';
-                exit();
-            }
-        }
-
-        $this->view('admin', 'maintenance/updateRoom.php', [
-            'room' => $room,
-            'idbaotri' => $idbaotri
-        ]);
-    }
-
-    public function deleteRoom($idphong, $idbaotri)
-    {
-        $delete = $this->MaintenanceModel->deleteMaintenanceCT($idphong, $idbaotri);
-        if ($delete) {
-            $this->detail($idbaotri);
-        } else {
-            echo '<script>alert("lỗi")</script>';
-            exit();
-        }
-        header('location:' . URLROOT . '/admin/maintenance');
-    }
-
-
 
     public function update($idbaotri = null)
     {
@@ -135,7 +82,10 @@ class Maintenance extends Controller
                 $desc = $_POST['desc'];
                 $update = $this->MaintenanceModel->updateMaintenance($idbaotri, $name, $start, $end, $desc);
                 if ($update) {
-                    header('location:' . URLROOT . '/admin/maintenance');
+                    echo "<script> alert('Lưu thành công');
+                        window.location.href = '" . URLROOT . "/admin/maintenance';
+                    </script>";
+                    exit();
                 } else {
                     echo '<script>alert("lỗi")</script>';
                     exit();
@@ -156,7 +106,76 @@ class Maintenance extends Controller
         if (!empty($idbaotri) && filter_var($idbaotri, FILTER_VALIDATE_INT)) {
             $delete = $this->MaintenanceModel->deleteMaintenance($idbaotri);
             if ($delete) {
-                header('location:' . URLROOT . '/admin/maintenance');
+                echo "<script> alert('Xóa thành công');
+                        window.location.href = '" . URLROOT . "/admin/maintenance';
+                    </script>";
+                exit();
+            } else {
+                echo '<script>alert("lỗi")</script>';
+                exit();
+            }
+        } else {
+            header('location:' . URLROOT . '/admin/maintenance');
+        }
+    }
+
+    public function createRoom($idbaotri = null)
+    {
+        if (!empty($idbaotri) && filter_var($idbaotri, FILTER_VALIDATE_INT)) {
+            $rooms = $this->MaintenanceModel->getRoomNoMaintenance($idbaotri);
+
+            if (isset($_POST['createRoom'])) {
+                $result = $this->MaintenanceModel->createMaintenanceCT($_POST['idphong'], $_POST['idbaotri'], $_POST['soluong']);
+                if ($result) {
+                    echo "<script> alert('Thêm thành công');</script>";
+                    $this->detail($idbaotri);
+                } else {
+                    echo '<script>alert("lỗi")</script>';
+                    exit();
+                }
+            }
+            $this->view('admin', 'maintenance/createRoom.php', [
+                'rooms' => $rooms,
+                'idbaotri' => $idbaotri
+            ]);
+        } else {
+            header('location:' . URLROOT . '/admin/maintenance');
+        }
+    }
+
+
+    public function updateRoom($idphong, $idbaotri)
+    {
+        if (!empty($idbaotri) && !empty($idphong) && filter_var($idbaotri, FILTER_VALIDATE_INT)) {
+            $room = $this->MaintenanceModel->getRoomMaintenance($idphong, $idbaotri);
+
+            if (isset($_POST['updateRoom'])) {
+                $result = $this->MaintenanceModel->updateMaintenanceROom($_POST['idphong'], $_POST['idbaotri'], $_POST['soluong']);
+                if ($result) {
+                    echo "<script> alert('lưu thông tin thành công');</script>";
+                    $this->detail($idbaotri);
+                } else {
+                    echo '<script>alert("lỗi")</script>';
+                    exit();
+                }
+            }
+
+            $this->view('admin', 'maintenance/updateRoom.php', [
+                'room' => $room,
+                'idbaotri' => $idbaotri
+            ]);
+        } else {
+            header('location:' . URLROOT . '/admin/maintenance');
+        }
+    }
+
+    public function deleteRoom($idphong, $idbaotri)
+    {
+        if (!empty($idbaotri) && !empty($idphong) && filter_var($idbaotri, FILTER_VALIDATE_INT)) {
+            $delete = $this->MaintenanceModel->deleteMaintenanceCT($idphong, $idbaotri);
+            if ($delete) {
+                echo "<script> alert('Xóa thành công');</script>";
+                $this->detail($idbaotri);
             } else {
                 echo '<script>alert("lỗi")</script>';
                 exit();

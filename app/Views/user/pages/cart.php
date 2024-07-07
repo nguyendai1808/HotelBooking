@@ -78,7 +78,7 @@
                                                 <span class="me-2">Số lượng: </span>
                                                 <div class="quantity">
                                                     <span class="minus">-</span>
-                                                    <input type="number" class="num item-quantity" id="soluongdat" value="<?= $item['soluongdat'] ?>" min="1" max="<?= $item['sophongtrong'] ?? 100 ?>" readonly>
+                                                    <input type="number" class="num item-quantity" id="soluongdat" value="<?= $item['soluongdat'] ?>" min="0" max="<?= $item['sophongtrong'] ?? 100 ?>" readonly>
                                                     <span class="plus">+</span>
                                                 </div>
                                             </div>

@@ -27,7 +27,7 @@
                                 <?php if (strtotime($data['time'][0]['ngayketthuc']) > time()) : ?>
                                     <td class="method">
                                         <div class="d-flex justify-content-center">
-                                            <a href="<?= URLROOT ?>/admin/offers/deletePromotionRoom/<?= $item['idphong'] . '/' . $data['idkhuyenmai'] ?>" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></a>
+                                            <a href="<?= URLROOT ?>/admin/offers/deletePromotionRoom/<?= $item['idphong'] . '/' . $data['idkhuyenmai'] ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa');" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></a>
                                         </div>
                                     </td>
                                 <?php endif; ?>

@@ -32,7 +32,7 @@
 
                                 <?php $color = ($item['trangthaidon'] == 'Đã hủy') ? 'danger'  : (($item['trangthaidon'] == 'Đã cọc tiền') ? 'warning' : 'success'); ?>
 
-                                <td class="status text-<?= $color ?>"><?= $item['trangthaidon'] ?></td>
+                                <td class="status fw-bold text-<?= $color ?>"><?= $item['trangthaidon'] ?></td>
                                 <td class="method">
                                     <form class="d-flex justify-content-center" action="<?= URLROOT ?>/admin/booking/cancelInvoice" method="post">
 

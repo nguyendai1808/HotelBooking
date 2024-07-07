@@ -4,7 +4,7 @@
 
         <div class="form-layout">
             <h3>Cập Nhật Tiện Nghi</h3>
-            <form action="<?= URLROOT ?>/admin/amenity/update/<?= $item['idtiennghi'] ?>" method="POST" class="form" enctype="multipart/form-data">
+            <form action="<?= URLROOT ?>/admin/amenity/update/<?= $item['idtiennghi'] ?>" method="POST" class="form" enctype="multipart/form-data" onsubmit="return confirm('Bạn có chắc chắn muốn cập nhật');">
                 <div class="input-box">
                     <label for="name">Tên Tiện Nghi:</label>
                     <input type="text" name="name" value="<?= $item['tentiennghi'] ?>" placeholder="Nhập tên tiện nghi" required />

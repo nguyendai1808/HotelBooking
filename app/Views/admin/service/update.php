@@ -4,7 +4,7 @@
 
         <div class="form-layout">
             <h3>Cập Nhật Dịch Vụ</h3>
-            <form action="<?= URLROOT ?>/admin/service/update/<?= $item['iddichvu'] ?>" method="POST" class="form" enctype="multipart/form-data">
+            <form action="<?= URLROOT ?>/admin/service/update/<?= $item['iddichvu'] ?>" method="POST" class="form" enctype="multipart/form-data" onsubmit="return confirm('Bạn có chắc chắn muốn cập nhật');">
                 <div class="input-box">
                     <label for="name">Tên Danh Mục:</label>
                     <input type="text" name="name" value="<?= $item['tendichvu'] ?>" placeholder="Nhập tên danh mục" required />

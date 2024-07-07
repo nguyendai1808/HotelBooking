@@ -271,26 +271,30 @@
         });
 
         uploadForm.addEventListener('submit', function(event) {
-            event.preventDefault(); // Ngăn chặn hành động mặc định của form
+            if (confirm('Bạn có chắc chắn muốn thêm')) {
+                event.preventDefault(); // Ngăn chặn hành động mặc định của form
 
-            // Tạo đối tượng FormData từ form
-            const formData = new FormData(uploadForm);
+                // Tạo đối tượng FormData từ form
+                const formData = new FormData(uploadForm);
 
-            // Thêm các hình ảnh từ imagePreview vào FormData
-            const imgWrappers = document.querySelectorAll('.img-wrapper');
-            imgWrappers.forEach(wrapper => {
-                const imgElement = wrapper.querySelector('img');
-                const filename = imgElement.src.split('/').pop(); // Lấy tên file từ URL hình ảnh
-                const file = dataURLtoFile(imgElement.src, filename); // Sử dụng tên thực của file
-                formData.append('images[]', file);
-            });
+                // Thêm các hình ảnh từ imagePreview vào FormData
+                const imgWrappers = document.querySelectorAll('.img-wrapper');
+                imgWrappers.forEach(wrapper => {
+                    const imgElement = wrapper.querySelector('img');
+                    const filename = imgElement.src.split('/').pop(); // Lấy tên file từ URL hình ảnh
+                    const file = dataURLtoFile(imgElement.src, filename); // Sử dụng tên thực của file
+                    formData.append('images[]', file);
+                });
 
-            // Cập nhật input type="file" với các file đã chọn
-            const files = imageUpload.files;
-            Array.from(files).forEach(file => formData.append('images[]', file));
+                // Cập nhật input type="file" với các file đã chọn
+                const files = imageUpload.files;
+                Array.from(files).forEach(file => formData.append('images[]', file));
 
-            // Gửi formData bằng hành động submit của form
-            uploadForm.submit();
+                // Gửi formData bằng hành động submit của form
+                uploadForm.submit();
+            } else {
+                event.preventDefault();
+            }
         });
 
 

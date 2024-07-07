@@ -23,7 +23,10 @@ class Rating extends Controller
             $status = 'Website';
             $update = $this->RatingModel->updateRating($iddanhgia, $status);
             if ($update) {
-                header('location:' . URLROOT . '/admin/rating');
+                echo "<script> alert('Chuyển thành công');
+                        window.location.href = '" . URLROOT . "/admin/rating';
+                    </script>";
+                exit();
             } else {
                 echo '<script>alert("lỗi")</script>';
                 exit();
@@ -39,7 +42,10 @@ class Rating extends Controller
             $status = 'Ẩn';
             $update = $this->RatingModel->updateRating($iddanhgia, $status);
             if ($update) {
-                header('location:' . URLROOT . '/admin/rating');
+                echo "<script> alert('Chuyển thành công');
+                        window.location.href = '" . URLROOT . "/admin/rating';
+                    </script>";
+                exit();
             } else {
                 echo '<script>alert("lỗi")</script>';
                 exit();
@@ -55,7 +61,10 @@ class Rating extends Controller
             $status = 'Hiển thị';
             $update = $this->RatingModel->updateRating($iddanhgia, $status);
             if ($update) {
-                header('location:' . URLROOT . '/admin/rating');
+                echo "<script> alert('Chuyển thành công');
+                        window.location.href = '" . URLROOT . "/admin/rating';
+                    </script>";
+                exit();
             } else {
                 echo '<script>alert("lỗi")</script>';
                 exit();

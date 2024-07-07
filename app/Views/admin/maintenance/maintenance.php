@@ -31,7 +31,7 @@
                                             <a href="<?= URLROOT ?>/admin/maintenance/update/<?= $item['idbaotri'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-pen-to-square"></i></a>
                                         <?php endif; ?>
 
-                                        <a href="<?= URLROOT ?>/admin/maintenance/delete/<?= $item['idbaotri'] ?>" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></a>
+                                        <a href="<?= URLROOT ?>/admin/maintenance/delete/<?= $item['idbaotri'] ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa');" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></a>
                                     </div>
                                 </td>
                             </tr>

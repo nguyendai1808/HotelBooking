@@ -78,13 +78,13 @@
             </div>
 
             <div class="col-lg-7 mt-4">
-                <div id="chartContainer1" style="height: 400px;"></div>
+                <div id="chartContainer1" style="height: 400px; width: 100%;"></div>
             </div>
             <div class="col-lg-5 mt-4">
-                <div id="chartContainer2" style="height: 400px;"></div>
+                <div id="chartContainer2" style="height: 400px; width: 100%;"></div>
             </div>
             <div class="col-12 mt-5">
-                <div id="chartContainer3" style="height: 400px;"></div>
+                <div id="chartContainer3" style="height: 400px; width: 100%;"></div>
             </div>
 
         </div>

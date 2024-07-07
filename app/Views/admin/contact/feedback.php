@@ -4,7 +4,7 @@
 
         <?php foreach ($data['contact'] as $item) : ?>
 
-            <form action="<?= URLROOT ?>/admin/contact/feedback/<?= $item['idlienhe'] ?>" method="POST" class="form">
+            <form action="<?= URLROOT ?>/admin/contact/feedback/<?= $item['idlienhe'] ?>" method="POST" class="form" onsubmit="return confirm('Bạn có chắc chắn muốn gửi');">
 
                 <div class="column">
                     <div class="input-box">
@@ -36,7 +36,7 @@
                     <textarea name="content" rows="3" placeholder="Nhập nội dung phản hồi" required></textarea>
                 </div>
 
-                <button class="btn-save" name="feedback" type="submit">Gửi</button>
+                <button class="btn-save" name="feedback" type="submit">Phản hồi</button>
                 <a class="btn-a btn-cancel" href="<?= URLROOT . '/admin/contact' ?>">Hủy</a>
             </form>
 

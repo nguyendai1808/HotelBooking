@@ -78,23 +78,6 @@ body a {
     border-radius: 8px;
 }
 
-@media screen and (max-width: 992px) {
-    .rating-room {
-        padding-top: 5%;
-    }
-}
-
-@media screen and (max-width: 400px) {
-    .rating-room {
-        padding-top: 10%;
-    }
-
-    .rating-room .rating-form {
-        width: 100%;
-        height: auto;
-    }
-}
-
 .rating-room .rating-box {
     display: flex;
     align-items: center;
@@ -150,11 +133,6 @@ input::-webkit-slider-thumb {
     font-weight: 600;
 }
 
-@media screen and (max-width: 500px) {
-    .rating-room .star {
-        text-align: left;
-    }
-}
 
 
 /* ---------------------------------pay -----------------------------------*/
@@ -250,18 +228,6 @@ input::-webkit-slider-thumb {
     cursor: pointer;
     border-radius: 5px;
     width: 100%;
-}
-
-@media (max-width: 600px) {
-    .change-date .date-content {
-        margin: 25% auto;
-    }
-}
-
-@media (max-width: 400px) {
-    .change-date .date-content {
-        margin: 35% auto;
-    }
 }
 
 /* ---------------------------------------------room-item cart, his, pay ---------------------------------------------*/
@@ -446,36 +412,6 @@ input::-webkit-slider-thumb {
 .cart .cart-total .bold {
     font-weight: bold;
 }
-
-@media (min-width: 990px) {
-    .cart .cart-total {
-        position: sticky;
-        top: 90px;
-    }
-}
-
-@media screen and (max-width: 992px) {
-    .cart .cart-total {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background-color: #fff;
-        z-index: 2;
-        padding: 20px 40px;
-    }
-}
-
-@media screen and (max-width: 600px) {
-    .cart .cart-total {
-        padding: 16px;
-    }
-
-    .cart .cart-total .btn-booking {
-        width: 100%;
-    }
-}
-
 
 /*  ---------------------------------------history - personal-infor ---------------------------------------*/
 .sidebar {
@@ -678,45 +614,6 @@ input::-webkit-slider-thumb {
     cursor: pointer;
 }
 
-@media screen and (max-width: 992px) {
-    #room-page .room .img-fluid {
-        height: 350px;
-    }
-
-}
-
-@media screen and (max-width: 768px) {
-    #home-page .room .room-img .img-fluid {
-        height: 320px;
-    }
-
-    #detailroom-page .room .img-fluid {
-        height: 320px;
-    }
-
-
-    #room-page .room .img-fluid {
-        height: 300px;
-    }
-
-}
-
-@media screen and (max-width: 400px) {
-    #home-page .room .room-img .img-fluid {
-        height: 250px;
-    }
-
-    #detailroom-page .room .img-fluid {
-        height: 250px;
-    }
-
-
-    #room-page .room .img-fluid {
-        height: 230px;
-    }
-}
-
-
 
 /* ------------------------------------ quantity bed ----------------------------------------*/
 .bed-item .quantity {
@@ -762,13 +659,13 @@ input::-webkit-slider-thumb {
     padding-bottom: 20px;
 }
 
-.room #category li{
+.room #category li {
     color: #9D6D33;
     font-weight: 500;
     cursor: pointer;
 }
 
-.room #category li:hover{
+.room #category li:hover {
     color: #FFC107;
 }
 
@@ -1315,70 +1212,6 @@ main .service .service-item:hover {
 }
 
 
-
-@media screen and (max-width: 1200px) {
-    .detailroom .carousel {
-        grid-auto-columns: calc((100% / 3) - 8px);
-    }
-
-    .detailroom #main-img {
-        height: 250px;
-    }
-}
-
-@media screen and (max-width: 992px) {
-    .detailroom .detail-image {
-        margin-bottom: 30px;
-    }
-
-    .detailroom .carousel {
-        grid-auto-columns: calc((100% / 4) - 10px);
-    }
-
-    .detailroom #main-img {
-        height: 400px;
-    }
-
-    .detailroom .carousel img {
-        height: 100px;
-    }
-}
-
-@media screen and (max-width: 768px) {
-    .detailroom .carousel {
-        grid-auto-columns: calc((100% / 3) - 8px);
-    }
-
-    .detailroom #main-img {
-        max-height: 320px;
-    }
-
-    .detailroom .carousel img {
-        height: 90px;
-    }
-
-    .detailroom .list-img i:first-child {
-        left: -10px;
-    }
-
-    .detailroom .list-img i:last-child {
-        right: -10px;
-    }
-
-}
-
-@media screen and (max-width: 400px) {
-
-    .detailroom #main-img {
-        max-height: 250px;
-    }
-
-    .detailroom .carousel img {
-        height: 70px;
-    }
-}
-
-
 /* review-amenities --------------------------------- */
 .review-amenities .tab-buttons {
     margin-top: 15px;
@@ -1488,37 +1321,6 @@ main .service .service-item:hover {
     content: ",";
 }
 
-@media (max-width: 768px) {
-    .review-amenities .review-item .rating {
-        flex-direction: column;
-    }
-
-    .review-amenities .review-item .rating li {
-        padding-left: 0;
-        margin-bottom: 5px;
-    }
-
-    .review-amenities .review-item .rating li:last-child {
-        margin-bottom: 0;
-    }
-
-    .review-amenities .review-item .rating li::before {
-        padding-right: 10px;
-        content: ">";
-    }
-
-    .review-amenities .review-item .rating li:first-child:before {
-        content: "";
-        padding: 0;
-    }
-
-    .review-amenities .review-item .rating li:not(:last-child, :first-child)::after {
-        content: none;
-    }
-
-}
-
-
 /* ------------------------------------slider-wrapper --------------------------------*/
 .slider-wrapper {
     width: 100%;
@@ -1607,18 +1409,6 @@ main .service .service-item:hover {
     z-index: 2;
 }
 
-@media screen and (max-width: 992px) {
-    .comment .slider-wrapper .carousel {
-        grid-auto-columns: calc((100% / 2) - 9px);
-    }
-}
-
-@media screen and (max-width: 768px) {
-    .comment .slider-wrapper .carousel {
-        grid-auto-columns: 100%;
-    }
-}
-
 /* about-list-img slider-wrapper ----------------------------------*/
 
 .about-list-img .slider-wrapper .carousel {
@@ -1659,27 +1449,6 @@ main .service .service-item:hover {
     z-index: 2;
 }
 
-@media screen and (max-width: 992px) {
-    .room-slider .slider-wrapper .carousel {
-        grid-auto-columns: calc((100% / 2) - 9px);
-    }
-}
-
-@media screen and (max-width: 768px) {
-    .room-slider .slider-wrapper .carousel {
-        grid-auto-columns: 100%;
-    }
-
-    .room-slider .slider-wrapper #left {
-        left: 0px;
-        top: 30%;
-    }
-
-    .room-slider .slider-wrapper #right {
-        right: 0px;
-        top: 30%;
-    }
-}
 
 /*  -----------------------------------about --------------------------------- */
 
@@ -1881,79 +1650,6 @@ main .service .service-item:hover {
     }
 }
 
-@media (max-width: 992px) {
-    .about .about-img {
-        height: 400px;
-    }
-
-    .see-detail {
-        text-align: center;
-    }
-
-    .about-list-img .slider-wrapper {
-        padding: 0px;
-    }
-
-    .about-list-img .slider-wrapper .card-img img {
-        height: 400px;
-    }
-
-    .video .image-play img {
-        height: 400px;
-    }
-}
-
-@media (max-width: 768px) {
-    .about .about-img {
-        height: 300px;
-    }
-
-    .about-list-img .slider-wrapper .card-img img {
-        height: 300px;
-    }
-
-    .video .image-play img {
-        height: 300px;
-    }
-
-    .video .video-wrapper {
-        margin-top: 10%;
-    }
-
-    .video #video-player {
-        height: 80%;
-        margin: 0;
-    }
-
-    .video #video-overlay {
-        padding: 20px;
-    }
-
-}
-
-
-@media (max-width: 400px) {
-    .about .about-img {
-        height: 230px;
-    }
-
-    .about-list-img .slider-wrapper .card-img img {
-        height: 230px;
-    }
-
-    .video .image-play img {
-        height: 230px;
-    }
-
-    .video .video-wrapper {
-        margin-top: 50%;
-    }
-
-    .video #video-player {
-        height: 50%;
-        margin: 0;
-    }
-}
 
 /* --------------------------------------comment ------------------------------------*/
 
@@ -2124,13 +1820,6 @@ textarea {
     background-color: #ffc107ad;
 }
 
-
-@media (max-width: 400px) {
-    .contact .contact-map iframe {
-        height: 300px;
-    }
-}
-
 /* -------------------------------header------------------------------------- */
 
 header {
@@ -2283,100 +1972,6 @@ header .account i {
     padding-right: 10px;
 }
 
-@media(max-width: 992px) {
-    header .logo {
-        float: left;
-        padding-left: 10px;
-        width: 80%;
-        justify-content: start;
-    }
-
-    header .logo img {
-        width: 100%;
-        height: 60px;
-        line-height: 60px;
-    }
-
-    header .open-sidebar-button {
-        float: right;
-        width: 20%;
-        text-align: right;
-    }
-
-    header .navbar-content {
-        flex-direction: column;
-        position: fixed;
-        top: 0;
-        right: -100%;
-        z-index: 10;
-        width: 300px;
-        height: 100%;
-        transition: 0.4s ease-out;
-        background-color: white;
-        box-shadow: -5px 0 5px rgba(134, 133, 133, 0.496);
-    }
-
-
-    header .navbar-content .navbar-item {
-        flex-direction: column;
-        align-items: flex-start;
-        width: 100%;
-        padding-left: 20px;
-    }
-
-    header .navbar-content .navbar-item a {
-        width: 100%;
-    }
-
-    header .navbar-content .navbar-other {
-        flex-direction: column;
-        align-items: flex-start;
-        width: 100%;
-        margin-top: 30px;
-        padding-left: 20px;
-    }
-
-    header .cart span {
-        display: block;
-    }
-
-    header .open-sidebar-button,
-    header .close-sidebar-button {
-        display: flex;
-        align-items: center;
-        padding: 20px;
-    }
-
-    header .open-sidebar-button {
-        justify-content: end;
-    }
-
-    header #sidebar-active:checked~.navbar-content {
-        right: 0;
-    }
-
-    header #sidebar-active:checked~#overlay {
-        height: 100%;
-        width: 100%;
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: 9;
-    }
-}
-
-@media(max-width: 400px) {
-    header .navbar-content {
-        width: 100%;
-    }
-
-    header .logo img {
-        width: 100%;
-        height: 50px;
-        line-height: 50px;
-    }
-}
-
 
 /* -------------------------------footer------------------------------------- */
 footer {
@@ -2505,33 +2100,6 @@ footer {
     font-size: 14px;
     font-weight: 500;
     text-align: center;
-}
-
-@media (max-width: 1200px) {
-    .footer {
-        max-width: 960px;
-    }
-
-    .footer-wrapper .footer-item,
-    .footer-wrapper .footer-item:nth-child(1) {
-        width: calc(50% - 30px);
-    }
-}
-
-@media (max-width: 768px) {
-    .footer {
-        max-width: 720px;
-    }
-
-    .footer-wrapper .footer-item .socials {
-        margin-bottom: 30px;
-    }
-
-    .footer-wrapper .footer-item,
-    .footer-wrapper .footer-item:nth-child(1) {
-        width: 100%;
-        margin: 0 10px 0px;
-    }
 }
 
 /* backtop */

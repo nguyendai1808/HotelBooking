@@ -1,7 +1,7 @@
 <section class="main-section">
     <div class="form-layout">
         <h3>Thêm phòng khuyến mãi</h3>
-        <form action="<?= URLROOT ?>/admin/offers/createPromotionRoom/<?= $data['idkhuyenmai'] ?>" method="post" class="form">
+        <form action="<?= URLROOT ?>/admin/offers/createPromotionRoom/<?= $data['idkhuyenmai'] ?>" method="post" class="form" onsubmit="return confirm('Bạn có chắc chắn muốn thêm');">
             <div class="input-box">
                 <label>Chọn phòng</label>
                 <div class="select-box">

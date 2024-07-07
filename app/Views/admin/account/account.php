@@ -33,9 +33,9 @@
                                         <a href="<?= URLROOT ?>/admin/account/detail/<?= $item['idtaikhoan'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-eye"></i></a>
 
                                         <?php if ($item['trangthai'] == 'Khóa') : ?>
-                                            <a href="<?= URLROOT ?>/admin/account/unlock/<?= $item['idtaikhoan'] ?>" class="btn btn-info text-white mx-1"><i class="fa-solid fa-lock-open"></i></a>
+                                            <a href="<?= URLROOT ?>/admin/account/unlock/<?= $item['idtaikhoan'] ?>" onclick="return confirm('Bạn có chắc chắn muốn mở khóa tài khoản này');" class="btn btn-info text-white mx-1"><i class="fa-solid fa-lock-open"></i></a>
                                         <?php else : ?>
-                                            <a href="<?= URLROOT ?>/admin/account/lock/<?= $item['idtaikhoan'] ?>" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-lock"></i></a>
+                                            <a href="<?= URLROOT ?>/admin/account/lock/<?= $item['idtaikhoan'] ?>" onclick="return confirm('Bạn có chắc chắn muốn khóa tài khoản này');" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-lock"></i></a>
                                         <?php endif; ?>
 
                                     </div>

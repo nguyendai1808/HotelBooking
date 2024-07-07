@@ -31,7 +31,7 @@
                                             <a href="<?= URLROOT ?>/admin/offers/updatePromotion/<?= $item['idkhuyenmai'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-pen-to-square"></i></a>
                                         <?php endif; ?>
 
-                                        <a href="<?= URLROOT ?>/admin/offers/deletePromotion/<?= $item['idkhuyenmai'] ?>" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></a>
+                                        <a href="<?= URLROOT ?>/admin/offers/deletePromotion/<?= $item['idkhuyenmai'] ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa');" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></a>
                                     </div>
                                 </td>
                             </tr>
@@ -66,7 +66,7 @@
                                 <td class="method">
                                     <div class="d-flex justify-content-center">
                                         <a href="<?= URLROOT ?>/admin/offers/updatePayType/<?= $item['idloaihinhtt'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-pen-to-square"></i></a>
-                                        <a href="<?= URLROOT ?>/admin/offers/deletePayType/<?= $item['idloaihinhtt'] ?>" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></a>
+                                        <a href="<?= URLROOT ?>/admin/offers/deletePayType/<?= $item['idloaihinhtt'] ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa loại hình thanh toán này');" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></a>
                                     </div>
                                 </td>
                             </tr>

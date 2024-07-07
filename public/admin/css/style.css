@@ -211,15 +211,3 @@
 .form .btn-cancel:hover {
   background: rgba(219, 17, 17, 0.688);
 }
-
-
-/*Responsive*/
-@media screen and (max-width: 768px) {
-  .form .column {
-    flex-wrap: wrap;
-  }
-
-  /* .form :where(.gender-option, .gender) {
-    row-gap: 15px;
-  } */
-}

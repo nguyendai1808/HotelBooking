@@ -11,7 +11,7 @@ class Account extends Controller
 
     public function index()
     {
-        $accounts =  $this->AccountModel->getAccount();
+        $accounts =  $this->AccountModel->getAccount2();
 
         $this->view('admin', 'account/account.php', [
             'accounts' => $accounts
@@ -23,7 +23,10 @@ class Account extends Controller
         if (isset($_POST['create'])) {
             $result = $this->AccountModel->createAccount2($_POST['surname'], $_POST['name'], $_POST['email'], $_POST['phone'], $_POST['pass'], $_POST['loaitk']);
             if ($result) {
-                header('location:' . URLROOT . '/admin/category');
+                echo "<script> alert('Thêm thành công');
+                        window.location.href = '" . URLROOT . "/admin/account';
+                    </script>";
+                exit();
             }
         }
         $this->view('admin', 'account/create.php');

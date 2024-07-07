@@ -117,11 +117,11 @@ class BookingModel
                         $ngaydi = $item['ngaydi'];
                         $id_phong = $item['id_phong'];
                         $id_dondat = $item['id_dondat'];
-                        $id_taikhoan = $item['id_taikhoan'];
+                        $id_taikhoan = $item['id_taikhoan'] ?? 'NULL';
                         $tonggia = intval($item['tonggia']);
                         $tonggiahuy = ($tonggia / $soluongdat) * intval($soluonghuy);
                         $sql = "INSERT INTO datphong(ngayden, ngaydi, soluongdat, tonggia, trangthaidat, id_phong, id_dondat, id_taikhoan) 
-                        VALUES ('$ngayden','$ngaydi','$soluonghuy','$tonggiahuy','Đã hủy','$id_phong','$id_dondat','$id_taikhoan')";
+                        VALUES ('$ngayden','$ngaydi','$soluonghuy','$tonggiahuy','Đã hủy','$id_phong','$id_dondat', $id_taikhoan)";
                     }
                     return $this->db->execute($sql);
                 }
@@ -148,7 +148,7 @@ class BookingModel
         $sql = "SELECT id_khachhang FROM thanhtoan WHERE id_dondat = '$iddondat'";
         $idkhachhang = $this->db->selectFirstColumnValue($sql, 'id_khachhang');
 
-        // Lấy tổng giá phòng hủy
+        // Lấy giá phòng hủy
         $sql = "SELECT (tonggia / soluongdat) as giaphong FROM datphong WHERE iddatphong = '$iddatphong'";
         $giaphong = $this->db->selectFirstColumnValue($sql, 'giaphong');
 
@@ -478,7 +478,7 @@ class BookingModel
     public function getBookingsById($id)
     {
         $sql = "SELECT * FROM dondat join datphong on dondat.iddondat = datphong.id_dondat
-        join phong on phong.idphong = datphong.id_phong where dondat.iddondat = $id";
+        join phong on phong.idphong = datphong.id_phong where dondat.iddondat = '$id'";
         $result = $this->db->select($sql);
         return $result;
     }

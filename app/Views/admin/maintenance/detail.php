@@ -31,7 +31,7 @@
                                     <td class="method">
                                         <div class="d-flex justify-content-center">
                                             <a href="<?= URLROOT ?>/admin/maintenance/updateRoom/<?= $item['idphong'] . '/' . $data['idbaotri'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-pen-to-square"></i></a>
-                                            <a href="<?= URLROOT ?>/admin/maintenance/deleteRoom/<?= $item['idphong'] . '/' . $data['idbaotri'] ?>" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></a>
+                                            <a href="<?= URLROOT ?>/admin/maintenance/deleteRoom/<?= $item['idphong'] . '/' . $data['idbaotri'] ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa');" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></a>
                                         </div>
                                     </td>
                                 <?php endif; ?>

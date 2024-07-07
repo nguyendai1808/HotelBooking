@@ -1,6 +1,6 @@
 <section class="main-section">
     <div class="table-warpper">
-        <h4 class="table-title">Danh sách tài khoản</h4>
+        <h4 class="table-title">Danh sách đánh giá</h4>
         <div class="table-content">
             <table>
                 <thead>
@@ -30,9 +30,9 @@
                                 </td>
                                 <td class="method">
                                     <div class="d-flex justify-content-center">
-                                        <a href="<?= URLROOT ?>/admin/rating/website/<?= $item['iddanhgia'] ?>" class="btn btn-info text-white mx-1"><i class="fa-solid fa-globe"></i></a>
-                                        <a href="<?= URLROOT ?>/admin/rating/display/<?= $item['iddanhgia'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-eye"></i></a>
-                                        <a href="<?= URLROOT ?>/admin/rating/hidden/<?= $item['iddanhgia'] ?>" class="btn btn-secondary text-white mx-1"><i class="fa-solid fa-eye-slash"></i></a>
+                                        <a href="<?= URLROOT ?>/admin/rating/website/<?= $item['iddanhgia'] ?>" onclick="return confirm('Bạn có chắc chắn muốn cho bình luận này hiển thị lên trang web');" class="btn btn-info text-white mx-1"><i class="fa-solid fa-globe"></i></a>
+                                        <a href="<?= URLROOT ?>/admin/rating/display/<?= $item['iddanhgia'] ?>" onclick="return confirm('Bạn có chắc chắn muốn chuyển sang trạng thái hiển thị');" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-eye"></i></a>
+                                        <a href="<?= URLROOT ?>/admin/rating/hidden/<?= $item['iddanhgia'] ?>" onclick="return confirm('Bạn có chắc chắn muốn chuyển sang trạng thái ẩn');" class="btn btn-secondary text-white mx-1"><i class="fa-solid fa-eye-slash"></i></a>
                                     </div>
                                 </td>
                             </tr>

@@ -76,9 +76,19 @@ document.addEventListener("DOMContentLoaded", function () {
     var dateEnd = document.getElementById("dateEnd");
 
     if (dateStart && dateEnd) {
+
         // Thêm lắng nghe sự kiện cho input ngày bắt đầu
         dateStart.addEventListener("input", function () {
-            if (dateStart.value >= dateEnd.value) {
+            var currentDate = new Date();
+            currentDate.setDate(currentDate.getDate());
+
+            if (new Date(dateStart.value) < currentDate) {
+                alert("Ngày bắt đầu phải lớn hơn ngày hôm nay ít nhất 1 ngày.");
+                dateStart.value = null;
+                return;
+            }
+
+            if (dateStart.value >= dateEnd.value || !dateEnd.value) {
                 if (dateStart.value) {
                     var newEndDate = new Date(dateStart.value);
                     newEndDate.setDate(newEndDate.getDate() + 1);
@@ -89,7 +99,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Thêm lắng nghe sự kiện cho input ngày kết thúc
         dateEnd.addEventListener("input", function () {
-            if (dateEnd.value <= dateStart.value) {
+            var currentDate = new Date();
+            currentDate.setDate(currentDate.getDate() + 1);
+
+            if (new Date(dateEnd.value) < currentDate) {
+                alert("Ngày kết thúc phải lớn hơn ngày hôm nay ít nhất 2 ngày.");
+                dateEnd.value = null;
+                return;
+            }
+
+            if (dateEnd.value <= dateStart.value || !dateStart.value) {
                 if (dateEnd.value) {
                     var newStartDate = new Date(dateEnd.value);
                     newStartDate.setDate(newStartDate.getDate() - 1);
@@ -99,3 +118,22 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const roomSelect = document.getElementById('roomSelect');
+    const quantityInput = document.getElementById('quantityInput');
+
+    if (roomSelect && quantityInput) {
+        roomSelect.addEventListener('change', function () {
+            const selectedOption = roomSelect.options[roomSelect.selectedIndex];
+            const maxQuantity = selectedOption.getAttribute('data-soluong');
+            quantityInput.max = maxQuantity;
+        });
+
+        const initialSelectedOption = roomSelect.options[roomSelect.selectedIndex];
+        quantityInput.max = initialSelectedOption.getAttribute('data-soluong');
+    }
+
+});
+

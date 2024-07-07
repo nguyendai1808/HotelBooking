@@ -67,7 +67,7 @@ class Booking extends Controller
             $iddondat = $_POST['completedInvoice'];
             $update = $this->BookingModel->completedInvoice($iddondat);
             if ($update) {
-                echo '<script>alert("Cập nhật thành công đươn đặt " + ' . $iddondat . ')</script>';
+                echo '<script>alert("Cập nhật thành công đơn đặt " + ' . $iddondat . ')</script>';
                 $this->index();
             } else {
                 echo '<script>alert("lỗi")</script>';

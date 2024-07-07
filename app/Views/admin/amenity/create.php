@@ -1,7 +1,7 @@
 <section class="main-section">
     <div class="form-layout">
         <h3>Thêm tiện nghi phòng</h3>
-        <form action="<?= URLROOT ?>/admin/amenity/create" method="POST" class="form" enctype="multipart/form-data">
+        <form action="<?= URLROOT ?>/admin/amenity/create" method="POST" class="form" enctype="multipart/form-data" onsubmit="return confirm('Bạn có chắc chắn muốn thêm');">
             <div class="input-box">
                 <label>Tên Tiện Nghi:</label>
                 <input type="text" name="name" placeholder="Nhập tên tiện nghi" required />

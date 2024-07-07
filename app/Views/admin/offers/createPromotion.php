@@ -1,7 +1,7 @@
 <section class="main-section">
     <div class="form-layout">
         <h3>Thêm khuyến mãi</h3>
-        <form action="<?= URLROOT ?>/admin/offers/createPromotion" method="POST" class="form">
+        <form action="<?= URLROOT ?>/admin/offers/createPromotion" method="POST" class="form" onsubmit="return confirm('Bạn có chắc chắn muốn thêm');">
             <div class="input-box">
                 <label>Phần trăm khuyến mãi</label>
                 <input type="number" name="promotion" placeholder="Nhập phần trăm khuyến mãi. VD: 20" required />

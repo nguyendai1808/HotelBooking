@@ -4,7 +4,7 @@
 
         <div class="form-layout">
             <h3>Cập Nhật Tiện Nghi</h3>
-            <form action="<?= URLROOT ?>/admin/amenity/updateBed/<?= $item['idgiuong'] ?>" method="POST" class="form" >
+            <form action="<?= URLROOT ?>/admin/amenity/updateBed/<?= $item['idgiuong'] ?>" method="POST" class="form" onsubmit="return confirm('Bạn có chắc chắn muốn cập nhật');">
                 <div class="input-box">
                     <label for="name">Tên Giường:</label>
                     <input type="text" name="nameBed" value="<?= $item['tengiuong'] ?>" placeholder="Nhập tên giường" required />

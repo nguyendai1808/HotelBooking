@@ -1,7 +1,7 @@
 <section class="main-section">
     <div class="form-layout">
         <h3>Thêm loại hình thanh toán</h3>
-        <form action="<?= URLROOT ?>/admin/offers/createPayType" method="POST" class="form">
+        <form action="<?= URLROOT ?>/admin/offers/createPayType" method="POST" class="form" onsubmit="return confirm('Bạn có chắc chắn muốn thêm');">
             <div class="input-box">
                 <label>Loại hình thanh toán:</label>
                 <input type="text" name="namePayType" placeholder="Nhập tên loại hình thanh toán" required />

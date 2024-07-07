@@ -55,7 +55,7 @@ class RoomModel
 
     public function emptyRoom($checkin, $checkout, $idphong)
     {
-        $sql = "SELECT COUNT(*) as sophongban FROM datphong WHERE datphong.id_phong = '$idphong' AND (
+        $sql = "SELECT SUM(datphong.soluongdat) as sophongban FROM datphong WHERE datphong.id_phong = '$idphong' AND (
             ('$checkin' BETWEEN ngayden AND ngaydi)
             OR ('$checkout' BETWEEN ngayden AND ngaydi)
             OR (ngayden BETWEEN '$checkin' AND '$checkout')

@@ -4,7 +4,7 @@
 
         <?php foreach ($data['maintenance'] as $item) : ?>
 
-            <form action="<?= URLROOT ?>/admin/maintenance/update/<?= $item['idbaotri'] ?>" method="POST" class="form">
+            <form action="<?= URLROOT ?>/admin/maintenance/update/<?= $item['idbaotri'] ?>" method="POST" class="form" onsubmit="return confirm('Bạn có chắc chắn muốn cập nhật');">
 
                 <div class="input-box">
                     <label>Tên bảo trì</label>

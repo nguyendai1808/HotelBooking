@@ -4,7 +4,7 @@
 
         <?php foreach ($data['promotion'] as $item) : ?>
 
-            <form action="<?= URLROOT ?>/admin/offers/updatePromotion/<?= $item['idkhuyenmai'] ?>" method="POST" class="form">
+            <form action="<?= URLROOT ?>/admin/offers/updatePromotion/<?= $item['idkhuyenmai'] ?>" method="POST" class="form" onsubmit="return confirm('Bạn có chắc chắn muốn cập nhật');">
                 <div class="input-box">
                     <label>Phần trăm khuyến mãi</label>
                     <input type="number" name="promotion" value="<?= $item['khuyenmai'] ?>" placeholder="Nhập phần trăm khuyến mãi. VD: 20" required />

@@ -4,7 +4,7 @@
 
         <?php foreach ($data['room'] as $item) : ?>
 
-            <form action="<?= URLROOT ?>/admin/room/update/<?= $item['idphong'] ?>" method="post" class="form" enctype="multipart/form-data" id="uploadForm">
+            <form action="<?= URLROOT ?>/admin/room/update/<?= $item['idphong'] ?>" method="post" class="form" enctype="multipart/form-data" id="uploadForm" onsubmit="return confirm('Bạn có chắc chắn muốn cập nhật');">
 
                 <div class="column">
                     <div class="input-box">

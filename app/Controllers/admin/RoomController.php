@@ -67,7 +67,10 @@ class Room extends Controller
 
             $result = $this->RoomModel->updateStatusRoom('Tạm dừng', $idphong);
             if ($result) {
-                header('location:' . URLROOT . '/admin/room');
+                echo "<script> alert('cập nhật trạng thái: Tạm dừng');
+                        window.location.href = '" . URLROOT . "/admin/room';
+                    </script>";
+                exit();
             }
         } else {
             header('location:' . URLROOT . '/admin/room');
@@ -80,7 +83,10 @@ class Room extends Controller
 
             $result = $this->RoomModel->updateStatusRoom('Hoạt động', $idphong);
             if ($result) {
-                header('location:' . URLROOT . '/admin/room');
+                echo "<script> alert('cập nhật trạng thái: Hoạt động');
+                        window.location.href = '" . URLROOT . "/admin/room';
+                    </script>";
+                exit();
             }
         } else {
             header('location:' . URLROOT . '/admin/room');
@@ -149,7 +155,13 @@ class Room extends Controller
                     }
                 }
 
-                header('location:' . URLROOT . '/admin/room');
+                echo "<script> alert('Thêm phòng thành công');
+                        window.location.href = '" . URLROOT . "/admin/room';
+                    </script>";
+                exit();
+            } else {
+                echo "<script> alert('Lỗi');</script>";
+                exit();
             }
         }
 
@@ -216,7 +228,10 @@ class Room extends Controller
                         }
                     }
 
-                    header('location:' . URLROOT . '/admin/room');
+                    echo "<script> alert('Cập nhật phòng thành công');
+                        window.location.href = '" . URLROOT . "/admin/room';
+                    </script>";
+                    exit();
                 } else {
                     echo '<script>alert("lỗi")</script>';
                     exit();
@@ -312,7 +327,10 @@ class Room extends Controller
         if (!empty($idphong) && filter_var($idphong, FILTER_VALIDATE_INT)) {
             $delete = $this->RoomModel->deleteRoom($idphong);
             if ($delete) {
-                header('location:' . URLROOT . '/admin/room');
+                echo "<script> alert('Xóa thành công');
+                        window.location.href = '" . URLROOT . "/admin/room';
+                    </script>";
+                exit();
             } else {
                 echo '<script>alert("lỗi")</script>';
                 exit();

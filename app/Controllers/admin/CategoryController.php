@@ -23,9 +23,12 @@ class Category extends Controller
     {
         if (isset($_POST['create'])) {
 
-            $result = $this->CategoryModel->createCategory(null,$_POST['name']);
+            $result = $this->CategoryModel->createCategory($_POST['name'], $_POST['desc']);
             if ($result) {
-                header('location:' . URLROOT . '/admin/category');
+                echo "<script> alert('Thêm thành công');
+                        window.location.href = '" . URLROOT . "/admin/category';
+                    </script>";
+                exit();
             }
         }
         $this->view('admin', 'category/create.php');
@@ -39,7 +42,10 @@ class Category extends Controller
             if (isset($_POST['update'])) {
                 $update = $this->CategoryModel->updateCategory($iddanhmuc, $_POST['name'], $_POST['desc']);
                 if ($update) {
-                    header('location:' . URLROOT . '/admin/category');
+                    echo "<script> alert('Cập nhật thành công');
+                        window.location.href = '" . URLROOT . "/admin/category';
+                    </script>";
+                    exit();
                 } else {
                     echo '<script>alert("lỗi")</script>';
                     exit();
@@ -57,10 +63,13 @@ class Category extends Controller
 
     public function delete($iddanhmuc = null)
     {
-        if (!empty($iddanhmuc)) {
+        if (!empty($iddanhmuc) && filter_var($iddanhmuc, FILTER_VALIDATE_INT)) {
             $delete = $this->CategoryModel->deleteCategory($iddanhmuc);
             if ($delete) {
-                header('location:' . URLROOT . '/admin/category');
+                echo "<script> alert('Xóa thành công');
+                        window.location.href = '" . URLROOT . "/admin/category';
+                    </script>";
+                exit();
             } else {
                 echo '<script>alert("lỗi")</script>';
                 exit();

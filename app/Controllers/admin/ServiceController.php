@@ -31,7 +31,10 @@ class Service extends Controller
             $result = $this->ServiceModel->createServices($name, $desc, $image);
 
             if ($result) {
-                header('location:' . URLROOT . '/admin/service');
+                echo "<script> alert('Thêm thành công');
+                        window.location.href = '" . URLROOT . "/admin/service';
+                    </script>";
+                exit();
             }
         }
         $this->view('admin', 'service/create.php');
@@ -53,7 +56,10 @@ class Service extends Controller
 
                 $update = $this->ServiceModel->updateServices($iddichvu, $name, $desc, $image);
                 if ($update) {
-                    header('location:' . URLROOT . '/admin/service');
+                    echo "<script> alert('Cập nhật thành công');
+                        window.location.href = '" . URLROOT . "/admin/service';
+                    </script>";
+                    exit();
                 } else {
                     echo '<script>alert("lỗi")</script>';
                     exit();
@@ -74,7 +80,10 @@ class Service extends Controller
         if (!empty($iddichvu)) {
             $delete = $this->ServiceModel->deleteService($iddichvu);
             if ($delete) {
-                header('location:' . URLROOT . '/admin/service');
+                echo "<script> alert('Xóa thành công');
+                        window.location.href = '" . URLROOT . "/admin/service';
+                    </script>";
+                exit();
             } else {
                 echo '<script>alert("lỗi")</script>';
                 exit();

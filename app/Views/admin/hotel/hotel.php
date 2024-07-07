@@ -5,7 +5,7 @@
         <?php if (!empty($data['hotel'])) :
             foreach ($data['hotel'] as $item) : ?>
 
-                <form action="<?= URLROOT ?>/admin/hotel/update" method="post" class="form">
+                <form action="<?= URLROOT ?>/admin/hotel/update" method="post" class="form" onsubmit="return confirm('Bạn có chắc chắn muốn cập nhật thông tin');">
                     <div class="column">
                         <div class="input-box">
                             <label>Tên khách sạn</label>

@@ -34,9 +34,9 @@
 
                                         <?php $method = $item['trangthai'] == 'Hoạt động' ? 'pause' : 'continue'; ?>
 
-                                        <a href="<?= URLROOT ?>/admin/room/<?= $method . '/' . $item['idphong'] ?>" class="btn btn-info text-white mx-1"><i class="fa-solid fa-rotate"></i></a>
+                                        <a href="<?= URLROOT ?>/admin/room/<?= $method . '/' . $item['idphong'] ?>" onclick="return confirm('Bạn có chắc chắn muốn thay đổi trạng thái');" class="btn btn-info text-white mx-1"><i class="fa-solid fa-rotate"></i></a>
                                         <a href="<?= URLROOT ?>/admin/room/update/<?= $item['idphong'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-pen-to-square"></i></a>
-                                        <a href="<?= URLROOT ?>/admin/room/delete/<?= $item['idphong'] ?>" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></a>
+                                        <a href="<?= URLROOT ?>/admin/room/delete/<?= $item['idphong'] ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa');" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></a>
                                     </div>
                                 </td>
                             </tr>

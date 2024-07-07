@@ -13,6 +13,12 @@ class AccountModel
         $result = $this->db->select($sql);
         return $result ?? null;
     }
+    public function getAccount2()
+    {
+        $sql = "SELECT * FROM taikhoan where loaitk != 'admin'";
+        $result = $this->db->select($sql);
+        return $result ?? null;
+    }
 
 
     public function createAccount2($Surname, $name, $email, $phone, $pass, $accountType)

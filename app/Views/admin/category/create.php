@@ -1,7 +1,7 @@
 <section class="main-section">
     <div class="form-layout">
         <h3>Thêm Danh Mục Phòng</h3>
-        <form action="<?= URLROOT ?>/admin/category/create" method="POST" class="form">
+        <form action="<?= URLROOT ?>/admin/category/create" method="POST" class="form" onsubmit="return confirm('Bạn có chắc chắn muốn thêm');">
             <div class="input-box">
                 <label>Tên Danh Mục:</label>
                 <input type="text" name="name" placeholder="Nhập tên danh mục" required />
