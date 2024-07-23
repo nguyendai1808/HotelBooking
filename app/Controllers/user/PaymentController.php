@@ -1,6 +1,6 @@
 <?php
 
-require_once './Core/PaymenVnpay.php';
+require_once './core/PaymenVnpay.php';
 
 class Payment extends Controller
 {

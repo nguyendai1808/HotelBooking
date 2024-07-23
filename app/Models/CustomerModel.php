@@ -27,8 +27,11 @@ class CustomerModel
 
     public function getCustomerInvoiceByPage($per_page, $offset)
     {
-        $sql = "SELECT *, COUNT(id_dondat) as sodon, SUM(sotienthanhtoan) as tongtien FROM khachhang 
-        join thanhtoan on khachhang.idkhachhang = thanhtoan.id_khachhang GROUP BY email
+        $sql = "SELECT *, COUNT(id_dondat) as sodon, SUM(sotienthanhtoan) as tongtien FROM khachhang
+        join thanhtoan on khachhang.idkhachhang = thanhtoan.id_khachhang 
+        join dondat on dondat.iddondat = thanhtoan.id_dondat
+        where dondat.trangthaidon = 'Hoàn tất'
+        GROUP BY khachhang.email
         LIMIT $per_page OFFSET $offset";
         $result = $this->db->select($sql);
         return $result;
