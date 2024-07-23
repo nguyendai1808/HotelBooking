@@ -19,10 +19,10 @@
                                 <td class="name"><img src="<?= USER_PATH ?>/images/amenities/<?= !empty($item['icon']) ? $item['icon'] : 'notImage.jpg' ?>" alt="img"><?= $item['tentiennghi'] ?></td>
 
                                 <td class="method">
-                                    <div class="d-flex justify-content-center">
+                                    <form method="post" action="<?= URLROOT ?>/admin/amenity/delete" class="d-flex justify-content-center">
                                         <a href="<?= URLROOT ?>/admin/amenity/update/<?= $item['idtiennghi'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-pen-to-square"></i></a>
-                                        <a href="<?= URLROOT ?>/admin/amenity/delete/<?= $item['idtiennghi'] ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa');" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></a>
-                                    </div>
+                                        <button name="delete" value="<?= $item['idtiennghi'] ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa');" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></button>
+                                    </form>
                                 </td>
                             </tr>
 
@@ -54,10 +54,10 @@
                                 <td class="nameBed"><?= $item['tengiuong'] ?></td>
 
                                 <td class="method">
-                                    <div class="d-flex justify-content-center">
+                                    <form method="post" action="<?= URLROOT ?>/admin/amenity/deleteBed" class="d-flex justify-content-center">
                                         <a href="<?= URLROOT ?>/admin/amenity/updateBed/<?= $item['idgiuong'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-pen-to-square"></i></a>
-                                        <a href="<?= URLROOT ?>/admin/amenity/deleteBed/<?= $item['idgiuong'] ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa');" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></a>
-                                    </div>
+                                        <button name="deleteBed" value="<?= $item['idgiuong'] ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa');" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></button>
+                                    </form>
                                 </td>
                             </tr>
 

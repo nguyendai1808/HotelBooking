@@ -1,4 +1,7 @@
 <?php
+
+require_once './Core/PaymenVnpay.php';
+
 class Payment extends Controller
 {
     private $AccountModel;
@@ -49,9 +52,12 @@ class Payment extends Controller
                 $account = $this->AccountModel->findAccountById(Session::get('user_id'));
             }
 
+            $Booking = $this->getInfoRoomMore($Booking);
+            Session::set('booking', $Booking, 1800);
+
             $this->view('user', 'payment.php', [
                 'account' => $account,
-                'booking' => $this->getRoomMore($Booking)
+                'booking' => $Booking
             ]);
         }
 
@@ -85,9 +91,12 @@ class Payment extends Controller
                 $account = $this->AccountModel->findAccountById(Session::get('user_id'));
             }
 
+            $Booking = $this->getInfoRoomMore($Booking);
+            Session::set('booking', $Booking, 1800);
+
             $this->view('user', 'payment.php', [
                 'account' => $account,
-                'booking' => $this->getRoomMore($Booking)
+                'booking' => $Booking
             ]);
         }
 
@@ -131,77 +140,97 @@ class Payment extends Controller
                 $account = $this->AccountModel->findAccountById(Session::get('user_id'));
             }
 
+            $Booking = $this->getInfoRoomMore($Booking);
+            Session::set('booking', $Booking, 1800);
+
             $this->view('user', 'payment.php', [
                 'account' => $account,
-                'booking' => $this->getRoomMore($Booking)
+                'booking' => $Booking
+            ]);
+        }
+
+        if (Session::get('booking')) {
+            $Booking = Session::get('booking');
+            $account = null;
+            if (!empty(Session::get('user_id'))) {
+                $account = $this->AccountModel->findAccountById(Session::get('user_id'));
+            }
+
+            $this->view('user', 'payment.php', [
+                'account' => $account,
+                'booking' => $Booking
             ]);
         } else {
-
             header('location:' . URLROOT . '/room');
         }
     }
 
-    public function getRoomMore($Rooms)
+    public function getInfoRoomMore($Rooms)
     {
-        foreach ($Rooms as $key => $room) {
-            $promotion = $this->RoomModel->getPromotionRoom($room['idphong']);
-            $Rooms[$key]['khuyenmai'] = $promotion;
+        if ($Rooms) {
+            foreach ($Rooms as $key => $room) {
+                $promotion = $this->RoomModel->getPromotionRoom($room['idphong']);
+                $Rooms[$key]['khuyenmai'] = $promotion;
 
-            $mainImg = $this->RoomModel->getMainImageRoom($room['idphong']);
-            $Rooms[$key]['anhphong'] = $mainImg;
+                $mainImg = $this->RoomModel->getMainImageRoom($room['idphong']);
+                $Rooms[$key]['anhphong'] = $mainImg;
 
-            $nameBed = $this->RoomModel->getNameBed($room['idphong']);
-            $Rooms[$key]['tengiuong'] = $nameBed;
+                $nameBed = $this->RoomModel->getNameBed($room['idphong']);
+                $Rooms[$key]['tengiuong'] = $nameBed;
 
-            $paymentMethod = $this->RoomModel->findPaymentMethod($room['idphong']);
-            if ($paymentMethod) {
-                $Rooms[$key]['loaihinhtt'] = implode(" & ", array_column($paymentMethod, 'loaihinhthanhtoan'));
+                $paymentMethod = $this->RoomModel->findPaymentMethod($room['idphong']);
+                if ($paymentMethod) {
+                    $Rooms[$key]['loaihinhtt'] = implode(" & ", array_column($paymentMethod, 'loaihinhthanhtoan'));
+                }
             }
         }
         return $Rooms;
     }
 
-    public function paynow()
+    public function booking()
     {
-        if (isset($_POST['paynow'])) {
+        $customer = Session::get('customer');
+        $booking = Session::get('booking');
 
-            $customer = Session::get('customer') ?? [];
-            if (count($customer) > 0) {
+        if (!empty($customer) && !empty($booking)) {
 
-                $payment = new PaymentVnpay;
-                $order_id = time();
+            $email = Validate::checkEmail($customer['email']);
+            if (!$email) {
+                Session::delete('customer');
+                echo "<script> alert('Email này không tồn tại, vui lòng nhập đúng email'); 
+                    window.history.back();
+                </script>";
+                exit();
+            }
+
+            $phone = Validate::checkPhone($customer['phone']);
+            if (!$phone) {
+                Session::delete('customer');
+                echo "<script> alert('Số điện thoại này không tồn tại, vui lòng nhập đúng số điện thoại'); 
+                    window.history.back();
+                </script>";
+                exit();
+            }
+
+            $payment = new PaymentVnpay();
+            $order_id = time();
+
+            if (isset($_POST['paynow'])) {
                 $payment_method = $_POST['paynow'];
                 $order_price = $_POST['tongsotien'];
-
-                $booking =  $_POST['booking'];;
-                Session::set('booking', json_decode($booking, true));
-
-                $payment->vnpay_payment($order_id, $order_price, $payment_method);
             }
-        } else {
-            header('location:' . URLROOT . '/room');
-        }
-    }
 
-    public function bookroom()
-    {
-        if (isset($_POST['bookroom'])) {
-
-            $customer = Session::get('customer') ?? [];
-            if (count($customer) > 0) {
-
-                $payment = new PaymentVnpay;
-                $order_id = time();
+            if (isset($_POST['bookroom'])) {
                 $payment_method = $_POST['bookroom'];
                 $order_price = $_POST['sotiendatphong'];
-
-                $booking =  $_POST['booking'];;
-                Session::set('booking', json_decode($booking, true));
-
-                $payment->vnpay_payment($order_id, $order_price, $payment_method);
             }
+            $payment->vnpay_payment($order_id, $order_price, $payment_method);
         } else {
-            header('location:' . URLROOT . '/room');
+            Session::delete('customer');
+            echo "<script> alert('Đã xảy ra lỗi, vui lòng thử lại'); 
+                window.location.href = '" . URLROOT . "/payment';
+            </script>";
+            exit();
         }
     }
 
@@ -214,45 +243,50 @@ class Payment extends Controller
                 'phone' => isset($_POST['phone']) ? $_POST['phone'] : '',
                 'address' => isset($_POST['address']) ? $_POST['address'] : ''
             ];
-
             Session::set('customer', $customer);
         } else {
-            header('location:' . URLROOT . '/room');
+            header('location:' . URLROOT . '/payment');
         }
     }
 
     public function resultPayment()
     {
         if ($_SERVER["REQUEST_METHOD"] == "GET") {
-            $vnp_ResponseCode = $_GET['vnp_ResponseCode'];
-            if ($vnp_ResponseCode == '00') {
 
-                $customer = Session::get('customer') ?? [];
-                $booking = Session::get('booking') ?? [];
+            $customer = Session::get('customer');
+            $booking = Session::get('booking');
+            if (!empty($customer) && !empty($booking)) {
 
-                if (count($customer) > 0 && count($booking) > 0) {
+                $vnp_ResponseCode = $_GET['vnp_ResponseCode'];
+                if ($vnp_ResponseCode == '00') {
+
                     $iddondat = $_GET['vnp_TxnRef'];
-                    $sotien = intval($_GET['vnp_Amount']) / 100;
+                    $sotiendathanhtoan = intval($_GET['vnp_Amount']) / 100;
 
                     $mail = new Mail();
-                    if ($mail->sendMailBooking($customer['email'], 'HotelBooking xin chào!', $customer, $booking, $iddondat, $sotien)) {
+                    if ($mail->sendMailBooking($customer['email'], 'HotelBooking xin chào!', $customer, $booking, $iddondat, $sotiendathanhtoan)) {
 
-                        $idkhachhang =  $this->CustomerModel->findCustomer($customer['fullname'], $customer['email'], $customer['phone'], $customer['address']);
+                        $idkhachhang =  $this->CustomerModel->getIdCustomer($customer['fullname'], $customer['email'], $customer['phone'], $customer['address']);
                         if (empty($idkhachhang)) {
                             $this->CustomerModel->createCustomer($customer['fullname'], $customer['email'], $customer['phone'], $customer['address']);
-                            $idkhachhang =  $this->CustomerModel->findCustomer($customer['fullname'], $customer['email'], $customer['phone'], $customer['address']);
+                            $idkhachhang =  $this->CustomerModel->getIdCustomer($customer['fullname'], $customer['email'], $customer['phone'], $customer['address']);
                         }
 
-                        $idtaikhoan = Session::get('user_id') ?? null;
+                        if (Session::get('user_id')) {
+                            $idtaikhoan = Session::get('user_id');
+                        } else {
+                            $idtaikhoan = $this->AccountModel->getIdAccountByEmail($customer['email']);
+                        }
+
                         $tongsotien = 0;
                         foreach ($booking as $item) {
                             $tongsotien += intval($item['tonggia']);
                         }
 
-                        if (($tongsotien - $sotien) > 0) {
+                        if (($tongsotien - $sotiendathanhtoan) > 0) {
                             $trangthaidon = 'Đã cọc tiền';
-                            $sotiencoc = $sotien;
-                            $sotienconthieu = ($tongsotien - $sotien);
+                            $sotiencoc = $sotiendathanhtoan;
+                            $sotienconthieu = ($tongsotien - $sotiendathanhtoan);
                         } else {
                             $trangthaidon = 'Đã thanh toán';
                             $sotiencoc = 0;
@@ -269,30 +303,22 @@ class Payment extends Controller
                             }
                         }
                         $kieuthantoan = "Thanh toán qua VNPAY";
-                        $this->PaymentModel->createPayment($thoigiandat, $sotien, $kieuthantoan, $iddondat, $idkhachhang);
+                        $this->PaymentModel->createPayment($thoigiandat, $sotiendathanhtoan, $kieuthantoan, $iddondat, $idkhachhang);
+
+                        Session::delete('booking');
+                        Session::delete('customer');
 
                         $this->view('user', 'payment_success.php');
-                    } else {
-                        echo "<script> alert('Giao dịch thất bại');
-                        window.location.href = '" . URLROOT . "/room';
-                        </script>";
-                        exit;
-                    };
-                } else {
-                    echo "<script> alert('Giao dịch thất bại');
-                        window.location.href = '" . URLROOT . "/room';
-                        </script>";
-                    exit;
-                };
-            } else {
-                echo "<script> alert('Giao dịch thất bại');
-                    window.location.href = '" . URLROOT . "/room';
-                </script>";
+                        exit();
+                    }
+                }
             }
+            echo "<script> alert('Giao dịch thất bại');
+                window.location.href = '" . URLROOT . "/payment';
+            </script>";
+            exit();
         } else {
-            header('location:' . URLROOT . '/room');
+            header('location:' . URLROOT . '/payment');
         }
-        Session::delete('customer');
-        Session::delete('booking');
     }
 }

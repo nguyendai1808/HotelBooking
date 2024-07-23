@@ -1,7 +1,7 @@
 <Main class="container-fluid">
 
     <section class="banner-image banner-gray mb-5">
-        <img src="<?= USER_PATH ?>/images/<?= $data['display']['baner'] ?? 'notbg.jpg' ?>" alt="banner">
+        <img src="<?= USER_PATH ?>/images/bg-img-2.jpg" alt="banner">
         <div class="banner-content">
             <h3 class="section-title text-uppercase">Thanh toán</h3>
             <div class="banner-item">
@@ -74,7 +74,7 @@
                 </div>
 
                 <div class="col-lg-5">
-                    <form class="pay-total border p-3 bg-white" action="<?= URLROOT ?>/payment/paynow" method="post" onsubmit="return checkFormCustomer();">
+                    <form class="pay-total border p-3 bg-white" action="<?= URLROOT ?>/payment/booking" method="post" onsubmit="return checkFormCustomer();">
                         <h5 class="mb-3 about about-img about-list-img">Chi tiết đặt phòng</h5>
                         <div class="pay-bill">
                             <div class="col-lg-12">
@@ -108,7 +108,6 @@
                             <div class="col-lg-12">
                                 <p class="fw-bold m-0">Tổng số tiền:</p>
 
-                                <input type="hidden" name="booking" value="<?= htmlspecialchars(json_encode($data['booking'])) ?>">
                                 <input type="hidden" name="tongsotien" value="<?= $tongsotien ?>">
                                 <input type="hidden" name="sotiendatphong" value="<?= $sotiendatphong ?>">
 
@@ -131,7 +130,7 @@
 
                             <?php if ($sotiendatphong != 0) : ?>
 
-                                <button type="submit" name="bookroom" value="book" formaction="<?= URLROOT ?>/payment/bookroom" class="btn btn-success fw-bold">Đặt phòng</button>
+                                <button type="submit" name="bookroom" value="book" class="btn btn-success fw-bold">Đặt phòng</button>
 
                             <?php endif; ?>
 

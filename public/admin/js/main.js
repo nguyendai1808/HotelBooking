@@ -1,82 +1,83 @@
+const URLROOT = 'https://hotelbooking.com';
+const USER_PATH = URLROOT + '/public/user';
+const ADMIN_PATH = URLROOT + '/public/admin';
 
-let sidebar = document.querySelector(".sidebar");
-let sidebarBtn = document.querySelector(".sidebarBtn");
-sidebarBtn.onclick = function () {
-    sidebar.classList.toggle("active");
-}
-
-
-const search = document.querySelector('.search-box input'),
-    table_rows = document.querySelectorAll('.table-content tbody tr'),
-    table_headings = document.querySelectorAll('.table-content thead th');
-
-search.addEventListener('input', searchTable);
-
-function searchTable() {
-    table_rows.forEach((row, i) => {
-        let table_data = row.textContent.toLowerCase(),
-            search_data = search.value.toLowerCase();
-
-        row.classList.toggle('hide', table_data.indexOf(search_data) < 0);
-        row.style.setProperty('--delay', i / 25 + 's');
-    })
-
-    document.querySelectorAll('tbody tr:not(.hide)').forEach((visible_row, i) => {
-        visible_row.style.backgroundColor = (i % 2 == 0) ? 'transparent' : '#0000000b';
-    });
-}
-
-
-table_headings.forEach((head, i) => {
-    let sort_asc = false;
-    head.onclick = () => {
-        if (!head.classList.contains('method')) { // Kiểm tra nếu không phải cột "method"
-            table_headings.forEach(head => head.classList.remove('active'));
-            head.classList.add('active');
-
-            document.querySelectorAll('td').forEach(td => td.classList.remove('active'));
-            table_rows.forEach(row => {
-                if (!row.querySelector('.method')) { // Bỏ qua xử lý cho cột "method"
-                    row.querySelectorAll('td')[i].classList.add('active');
-                }
-            })
-            head.classList.toggle('asc', sort_asc);
-            sort_asc = head.classList.contains('asc') ? false : true;
-
-            sortTable(i, sort_asc);
-        }
-    }
-})
-
-function sortTable(column, sort_asc) {
-    [...table_rows].sort((a, b) => {
-        let first_row = a.querySelectorAll('.table-content td')[column].textContent.toLowerCase(),
-            second_row = b.querySelectorAll('.table-content td')[column].textContent.toLowerCase();
-
-        return sort_asc ? (first_row < second_row ? 1 : -1) : (first_row < second_row ? -1 : 1);
-    })
-        .map(sorted_row => document.querySelector('.table-content tbody').appendChild(sorted_row));
-}
-
+// -----------------------------------------------search - sort---------------------------------------------//
 document.addEventListener("DOMContentLoaded", function () {
-    var links = document.querySelectorAll(".sidebar-item a");
-    links.forEach(function (link) {
-        link.addEventListener("click", function () {
-            links.forEach(function (item) {
-                item.classList.remove("active");
-            });
-            this.classList.add("active");
+    const search = document.querySelector('.search-box input'),
+        table_rows = document.querySelectorAll('.table-content tbody tr'),
+        table_headings = document.querySelectorAll('.table-content thead th');
+    const regex = /[\.,\s\-\/\\]/g;
+
+    search.addEventListener('input', searchTable);
+
+    function searchTable() {
+        table_rows.forEach((row, i) => {
+            let table_data = row.textContent.toLowerCase().replace(regex, ''),
+                search_data = search.value.toLowerCase().replace(regex, '');
+
+            row.classList.toggle('hide', table_data.indexOf(search_data) < 0);
         });
+
+        document.querySelectorAll('tbody tr:not(.hide)').forEach((visible_row, i) => {
+            visible_row.style.backgroundColor = (i % 2 == 0) ? 'transparent' : '#f2f2f2';
+        });
+    }
+
+    table_headings.forEach((head, i) => {
+        let sort_asc = false;
+        head.onclick = () => {
+            if (!head.classList.contains('method')) { // Kiểm tra nếu không phải cột "method"
+                table_headings.forEach(head => head.classList.remove('active'));
+                head.classList.add('active');
+
+                document.querySelectorAll('td').forEach(td => td.classList.remove('active'));
+                table_rows.forEach(row => {
+                    if (!row.querySelector('.method')) { // Bỏ qua xử lý cho cột "method"
+                        row.querySelectorAll('td')[i].classList.add('active');
+                    }
+                });
+                head.classList.toggle('asc', sort_asc);
+                sort_asc = head.classList.contains('asc') ? false : true;
+
+                sortTable(i, sort_asc);
+            }
+        };
     });
+
+    function sortTable(column, sort_asc) {
+        const getCellValue = (row, index) => row.querySelectorAll('td')[index].textContent.toLowerCase().trim();
+
+        const comparer = (idx, asc) => (a, b) => {
+            const v1 = getCellValue(asc ? a : b, idx).replace(regex, '');
+            const v2 = getCellValue(asc ? b : a, idx).replace(regex, '');
+            const n1 = parseFloat(v1);
+            const n2 = parseFloat(v2);
+            const date1 = Date.parse(v1);
+            const date2 = Date.parse(v2);
+
+            if (!isNaN(n1) && !isNaN(n2)) {
+                return n1 - n2;
+            } else if (!isNaN(date1) && !isNaN(date2)) {
+                return date1 - date2;
+            } else {
+                return v1 > v2 ? 1 : v1 < v2 ? -1 : 0;
+            }
+        };
+
+        Array.from(table_rows)
+            .sort(comparer(column, sort_asc))
+            .forEach(row => document.querySelector('.table-content tbody').appendChild(row));
+    }
 });
 
 
+// -----------------------------------------------check-date---------------------------------------------//
 document.addEventListener("DOMContentLoaded", function () {
     var dateStart = document.getElementById("dateStart");
     var dateEnd = document.getElementById("dateEnd");
 
     if (dateStart && dateEnd) {
-
         // Thêm lắng nghe sự kiện cho input ngày bắt đầu
         dateStart.addEventListener("input", function () {
             var currentDate = new Date();
@@ -119,7 +120,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-
+// ----------------------------------------------- update-quantityInput ---------------------------------------------//
 document.addEventListener('DOMContentLoaded', function () {
     const roomSelect = document.getElementById('roomSelect');
     const quantityInput = document.getElementById('quantityInput');
@@ -134,6 +135,4 @@ document.addEventListener('DOMContentLoaded', function () {
         const initialSelectedOption = roomSelect.options[roomSelect.selectedIndex];
         quantityInput.max = initialSelectedOption.getAttribute('data-soluong');
     }
-
 });
-

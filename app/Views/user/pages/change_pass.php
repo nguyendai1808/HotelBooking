@@ -59,26 +59,5 @@ endif; ?>
         }
     });
 
-    function eyePass() {
-        var form = document.querySelectorAll('#form-pass .eye-toggle');
-          
-        form.forEach(toggle => {
-            toggle.addEventListener('click', function() {
-                const input = this.previousElementSibling;
-                const visible = this.getAttribute('data-visible') === 'true';
-
-                if (visible) {
-                    input.type = 'password';
-                    this.src = USER_PATH + '/icon/eye-hidden.png';
-                    this.setAttribute('data-visible', 'false');
-                } else {
-                    input.type = 'text';
-                    this.src = USER_PATH + '/icon/eye.png';
-                    this.setAttribute('data-visible', 'true');
-                }
-            });
-        });
-    }
-
-    eyePass();
+    togglePassword();
 </script>

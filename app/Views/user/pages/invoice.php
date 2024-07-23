@@ -1,7 +1,7 @@
 <Main class="container-fluid">
 
     <section class="banner-image banner-gray mb-5">
-        <img src="<?= USER_PATH ?>/images/<?= $data['display']['baner'] ?? 'notbg.jpg' ?>" alt="banner">
+        <img src="<?= USER_PATH ?>/images/bg-img-2.jpg" alt="banner">
         <div class="banner-content">
             <h3 class="section-title text-uppercase">Chi tiết đơn đặt</h3>
             <div class="banner-item">
@@ -19,7 +19,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-lg-3">
-                        <div class="sidebar pb-5" id="sidebar">
+                        <div class="sidebar pb-4" id="sidebar">
                             <ul class="list-group">
                                 <li data-url="<?= URLROOT ?>/invoice/all">
                                     <span><i class="fa-solid fa-caret-right pe-3"></i>Tất cả</span>
@@ -45,7 +45,7 @@
 
                         <div id="main-content">
 
-                            <?php require_once APPROOT . '/views/user/pages/' . $data['page']; ?>
+                            <?php require_once APPROOT . '/views/user/pages/list_booking.php'; ?>
 
                         </div>
 

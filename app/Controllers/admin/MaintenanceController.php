@@ -6,7 +6,6 @@ class Maintenance extends Controller
 
     public function __construct()
     {
-        //gọi model User
         $this->MaintenanceModel = $this->model('MaintenanceModel');
         $this->RoomModel = $this->model('RoomModel');
     }
@@ -21,6 +20,19 @@ class Maintenance extends Controller
     }
 
 
+    public function getInfoRoomMore($Rooms)
+    {
+        if ($Rooms) {
+            foreach ($Rooms as $key => $room) {
+                $mainImg = $this->RoomModel->getMainImageRoom($room['idphong']);
+                $Rooms[$key]['anhphong'] = $mainImg;
+                $nameBed = $this->RoomModel->getNameBed($room['idphong']);
+                $Rooms[$key]['tengiuong'] = $nameBed;
+            }
+        }
+        return $Rooms;
+    }
+
     public function detail($idbaotri = null)
     {
         if (!empty($idbaotri) && filter_var($idbaotri, FILTER_VALIDATE_INT)) {
@@ -29,7 +41,7 @@ class Maintenance extends Controller
 
             $time = $this->MaintenanceModel->findMaintenanceById($idbaotri);
             $this->view('admin', 'maintenance/detail.php', [
-                'rooms' => $this->getRoomMore($rooms),
+                'rooms' => $this->getInfoRoomMore($rooms),
                 'idbaotri' => $idbaotri,
                 'time' => $time
             ]);
@@ -38,34 +50,17 @@ class Maintenance extends Controller
         }
     }
 
-    public function getRoomMore($Rooms)
-    {
-        foreach ($Rooms as $key => $room) {
-
-            $mainImg = $this->RoomModel->getMainImageRoom($room['idphong']);
-            $Rooms[$key]['anhphong'] = $mainImg;
-            $nameBed = $this->RoomModel->getNameBed($room['idphong']);
-            $Rooms[$key]['tengiuong'] = $nameBed;
-        }
-        return $Rooms;
-    }
-
-
     public function create()
     {
         if (isset($_POST['create'])) {
-            $name = $_POST['name'];
-            $start = $_POST['dateStart'];
-            $end = $_POST['dateEnd'];
-            $desc = $_POST['desc'];
-            $result = $this->MaintenanceModel->createMaintenance($name, $start, $end, $desc);
+            $result = $this->MaintenanceModel->createMaintenance($_POST['name'], $_POST['dateStart'], $_POST['dateEnd'], $_POST['desc']);
             if ($result) {
                 echo "<script> alert('Thêm thành công');
                         window.location.href = '" . URLROOT . "/admin/maintenance';
                     </script>";
                 exit();
             } else {
-                echo '<script>alert("lỗi")</script>';
+                echo '<script>alert("Lỗi")</script>';
                 exit();
             }
         }
@@ -76,18 +71,14 @@ class Maintenance extends Controller
     {
         if (!empty($idbaotri) && filter_var($idbaotri, FILTER_VALIDATE_INT)) {
             if (isset($_POST['update'])) {
-                $name = $_POST['name'];
-                $start = $_POST['dateStart'];
-                $end = $_POST['dateEnd'];
-                $desc = $_POST['desc'];
-                $update = $this->MaintenanceModel->updateMaintenance($idbaotri, $name, $start, $end, $desc);
+                $update = $this->MaintenanceModel->updateMaintenance($idbaotri,  $_POST['name'], $_POST['dateStart'], $_POST['dateEnd'], $_POST['desc']);
                 if ($update) {
                     echo "<script> alert('Lưu thành công');
                         window.location.href = '" . URLROOT . "/admin/maintenance';
                     </script>";
                     exit();
                 } else {
-                    echo '<script>alert("lỗi")</script>';
+                    echo '<script>alert("Lỗi")</script>';
                     exit();
                 }
             }
@@ -101,17 +92,17 @@ class Maintenance extends Controller
         }
     }
 
-    public function delete($idbaotri = null)
+    public function delete()
     {
-        if (!empty($idbaotri) && filter_var($idbaotri, FILTER_VALIDATE_INT)) {
-            $delete = $this->MaintenanceModel->deleteMaintenance($idbaotri);
+        if (isset($_POST['delete'])) {
+            $delete = $this->MaintenanceModel->deleteMaintenance($_POST['delete']);
             if ($delete) {
                 echo "<script> alert('Xóa thành công');
                         window.location.href = '" . URLROOT . "/admin/maintenance';
                     </script>";
                 exit();
             } else {
-                echo '<script>alert("lỗi")</script>';
+                echo '<script>alert("Lỗi")</script>';
                 exit();
             }
         } else {
@@ -127,14 +118,16 @@ class Maintenance extends Controller
             if (isset($_POST['createRoom'])) {
                 $result = $this->MaintenanceModel->createMaintenanceCT($_POST['idphong'], $_POST['idbaotri'], $_POST['soluong']);
                 if ($result) {
-                    echo "<script> alert('Thêm thành công');</script>";
-                    $this->detail($idbaotri);
+                    echo "<script> alert('Thêm thành công');
+                        window.location.href = '" . URLROOT . "/admin/maintenance/detail/$idbaotri';
+                    </script>";
+                    exit();
                 } else {
-                    echo '<script>alert("lỗi")</script>';
+                    echo '<script>alert("Lỗi")</script>';
                     exit();
                 }
             }
-            $this->view('admin', 'maintenance/createRoom.php', [
+            $this->view('admin', 'maintenance/create_room.php', [
                 'rooms' => $rooms,
                 'idbaotri' => $idbaotri
             ]);
@@ -142,7 +135,6 @@ class Maintenance extends Controller
             header('location:' . URLROOT . '/admin/maintenance');
         }
     }
-
 
     public function updateRoom($idphong, $idbaotri)
     {
@@ -152,15 +144,17 @@ class Maintenance extends Controller
             if (isset($_POST['updateRoom'])) {
                 $result = $this->MaintenanceModel->updateMaintenanceROom($_POST['idphong'], $_POST['idbaotri'], $_POST['soluong']);
                 if ($result) {
-                    echo "<script> alert('lưu thông tin thành công');</script>";
-                    $this->detail($idbaotri);
+                    echo "<script> alert('Lưu thông tin thành công');
+                        window.location.href = '" . URLROOT . "/admin/maintenance/detail/$idbaotri';
+                    </script>";
+                    exit();
                 } else {
-                    echo '<script>alert("lỗi")</script>';
+                    echo '<script>alert("Lỗi")</script>';
                     exit();
                 }
             }
 
-            $this->view('admin', 'maintenance/updateRoom.php', [
+            $this->view('admin', 'maintenance/update_room.php', [
                 'room' => $room,
                 'idbaotri' => $idbaotri
             ]);
@@ -169,16 +163,21 @@ class Maintenance extends Controller
         }
     }
 
-    public function deleteRoom($idphong, $idbaotri)
+    public function deleteRoom($idbaotri)
     {
-        if (!empty($idbaotri) && !empty($idphong) && filter_var($idbaotri, FILTER_VALIDATE_INT)) {
-            $delete = $this->MaintenanceModel->deleteMaintenanceCT($idphong, $idbaotri);
-            if ($delete) {
-                echo "<script> alert('Xóa thành công');</script>";
-                $this->detail($idbaotri);
-            } else {
-                echo '<script>alert("lỗi")</script>';
-                exit();
+        if (!empty($idbaotri) && filter_var($idbaotri, FILTER_VALIDATE_INT)) {
+            if (isset($_POST['deleteRoom'])) {
+                $idphong = $_POST['deleteRoom'];
+                $delete = $this->MaintenanceModel->deleteMaintenanceCT($idphong, $idbaotri);
+                if ($delete) {
+                    echo "<script> alert('Xóa thành công');
+                        window.location.href = '" . URLROOT . "/admin/maintenance/detail/$idbaotri';
+                    </script>";
+                    exit();
+                } else {
+                    echo '<script>alert("Lỗi")</script>';
+                    exit();
+                }
             }
         } else {
             header('location:' . URLROOT . '/admin/maintenance');

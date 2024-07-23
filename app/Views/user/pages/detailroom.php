@@ -2,7 +2,7 @@
 
     <!-- banner image Start -->
     <section class="banner-image">
-        <img src="<?= USER_PATH ?>/images/<?= $data['display']['baner'] ?? 'notbg.jpg' ?>" alt="banner">
+        <img src="<?= USER_PATH ?>/images/bg-img-2.jpg" alt="banner">
     </section>
     <!-- banner image end -->
 
@@ -51,7 +51,7 @@
                                     <div class="detail-desc pb-3">
                                         <div class="d-flex justify-content-between mb-3">
                                             <h4 class="m-0"><?= $item['tenphong'] ?> - <?= $item['tengiuong'] ?></h4>
-                                            <span class="fw-bold text-success h5"> <?= !empty($item['danhgia']) ?  round($item['danhgia'], 1) . '/10' : ''; ?></span>
+                                            <span class="fw-bold text-success h5 ps-3"> <?= !empty($item['danhgia']) ?  round($item['danhgia'], 1) . '/10' : ''; ?></span>
                                         </div>
 
                                         <?php $giaphong = $item['giaphong'];
@@ -96,7 +96,7 @@
                                                 </div>
                                             </div>
                                         <?php endif; ?>
-                                        
+
                                         <input type="hidden" id="sophongtrong" value="<?= $item['soluongphongtrong'] ?>">
                                         <input type="hidden" name="idphong" value="<?= $item['idphong'] ?>">
                                         <input type="hidden" name="giaphong" value="<?= $giaphong ?>">
@@ -194,12 +194,26 @@
 
                                 <div class="review-item">
                                     <div class="review-user">
-                                        <img class="user-avatar" src="<?= USER_PATH ?>/images/avatars/<?= $item['anh'] ?? 'user.png' ?>" alt="avatar">
+                                        <img class="user-avatar" src="<?= USER_PATH ?>/images/avatars/<?= empty($item['anh']) ? 'user.png' : $item['anh'] ?>" alt="avatar">
                                         <div>
                                             <strong><?= trim($item['ho'] . ' ' . $item['ten']) ?></strong>
                                             <p class="m-0"><?= $item['thoigian'] ? date('d-m-Y', strtotime($item['thoigian'])) : '' ?></p>
                                         </div>
-                                        <small><i class="fa-solid fa-quote-right fa-2x"></i></small>
+
+                                        <div class="dropdown">
+                                            <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
+
+                                            <?php if ($item['id_taikhoan'] == $data['user_id']) : ?>
+
+                                                <form class="content" method="post" action="<?= URLROOT ?>/room/rating">
+                                                    <button type="submit" name="delete" value="<?= $item['iddanhgia'] ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa bình luận này');">
+                                                        <i class="fa-solid fa-delete-left pe-2"></i>Xóa
+                                                    </button>
+                                                </form>
+
+                                            <?php endif; ?>
+
+                                        </div>
                                     </div>
                                     <ul class="rating">
                                         <li class="lable">Đánh giá:</li>
@@ -238,15 +252,15 @@
 
                             <ul>
                                 <?php if ($current_page > 1) : ?>
-                                    <li><a href="<?= URLROOT ?>/room/ratingP/1"><i class="fa-solid fa-angles-left"></i></a></li>
+                                    <li><a href="<?= URLROOT ?>/room/ratingPage/1"><i class="fa-solid fa-angles-left"></i></a></li>
                                 <?php endif; ?>
 
                                 <?php for ($i = $start; $i <= $end; $i++) : ?>
-                                    <li><a <?= $i == $current_page ? 'class="active"' : '' ?> href="<?= URLROOT ?>/room/ratingP/<?= $i ?>"><?= $i ?></a></li>
+                                    <li><a <?= $i == $current_page ? 'class="active"' : '' ?> href="<?= URLROOT ?>/room/ratingPage/<?= $i ?>"><?= $i ?></a></li>
                                 <?php endfor; ?>
 
                                 <?php if ($current_page < $total_pages) : ?>
-                                    <li><a href="<?= URLROOT ?>/room/ratingP/<?= $total_pages ?>"><i class="fa-solid fa-angles-right"></i></a></li>
+                                    <li><a href="<?= URLROOT ?>/room/ratingPage/<?= $total_pages ?>"><i class="fa-solid fa-angles-right"></i></a></li>
                                 <?php endif; ?>
                             </ul>
 

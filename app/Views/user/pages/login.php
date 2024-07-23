@@ -9,7 +9,7 @@
 
             <div class="input-layout">
                 <label>Email</label>
-                <input type="text" name="email" placeholder="Email" required />
+                <input type="text" name="email" value="<?= $data['email'] ?? '' ?>" placeholder="Email" required />
             </div>
 
             <div class="input-layout" id="form-pass">
@@ -21,7 +21,7 @@
             <button type="submit" class="btn-layout" name="login">Đăng nhập</button>
             <div class="d-flex justify-content-between">
                 <a href="<?= URLROOT ?>/register">Tạo tài khoản</a>
-                <a href="<?= URLROOT ?>/login/forgotpass">Quên mật khẩu?</a>
+                <a href="<?= URLROOT ?>/login/forgotPass">Quên mật khẩu?</a>
             </div>
         </form>
     </div>

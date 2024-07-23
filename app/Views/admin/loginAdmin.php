@@ -5,17 +5,19 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Đăng nhập Admin</title>
+    <title>Admin</title>
 
     <link rel="stylesheet" href="<?= USER_PATH ?>/css/style.css" />
-    <link rel="stylesheet" href="<?= URLROOT ?>/public/bootstrap/bootstrap.min.css" />
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </head>
 
 <body>
-
     <main class="container-fluid">
         <div class="wrapper-layout">
             <h2>Đăng Nhập</h2>
@@ -33,10 +35,11 @@
                 <div class="input-layout" id="form-pass">
                     <label>Mật khẩu</label>
                     <input name="password" type="password" placeholder="Mật khẩu" required />
-                    <img class="eye-toggle" src="<?= USER_PATH ?>/icon/eye-hidden.png" data-visible="false">
+                    <img class="eye-toggle" src="<?= ADMIN_PATH ?>/icon/eye-hidden.png" data-visible="false">
                 </div>
 
                 <button type="submit" class="btn-layout" name="loginAdmin">Đăng nhập</button>
+                <a class="text-decoration-none" href="<?= URLROOT ?>/home">Quay lại website</a>
             </form>
         </div>
     </main>
@@ -48,11 +51,11 @@
 
                 if (visible) {
                     input.type = 'password';
-                    this.src = '<?= USER_PATH ?>/icon/eye-hidden.png';
+                    this.src = '<?= ADMIN_PATH ?>/icon/eye-hidden.png';
                     this.setAttribute('data-visible', 'false');
                 } else {
                     input.type = 'text';
-                    this.src = '<?= USER_PATH ?>/icon/eye.png';
+                    this.src = '<?= ADMIN_PATH ?>/icon/eye.png';
                     this.setAttribute('data-visible', 'true');
                 }
             });

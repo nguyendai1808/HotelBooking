@@ -51,7 +51,7 @@
 .sidebar .sidebar-item li {
   position: relative;
   list-style: none;
-  height: 48px;
+  height: 50px;
 }
 
 .sidebar .sidebar-item li a {
@@ -106,7 +106,7 @@
   width: calc(100% - 250px);
   left: 250px;
   transition: all 0.5s ease;
-  padding-top: 110px;
+  padding-top: 100px;
 }
 
 .sidebar.active~.main-section {
@@ -125,7 +125,7 @@ nav {
   width: calc(100% - 250px);
   left: 250px;
   top: 0;
-  z-index: 100;
+  z-index: 2;
   padding: 0 20px;
   transition: all 0.5s ease;
   background-color: rgb(254, 237, 213);
@@ -215,6 +215,19 @@ nav .profile-details i {
 
 
 /* --------------------------overview-boxes---------------------------- */
+
+.main-section .statistical-detail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.main-section .statistical-detail i {
+  font-size: 25px;
+}
+
+
 .main-section .overview-boxes {
   display: flex;
   align-items: center;
@@ -260,15 +273,15 @@ nav .profile-details i {
 }
 
 
-.overview-boxes .box-item .up-down {
+.overview-boxes .box-item .box-date {
   display: flex;
   align-items: center;
 }
 
-.overview-boxes .box-item .up-down i {
+.overview-boxes .box-item .box-date i {
   height: 20px;
   width: 20px;
-  background: #8FDACB;
+  background: #7e64bcfe;
   line-height: 20px;
   text-align: center;
   border-radius: 50%;
@@ -277,15 +290,9 @@ nav .profile-details i {
   margin-right: 5px;
 }
 
-.main-section .box-item .up-down .text {
+.main-section .box-item .box-date .text {
   font-size: 12px;
 }
-
-.box-item .up-down i.down {
-  background: #e87d88;
-}
-
-
 
 /* -------------------------------footer-------------------------------------- */
 footer {
@@ -303,8 +310,19 @@ footer {
   padding: 0 20px;
 }
 
+.table-warpper .table-title-warpper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.table-warpper .table-title-warpper i {
+  font-size: 25px;
+}
+
+
 .table-warpper .table-title {
-  padding: 10px 0px;
+  margin: 10px 0px;
   margin-bottom: 20px;
 }
 
@@ -369,6 +387,7 @@ footer {
   top: 0;
   left: 0;
   background-color: #d5d1defe;
+  z-index: 1;
 }
 
 .table-content thead th {
@@ -398,7 +417,6 @@ footer {
   min-width: 150px;
 }
 
-
 .table-content thead th:where(.email, .name, .desc, .date-long) {
   min-width: 250px;
 }
@@ -409,6 +427,10 @@ footer {
 
 .table-content thead th:where(.stt) {
   min-width: 100px;
+}
+
+.table-content tbody td:where(.date, .number) {
+  font-weight: 500;
 }
 
 .table-content thead th i {
@@ -447,4 +469,55 @@ footer {
 .table-content thead th.active,
 .table-content tbody td.active {
   color: #6c00bd;
+}
+
+/* ----------------------export-file--------------------------- */
+.export-date {
+  z-index: 3;
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.export-date .date-content {
+  background-color: #fff;
+  margin: 15% auto;
+  padding: 20px;
+  width: 70%;
+  border-radius: 5px;
+}
+
+.export-date .close-date {
+  text-align: right;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.export-date input {
+  margin-bottom: 10px;
+}
+
+.export-date label {
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.export-date .export {
+  align-items: center;
+  width: 100%;
+  margin-top: 14px;
+}
+
+.export-date .export .btn-export {
+  padding: 5px 10px;
+  background-color: #6A4FF4;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  width: 100%;
 }

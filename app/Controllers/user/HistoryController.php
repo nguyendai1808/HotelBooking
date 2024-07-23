@@ -7,21 +7,21 @@ class History extends Controller
     private $pagination;
     private $per_page = 3;
 
-
     public function __construct()
     {
         $this->BookingModel = $this->model('BookingModel');
         $this->RoomModel = $this->model('RoomModel');
         $this->RatingModel = $this->model('RatingModel');
 
-        if (!empty(Session::get('history'))) {
-            $history = Session::get('history');
-            $this->pagination = new Pagination($history, $this->per_page);
+        if (Session::get('history')) {
+            $totalItems = count(Session::get('history'));
+            $this->pagination = new Pagination($totalItems, $this->per_page);
         } else {
             $idtaikhoan = Session::get('user_id');
             $history = $this->BookingModel->getBookingHistoryByStatus($idtaikhoan);
             if ($history) {
-                $this->pagination = new Pagination($history, $this->per_page);
+                $totalItems = count($history);
+                $this->pagination = new Pagination($totalItems, $this->per_page);
                 Session::set('history', $history, 1800);
             }
         }
@@ -32,15 +32,258 @@ class History extends Controller
         header('location:' . URLROOT . '/history/all');
     }
 
+    public function all()
+    {
+        $idtaikhoan = Session::get('user_id');
+        $history = $this->BookingModel->getBookingHistoryByStatus($idtaikhoan);
+
+        if ($history) {
+            $totalItems = count($history);
+            $this->pagination = new Pagination($totalItems, $this->per_page);
+            Session::set('history', $history, 1800);
+            $list_booking = $this->pagination->getItemsbyCurrentPage($history, 1);
+            $pag = [
+                'total_pages' => $this->pagination->getTotalPages(),
+                'current_page' => $this->pagination->getcurrentPage(),
+                'view' => 'history'
+            ];
+            $rating = $this->RatingModel->getCriteria();
+        } else {
+            $list_booking = null;
+            $pag = null;
+            $rating = null;
+        }
+
+        if ($this->isAjaxRequest()) {
+            ob_start();
+            extract([
+                'list_booking' => $this->getInfoBooking($list_booking),
+                'rating' => $rating,
+                'pagination' => $pag
+            ]);
+            require_once APPROOT . '/views/user/pages/list_booking.php';
+            require_once APPROOT . '/views/user/pages/rating.php';
+            $page = ob_get_clean();
+
+            $response = [
+                'page' => $page
+            ];
+
+            // Trả về dữ liệu dưới dạng JSON
+            header('Content-Type: application/json');
+            echo json_encode($response);
+            exit;
+        } else {
+            $this->view('user', 'history.php', [
+                'list_booking' => $this->getInfoBooking($list_booking),
+                'rating' => $rating,
+                'pagination' => $pag
+            ]);
+        }
+    }
+
+    public function checkoutLounge()
+    {
+        $idtaikhoan = Session::get('user_id');
+        $booking = $this->BookingModel->getBookingHistoryByStatus($idtaikhoan, 'Đã cọc tiền');
+
+        if ($booking) {
+            $totalItems = count($booking);
+            $this->pagination = new Pagination($totalItems, $this->per_page);
+            Session::set('history', $booking, 1800);
+            $list_booking = $this->pagination->getItemsbyCurrentPage($booking, 1);
+
+            $pag = [
+                'total_pages' => $this->pagination->getTotalPages(),
+                'current_page' => $this->pagination->getcurrentPage(),
+                'view' => 'history'
+            ];
+        } else {
+            $list_booking = null;
+            $pag = null;
+        }
+
+        if ($this->isAjaxRequest()) {
+            ob_start();
+            extract([
+                'list_booking' => $this->getInfoBooking($list_booking),
+                'pagination' => $pag
+            ]);
+            require_once APPROOT . '/views/user/pages/list_booking.php';
+            $page = ob_get_clean();
+
+            $response = [
+                'page' => $page
+            ];
+
+            // Trả về dữ liệu dưới dạng JSON
+            header('Content-Type: application/json');
+            echo json_encode($response);
+            exit;
+        } else {
+
+            $this->view('user', 'history.php', [
+                'list_booking' => $this->getInfoBooking($list_booking),
+                'pagination' => $pag
+            ]);
+        }
+    }
+
+    public function paidBooking()
+    {
+        $idtaikhoan = Session::get('user_id');
+        $booking = $this->BookingModel->getBookingHistoryByStatus($idtaikhoan, 'Đã thanh toán');
+
+        if ($booking) {
+            $totalItems = count($booking);
+            $this->pagination = new Pagination($totalItems, $this->per_page);
+            Session::set('history', $booking, 1800);
+            $list_booking = $this->pagination->getItemsbyCurrentPage($booking, 1);
+
+            $pag = [
+                'total_pages' => $this->pagination->getTotalPages(),
+                'current_page' => $this->pagination->getcurrentPage(),
+                'view' => 'history'
+            ];
+        } else {
+            $list_booking = null;
+            $pag = null;
+        }
+
+        if ($this->isAjaxRequest()) {
+            ob_start();
+            extract([
+                'list_booking' => $this->getInfoBooking($list_booking),
+                'pagination' => $pag
+            ]);
+            require_once APPROOT . '/views/user/pages/list_booking.php';
+            $page = ob_get_clean();
+
+            $response = [
+                'page' => $page
+            ];
+
+            // Trả về dữ liệu dưới dạng JSON
+            header('Content-Type: application/json');
+            echo json_encode($response);
+            exit;
+        } else {
+
+            $this->view('user', 'history.php', [
+                'list_booking' => $this->getInfoBooking($list_booking),
+                'pagination' => $pag
+            ]);
+        }
+    }
+
+    public function booked()
+    {
+        $idtaikhoan = Session::get('user_id');
+        $booking = $this->BookingModel->getBookingHistoryByStatus($idtaikhoan, 'Hoàn tất, Đã đánh giá');
+
+        if ($booking) {
+            $totalItems = count($booking);
+            $this->pagination = new Pagination($totalItems, $this->per_page);
+            Session::set('history', $booking, 1800);
+            $list_booking = $this->pagination->getItemsbyCurrentPage($booking, 1);
+
+            $pag = [
+                'total_pages' => $this->pagination->getTotalPages(),
+                'current_page' => $this->pagination->getcurrentPage(),
+                'view' => 'history'
+            ];
+            $rating = $this->RatingModel->getCriteria();
+        } else {
+            $list_booking = null;
+            $pag = null;
+            $rating = null;
+        }
+
+        if ($this->isAjaxRequest()) {
+            ob_start();
+            extract([
+                'list_booking' => $this->getInfoBooking($list_booking),
+                'rating' => $rating,
+                'pagination' => $pag
+            ]);
+            require_once APPROOT . '/views/user/pages/list_booking.php';
+            require_once APPROOT . '/views/user/pages/rating.php';
+            $page = ob_get_clean();
+
+            $response = [
+                'page' => $page
+            ];
+
+            // Trả về dữ liệu dưới dạng JSON
+            header('Content-Type: application/json');
+            echo json_encode($response);
+            exit;
+        } else {
+            $this->view('user', 'history.php', [
+                'list_booking' => $this->getInfoBooking($list_booking),
+                'rating' => $rating,
+                'pagination' => $pag
+            ]);
+        }
+    }
+
+
+    public function canceledBooking()
+    {
+        $idtaikhoan = Session::get('user_id');
+        $booking = $this->BookingModel->getBookingHistoryByStatus($idtaikhoan, 'Đã Hủy');
+
+        if ($booking) {
+            $totalItems = count($booking);
+            $this->pagination = new Pagination($totalItems, $this->per_page);
+            Session::set('history', $booking, 1800);
+            $list_booking = $this->pagination->getItemsbyCurrentPage($booking, 1);
+
+            $pag = [
+                'total_pages' => $this->pagination->getTotalPages(),
+                'current_page' => $this->pagination->getcurrentPage(),
+                'view' => 'history'
+            ];
+        } else {
+            $list_booking = null;
+            $pag = null;
+        }
+
+        if ($this->isAjaxRequest()) {
+            ob_start();
+            extract([
+                'list_booking' => $this->getInfoBooking($list_booking),
+                'pagination' => $pag
+            ]);
+            require_once APPROOT . '/views/user/pages/list_booking.php';
+            $page = ob_get_clean();
+
+            $response = [
+                'page' => $page
+            ];
+
+            // Trả về dữ liệu dưới dạng JSON
+            header('Content-Type: application/json');
+            echo json_encode($response);
+            exit;
+        } else {
+            $this->view('user', 'history.php', [
+                'list_booking' => $this->getInfoBooking($list_booking),
+                'pagination' => $pag
+            ]);
+        }
+    }
 
     public function page($current_page = 1)
     {
-        $criteria = $this->RatingModel->getCriteria();
+        $rating = $this->RatingModel->getCriteria();
+        $history = Session::get('history');
+
         if ($this->isAjaxRequest()) {
-            $list_booking = $this->pagination->getItemsbyCurrentPage($current_page);
+
+            $list_booking = $this->pagination->getItemsbyCurrentPage($history, $current_page);
             $response = [
-                'bookings' => $this->getInforBooking($list_booking),
-                'criteria' => $criteria,
+                'bookings' => $this->getInfoBooking($list_booking),
                 'pagination' => [
                     'total_pages' => $this->pagination->getTotalPages(),
                     'current_page' => $this->pagination->getcurrentPage()
@@ -54,7 +297,8 @@ class History extends Controller
             exit;
         } else {
             if (!empty($current_page) && filter_var($current_page, FILTER_VALIDATE_INT)) {
-                $list_booking = $this->pagination->getItemsbyCurrentPage($current_page);
+
+                $list_booking = $this->pagination->getItemsbyCurrentPage($history, $current_page);
                 $pag = [
                     'total_pages' => $this->pagination->getTotalPages(),
                     'current_page' => $this->pagination->getcurrentPage(),
@@ -62,9 +306,8 @@ class History extends Controller
                 ];
 
                 $this->view('user', 'history.php', [
-                    'page' => 'list_booking.php',
-                    'list_booking' => $this->getInforBooking($list_booking),
-                    'criteria' => $criteria,
+                    'list_booking' => $this->getInfoBooking($list_booking),
+                    'rating' => $rating,
                     'pagination' => $pag
                 ]);
             } else {
@@ -73,246 +316,7 @@ class History extends Controller
         }
     }
 
-
-    public function all()
-    {
-        $idtaikhoan = Session::get('user_id');
-        $history = $this->BookingModel->getBookingHistoryByStatus($idtaikhoan);
-
-        if ($history) {
-            $this->pagination = new Pagination($history, $this->per_page);
-            Session::set('history', $history, 1800);
-            $list_booking = $this->pagination->getItemsbyCurrentPage(1);
-            $pag = [
-                'total_pages' => $this->pagination->getTotalPages(),
-                'current_page' => $this->pagination->getcurrentPage(),
-                'view' => 'history'
-            ];
-            $criteria = $this->RatingModel->getCriteria();
-        } else {
-            $list_booking = null;
-            $pag = null;
-            $criteria = null;
-        }
-
-        if ($this->isAjaxRequest()) {
-            ob_start();
-            extract([
-                'list_booking' => $this->getInforBooking($list_booking),
-                'criteria' => $criteria,
-                'pagination' => $pag
-            ]);
-            require_once APPROOT . '/views/user/pages/list_booking.php';
-            require_once APPROOT . '/views/user/pages/rating.php';
-            $page = ob_get_clean();
-
-            $response = [
-                'page' => $page
-            ];
-
-            // Trả về dữ liệu dưới dạng JSON
-            header('Content-Type: application/json');
-            echo json_encode($response);
-            exit;
-        } else {
-            $this->view('user', 'history.php', [
-                'page' => 'list_booking.php',
-                'list_booking' => $this->getInforBooking($list_booking),
-                'criteria' => $criteria,
-                'pagination' => $pag
-            ]);
-        }
-    }
-
-    public function checkoutLounge()
-    {
-        $idtaikhoan = Session::get('user_id');
-        $booking = $this->BookingModel->getBookingHistoryByStatus($idtaikhoan, 'Đã cọc tiền');
-        if ($booking) {
-            $this->pagination = new Pagination($booking, $this->per_page);
-            Session::set('history', $booking, 1800);
-            $list_booking = $this->pagination->getItemsbyCurrentPage(1);
-
-            $pag = [
-                'total_pages' => $this->pagination->getTotalPages(),
-                'current_page' => $this->pagination->getcurrentPage(),
-                'view' => 'history'
-            ];
-        } else {
-            $list_booking = null;
-            $pag = null;
-        }
-
-        if ($this->isAjaxRequest()) {
-            ob_start();
-            extract([
-                'list_booking' => $this->getInforBooking($list_booking),
-                'pagination' => $pag
-            ]);
-            require_once APPROOT . '/views/user/pages/list_booking.php';
-            $page = ob_get_clean();
-
-            $response = [
-                'page' => $page
-            ];
-
-            // Trả về dữ liệu dưới dạng JSON
-            header('Content-Type: application/json');
-            echo json_encode($response);
-            exit;
-        } else {
-
-            $this->view('user', 'history.php', [
-                'page' => 'list_booking.php',
-                'list_booking' => $this->getInforBooking($list_booking),
-                'pagination' => $pag
-            ]);
-        }
-    }
-
-    public function paidBooking()
-    {
-        $idtaikhoan = Session::get('user_id');
-        $booking = $this->BookingModel->getBookingHistoryByStatus($idtaikhoan, 'Đã thanh toán');
-        if ($booking) {
-            $this->pagination = new Pagination($booking, $this->per_page);
-            Session::set('history', $booking, 1800);
-            $list_booking = $this->pagination->getItemsbyCurrentPage(1);
-
-            $pag = [
-                'total_pages' => $this->pagination->getTotalPages(),
-                'current_page' => $this->pagination->getcurrentPage(),
-                'view' => 'history'
-            ];
-        } else {
-            $list_booking = null;
-            $pag = null;
-        }
-        if ($this->isAjaxRequest()) {
-            ob_start();
-            extract([
-                'list_booking' => $this->getInforBooking($list_booking),
-                'pagination' => $pag
-            ]);
-            require_once APPROOT . '/views/user/pages/list_booking.php';
-            $page = ob_get_clean();
-
-            $response = [
-                'page' => $page
-            ];
-
-            // Trả về dữ liệu dưới dạng JSON
-            header('Content-Type: application/json');
-            echo json_encode($response);
-            exit;
-        } else {
-
-            $this->view('user', 'history.php', [
-                'page' => 'list_booking.php',
-                'list_booking' => $this->getInforBooking($list_booking),
-                'pagination' => $pag
-            ]);
-        }
-    }
-
-    public function booked()
-    {
-        $idtaikhoan = Session::get('user_id');
-        $booking = $this->BookingModel->getBookingHistoryByStatus($idtaikhoan, 'Hoàn tất, Đã đánh giá');
-        if ($booking) {
-            $this->pagination = new Pagination($booking, $this->per_page);
-            Session::set('history', $booking, 1800);
-            $list_booking = $this->pagination->getItemsbyCurrentPage(1);
-
-            $pag = [
-                'total_pages' => $this->pagination->getTotalPages(),
-                'current_page' => $this->pagination->getcurrentPage(),
-                'view' => 'history'
-            ];
-            $criteria = $this->RatingModel->getCriteria();
-        } else {
-            $list_booking = null;
-            $pag = null;
-            $criteria = null;
-        }
-
-        if ($this->isAjaxRequest()) {
-            ob_start();
-            extract([
-                'list_booking' => $this->getInforBooking($list_booking),
-                'criteria' => $criteria,
-                'pagination' => $pag
-            ]);
-            require_once APPROOT . '/views/user/pages/list_booking.php';
-            require_once APPROOT . '/views/user/pages/rating.php';
-            $page = ob_get_clean();
-
-            $response = [
-                'page' => $page
-            ];
-
-            // Trả về dữ liệu dưới dạng JSON
-            header('Content-Type: application/json');
-            echo json_encode($response);
-            exit;
-        } else {
-            $this->view('user', 'history.php', [
-                'page' => 'list_booking.php',
-                'list_booking' => $this->getInforBooking($list_booking),
-                'criteria' => $criteria,
-                'pagination' => $pag
-            ]);
-        }
-    }
-
-
-    public function canceledBooking()
-    {
-        $idtaikhoan = Session::get('user_id');
-        $booking = $this->BookingModel->getBookingHistoryByStatus($idtaikhoan, 'Đã Hủy');
-
-        if ($booking) {
-            $this->pagination = new Pagination($booking, $this->per_page);
-            Session::set('history', $booking, 1800);
-            $list_booking = $this->pagination->getItemsbyCurrentPage(1);
-
-            $pag = [
-                'total_pages' => $this->pagination->getTotalPages(),
-                'current_page' => $this->pagination->getcurrentPage(),
-                'view' => 'history'
-            ];
-        } else {
-            $list_booking = null;
-            $pag = null;
-        }
-        if ($this->isAjaxRequest()) {
-            ob_start();
-            extract([
-                'list_booking' => $this->getInforBooking($list_booking),
-                'pagination' => $pag
-            ]);
-            require_once APPROOT . '/views/user/pages/list_booking.php';
-            $page = ob_get_clean();
-
-            $response = [
-                'page' => $page
-            ];
-
-            // Trả về dữ liệu dưới dạng JSON
-            header('Content-Type: application/json');
-            echo json_encode($response);
-            exit;
-        } else {
-            $this->view('user', 'history.php', [
-                'page' => 'list_booking.php',
-                'list_booking' => $this->getInforBooking($list_booking),
-                'pagination' => $pag
-            ]);
-        }
-    }
-
-
-    public function getInforBooking($history)
+    public function getInfoBooking($history)
     {
         if ($history) {
             foreach ($history as $key => $item) {
@@ -363,16 +367,14 @@ class History extends Controller
                 $booking = $this->BookingModel->getInvoiceBookingById($_POST['iddondat']);
                 $email = $this->BookingModel->getEmailCustommerByInvoice($_POST['iddondat']);
                 $mail = new Mail();
-                if ($mail->sendMailCancelRoom($email, 'Thông báo hủy đặt phòng!', $this->getInforBooking($booking))) {
+                if ($mail->sendMailCancelRoom($email, 'Thông báo hủy đặt phòng!', $this->getInfoBooking($booking))) {
                     echo "<script> alert('Hủy phòng thành công!');
-                    window.location.href = '" . URLROOT . "/history/all';
+                        window.history.back();
                     </script>";
                     exit();
                 }
             } else {
-                echo "<script> alert('Lỗi');
-                window.location.href = '" . URLROOT . "/history/all';
-                </script>";
+                echo "<script> alert('Lỗi'); </script>";
                 exit();
             }
         }
@@ -384,12 +386,10 @@ class History extends Controller
         if (isset($_POST['rating'])) {
             if (!empty($_POST['criteria'])) {
                 $tongdiem = 0;
-                $dem = 0;
                 foreach ($_POST['criteria'] as $idtieuchi => $value) {
                     $tongdiem += $value;
-                    $dem++;
                 }
-                $tongdiem = $tongdiem == 0 ? 0 : $tongdiem / $dem;
+                $tongdiem = $tongdiem / count($_POST['criteria']);
 
                 if ($this->RatingModel->createRating($_POST['content'], $tongdiem, $_POST['idtaikhoan'], $_POST['idphong'])) {
                     $iddanhgia =  $this->RatingModel->getRatingByIdUserRoom($_POST['idtaikhoan'], $_POST['idphong']);
@@ -399,13 +399,12 @@ class History extends Controller
                     $this->RatingModel->updateStatusBooking($_POST['iddatphong']);
                     $this->RatingModel->updateScoreAccount($_POST['idtaikhoan']);
                     echo "<script> alert('Đánh giá thành công');
-                        window.location.href = '" . URLROOT . "/history/all';
+                        window.history.back();
                     </script>";
                     exit();
                 }
             }
-            echo "<script> alert('Lỗi');
-            </script>";
+            echo "<script> alert('Lỗi');</script>";
             exit();
         } else {
             header('location:' . URLROOT . '/history/all');

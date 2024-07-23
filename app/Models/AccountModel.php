@@ -2,6 +2,7 @@
 class AccountModel
 {
     private $db;
+
     public function __construct()
     {
         $this->db = new Database();
@@ -11,15 +12,30 @@ class AccountModel
     {
         $sql = "SELECT * FROM taikhoan";
         $result = $this->db->select($sql);
-        return $result ?? null;
-    }
-    public function getAccount2()
-    {
-        $sql = "SELECT * FROM taikhoan where loaitk != 'admin'";
-        $result = $this->db->select($sql);
-        return $result ?? null;
+        return $result;
     }
 
+    public function countAccountUser()
+    {
+        $sql = "SELECT COUNT(*) as count FROM taikhoan where loaitk != 'admin'";
+        $result = $this->db->selectFirstColumnValue($sql, 'count');
+        return $result;
+    }
+
+    public function getAccountUserByPage($per_page, $offset)
+    {
+        $sql = "SELECT * FROM taikhoan where loaitk != 'admin'
+        LIMIT $per_page OFFSET $offset";
+        $result = $this->db->select($sql);
+        return $result;
+    }
+
+    public function getAccountImageById($idtaikhoan)
+    {
+        $sql = "SELECT anh FROM taikhoan where idtaikhoan = '$idtaikhoan'";
+        $result = $this->db->selectFirstColumnValue($sql, 'anh');
+        return $result;
+    }
 
     public function createAccount2($Surname, $name, $email, $phone, $pass, $accountType)
     {
@@ -32,7 +48,6 @@ class AccountModel
             return false;
         }
     }
-
 
     public function createAccount($Surname, $name, $email, $pass, $accountType = 'user')
     {
@@ -70,34 +85,31 @@ class AccountModel
 
     public function updateIdInvoice($idondat, $idtaikhoan)
     {
-        $sql = "UPDATE datphong set id_taikhoan = '$idtaikhoan' where id_dondat = '$idondat' and id_taikhoan is null";
+        $sql = "UPDATE datphong set id_taikhoan = '$idtaikhoan' where id_dondat = '$idondat' and (id_taikhoan is null or id_taikhoan = '')";
         $result = $this->db->execute($sql);
         return $result;
     }
-
-
 
     public function findAccountById($id)
     {
         $sql = "SELECT * FROM taikhoan WHERE idtaikhoan = '$id'";
         $result = $this->db->select($sql);
-        return $result ?? null;
+        return $result;
     }
 
     public function findAccountByEmail($email)
     {
         $sql = "SELECT * FROM taikhoan WHERE email = '$email'";
         $result = $this->db->select($sql);
-        return $result ?? null;
+        return $result;
     }
 
     public function getIdAccountByEmail($email)
     {
-        $sql = "SELECT * FROM taikhoan WHERE email = '$email'";
+        $sql = "SELECT idtaikhoan FROM taikhoan WHERE email = '$email'";
         $result = $this->db->selectFirstColumnValue($sql, 'idtaikhoan');
-        return $result ?? null;
+        return $result;
     }
-
 
     //kiểm tra tài khoản đăng nhập
     public function checkAccount($email, $pass)
@@ -107,7 +119,7 @@ class AccountModel
         if (password_verify($pass, $password)) {
             $sql = "SELECT trangthai FROM taikhoan WHERE email= '$email'";
             $result = $this->db->selectFirstColumnValue($sql, "trangthai");
-            return $result ?? null;
+            return $result;
         } else {
             return null;
         }
@@ -121,7 +133,7 @@ class AccountModel
         if (password_verify($pass, $password)) {
             $sql = "SELECT loaitk FROM taikhoan WHERE email= '$email'";
             $result = $this->db->selectFirstColumnValue($sql, "loaitk");
-            return $result ?? null;
+            return $result;
         } else {
             return null;
         }
@@ -132,7 +144,7 @@ class AccountModel
     {
         $sql = "SELECT * FROM taikhoan WHERE email= '$email'";
         $result = $this->db->rowCount($sql);
-        return $result ?? null;
+        return $result;
     }
 
     public function updateAccount($idtaikhoan, $ho, $ten, $sdt, $anh, $diachi)
@@ -170,7 +182,6 @@ class AccountModel
             return false;
         }
     }
-
 
     public function lockAccount($id)
     {

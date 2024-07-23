@@ -12,7 +12,7 @@
                         <?php if (strtotime($data['time'][0]['thoigianketthuc']) > time()) : ?>
                             <th class="method"><a href="<?= URLROOT . '/admin/maintenance/createRoom/' . $data['idbaotri'] ?>" class="btn btn-success"><small class="fa-solid fa-circle-plus pe-1"></small>Thêm</a></th>
                         <?php endif; ?>
-                        
+
                     </tr>
                 </thead>
                 <tbody>
@@ -29,10 +29,10 @@
 
                                 <?php if (strtotime($data['time'][0]['thoigianketthuc']) > time()) : ?>
                                     <td class="method">
-                                        <div class="d-flex justify-content-center">
+                                        <form method="post" action="<?= URLROOT ?>/admin/maintenance/deleteRoom/<?= $data['idbaotri'] ?>" class="d-flex justify-content-center">
                                             <a href="<?= URLROOT ?>/admin/maintenance/updateRoom/<?= $item['idphong'] . '/' . $data['idbaotri'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-pen-to-square"></i></a>
-                                            <a href="<?= URLROOT ?>/admin/maintenance/deleteRoom/<?= $item['idphong'] . '/' . $data['idbaotri'] ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa');" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></a>
-                                        </div>
+                                            <button name="deleteRoom" value="<?= $item['idphong'] ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa');" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></button>
+                                        </form>
                                     </td>
                                 <?php endif; ?>
 

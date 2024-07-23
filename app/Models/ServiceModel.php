@@ -2,6 +2,7 @@
 class ServiceModel
 {
     private $db;
+    
     public function __construct()
     {
         $this->db = new Database();
@@ -18,6 +19,12 @@ class ServiceModel
         return $result;
     }
 
+    public function getServiceImageById($id)
+    {
+        $sql = "SELECT icon FROM dichvu WHERE iddichvu = '$id'";
+        $result = $this->db->selectFirstColumnValue($sql, 'icon');
+        return $result;
+    }
 
     public function createServices($name, $desc, $icon)
     {
@@ -55,6 +62,54 @@ class ServiceModel
     public function deleteService($id)
     {
         $sql = "DELETE FROM dichvu WHERE iddichvu = '$id'";
+        $result = $this->db->execute($sql);
+        if ($result) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    //loại hình thanh toán
+    public function getPayTypes()
+    {
+        $sql = "SELECT * FROM loaihinhtt";
+        $result = $this->db->select($sql);
+        return $result;
+    }
+
+    public function createPaytype($name)
+    {
+        $sql = "INSERT INTO loaihinhtt (loaihinhthanhtoan) VALUES ('$name')";
+        $result = $this->db->execute($sql);
+        if ($result) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function findPayTypeById($id)
+    {
+        $sql = "SELECT * FROM loaihinhtt WHERE idloaihinhtt = '$id'";
+        $result = $this->db->select($sql);
+        return $result;
+    }
+
+    public function updatePayType($idloaihinhtt, $nameNew)
+    {
+        $sql = "UPDATE loaihinhtt SET loaihinhthanhtoan = '$nameNew' Where idloaihinhtt = '$idloaihinhtt'";
+        $result = $this->db->execute($sql);
+        if ($result) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function deletePaytype($id)
+    {
+        $sql = "DELETE FROM loaihinhtt WHERE idloaihinhtt = '$id'";
         $result = $this->db->execute($sql);
         if ($result) {
             return true;

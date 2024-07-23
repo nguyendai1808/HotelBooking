@@ -1,6 +1,6 @@
 <Main class="container-fluid" id="service-page">
     <section class="banner-image banner-gray mb-5">
-        <img src="<?= USER_PATH ?>/images/<?= $data['display']['baner'] ?? 'notbg.jpg'?>" alt="banner">
+        <img src="<?= USER_PATH ?>/images/bg-img-2.jpg" alt="banner">
         <div class="banner-content">
             <h3 class="section-title text-uppercase">Dịch vụ</h3>
             <div class="banner-item">
@@ -76,6 +76,6 @@
     </section>
     <!-- Service End -->
 
-    <?php include APPROOT . '/views/user/includes/comment.php'; ?>
+    <?php include APPROOT . '/views/user/pages/comment.php'; ?>
 
 </Main>

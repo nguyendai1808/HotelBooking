@@ -6,6 +6,7 @@ class Room extends Controller
     private $ImageModel;
     private $BookingModel;
     private $AmenityModel;
+    private $RatingModel;
 
     private $pagination;
     private $per_page = 3;
@@ -19,14 +20,17 @@ class Room extends Controller
         $this->ImageModel = $this->model('ImageModel');
         $this->BookingModel = $this->model('BookingModel');
         $this->AmenityModel = $this->model('AmenityModel');
+        $this->RatingModel = $this->model('RatingModel');
 
-        if (!empty(Session::get('rooms'))) {
+        if (Session::get('rooms')) {
             $rooms = Session::get('rooms');
-            $this->pagination = new Pagination($rooms, $this->per_page);
+            $totalItems = count($rooms);
+            $this->pagination = new Pagination($totalItems, $this->per_page);
         } else {
             $rooms = $this->RoomModel->getRooms();
             if ($rooms) {
-                $this->pagination = new Pagination($rooms, $this->per_page);
+                $totalItems = count($rooms);
+                $this->pagination = new Pagination($totalItems, $this->per_page);
                 Session::set('rooms', $rooms, 1800);
             }
         }
@@ -40,13 +44,16 @@ class Room extends Controller
         Session::delete('category');
         Session::delete('rangePrice');
         Session::delete('filterBed');
+        Session::delete('sortBy');
+        Session::delete('dataPage');
 
         $rooms = $this->RoomModel->getRooms();
         if ($rooms) {
-            $this->pagination = new Pagination($rooms, $this->per_page);
+            $totalItems = count($rooms);
+            $this->pagination = new Pagination($totalItems, $this->per_page);
             Session::set('rooms', $rooms, 1800);
 
-            $Rooms = $this->pagination->getItemsbyCurrentPage(1);
+            $Rooms = $this->pagination->getItemsbyCurrentPage($rooms, 1);
 
             $pag = [
                 'total_pages' => $this->pagination->getTotalPages(),
@@ -57,10 +64,9 @@ class Room extends Controller
             $pag = null;
         }
 
-
         //gọi và show dữ liệu ra view
         $this->view('user', 'room.php', [
-            'rooms' => $this->getInforRoomMore($Rooms),
+            'rooms' => $this->getInfoRoomMore($Rooms),
             'categorys' => $this->Categorys,
             'beds' => $this->Beds,
             'pagination' => $pag
@@ -70,6 +76,12 @@ class Room extends Controller
 
     public function search()
     {
+        Session::delete('category');
+        Session::delete('rangePrice');
+        Session::delete('filterBed');
+        Session::delete('sortBy');
+        Session::delete('dataPage');
+
         if (isset($_POST['change-date'])) {
             $checkin = isset($_POST['arrival']) ? $_POST['arrival'] : '';
             $checkout = isset($_POST['departure']) ? $_POST['departure'] : '';
@@ -83,10 +95,11 @@ class Room extends Controller
             $rooms = $this->RoomModel->searchRooms($adult, $child);
 
             if ($rooms) {
-                $this->pagination = new Pagination($rooms, $this->per_page);
+                $totalItems = count($rooms);
+                $this->pagination = new Pagination($totalItems, $this->per_page);
                 Session::set('rooms', $rooms, 1800);
 
-                $Rooms = $this->pagination->getItemsbyCurrentPage(1);
+                $Rooms = $this->pagination->getItemsbyCurrentPage($rooms, 1);
                 $pag = [
                     'total_pages' => $this->pagination->getTotalPages(),
                     'current_page' => $this->pagination->getcurrentPage()
@@ -97,7 +110,7 @@ class Room extends Controller
             }
 
             $this->view('user', 'room.php', [
-                'rooms' => $this->getInforRoomMore($Rooms),
+                'rooms' => $this->getInfoRoomMore($Rooms),
                 'categorys' => $this->Categorys,
                 'beds' => $this->Beds,
                 'pagination' => $pag
@@ -111,11 +124,13 @@ class Room extends Controller
             $child = $_POST["child"];
 
             $rooms = $this->RoomModel->searchRooms($adult, $child);
+
             if ($rooms) {
-                $this->pagination = new Pagination($rooms, $this->per_page);
+                $totalItems = count($rooms);
+                $this->pagination = new Pagination($totalItems, $this->per_page);
                 Session::set('rooms', $rooms, 1800);
 
-                $Rooms = $this->pagination->getItemsbyCurrentPage(1);
+                $Rooms = $this->pagination->getItemsbyCurrentPage($rooms, 1);
                 $pag = [
                     'total_pages' => $this->pagination->getTotalPages(),
                     'current_page' => $this->pagination->getcurrentPage()
@@ -126,7 +141,7 @@ class Room extends Controller
             }
 
             $this->view('user', 'room.php', [
-                'rooms' => $this->getInforRoomMore($Rooms),
+                'rooms' => $this->getInfoRoomMore($Rooms),
                 'categorys' => $this->Categorys,
                 'beds' => $this->Beds,
                 'pagination' => $pag
@@ -139,10 +154,10 @@ class Room extends Controller
     public function roomFilter()
     {
         $rooms = Session::get('rooms');
-
         $category = Session::get('category');
         $rangePrice = Session::get('rangePrice');
         $filterBed = Session::get('filterBed');
+        $sortBy = Session::get('sortBy');
 
         if ($category && $rooms) {
             $roomTmp = null;
@@ -174,7 +189,7 @@ class Room extends Controller
             $roomTmp = null;
             $Arr_idphong = null;
             foreach ($filterBed as $bed) {
-                $tmp =  $this->RoomModel->getRoomsByBed($bed['id'], $bed['quantity']);
+                $tmp = $this->RoomModel->getRoomsByBed($bed['id'], $bed['quantity']);
                 if (!empty($tmp)) {
                     $Arr_idphong[] = $tmp;
                 }
@@ -191,9 +206,52 @@ class Room extends Controller
             $rooms = $roomTmp;
         }
 
+        if ($sortBy && $rooms) {
+            switch ($sortBy) {
+                case 'rating':
+                    foreach ($rooms as $key => $item) {
+                        $rating = $this->RoomModel->getRatingRoom($item['idphong']);
+                        $rooms[$key]['rating'] = round($rating, 1);
+                    }
+                    usort($rooms, function ($a, $b) {
+                        return $b['rating'] - $a['rating'];
+                    });
+                    break;
+
+                case 'low_to_high':
+                    foreach ($rooms as $key => $item) {
+                        $promotion = $this->RoomModel->getPromotionRoom($item['idphong']);
+                        $rooms[$key]['price'] = !empty($promotion) ? intval($item['giaphong']) - (intval($item['giaphong']) * intval($promotion) * 0.01) : $item['giaphong'];
+                    }
+                    usort($rooms, function ($a, $b) {
+                        return $a['price'] - $b['price'];
+                    });
+                    break;
+
+                case 'high_to_low':
+                    foreach ($rooms as $key => $item) {
+                        $promotion = $this->RoomModel->getPromotionRoom($item['idphong']);
+                        $rooms[$key]['price'] = !empty($promotion) ? intval($item['giaphong']) - (intval($item['giaphong']) * intval($promotion) * 0.01) : $item['giaphong'];
+                    }
+                    usort($rooms, function ($a, $b) {
+                        return $b['price'] - $a['price'];
+                    });
+                    break;
+
+                default:
+                    usort($rooms, function ($a, $b) {
+                        return strcmp($a['tenphong'], $b['tenphong']);
+                    });
+                    break;
+            }
+        }
+
         if ($rooms) {
-            $this->pagination = new Pagination($rooms, $this->per_page);
-            $Rooms = $this->pagination->getItemsbyCurrentPage(1);
+            $totalItems = count($rooms);
+            $this->pagination = new Pagination($totalItems, $this->per_page);
+            Session::set('dataPage', $rooms, 1800);
+
+            $Rooms = $this->pagination->getItemsbyCurrentPage($rooms, 1);
             $pag = [
                 'total_pages' => $this->pagination->getTotalPages(),
                 'current_page' => $this->pagination->getcurrentPage()
@@ -204,7 +262,7 @@ class Room extends Controller
         }
 
         $response = [
-            'rooms' => $this->getInforRoomMore($Rooms),
+            'rooms' => $this->getInfoRoomMore($Rooms),
             'pagination' => $pag,
             'view' => 'room/page'
         ];
@@ -213,43 +271,9 @@ class Room extends Controller
         echo json_encode($response);
     }
 
-    public function filterBed()
-    {
-        if ($this->isAjaxRequest()) {
-
-            $beds = json_decode($_GET['beds'], true);
-            if ($beds) {
-                Session::set('filterBed', $beds, 1800);
-            } else {
-                Session::delete('filterBed');
-            }
-            $this->roomFilter();
-
-            exit;
-        } else {
-            header('location:' . URLROOT . '/room');
-        }
-    }
-
-    public function rangePrice()
-    {
-        if ($this->isAjaxRequest()) {
-
-            $rangePrice['min'] = $_GET['minPrice'];
-            $rangePrice['max'] = $_GET['maxPrice'];
-
-            Session::set('rangePrice', $rangePrice, 1800);
-            $this->roomFilter();
-            exit;
-        } else {
-            header('location:' . URLROOT . '/room');
-        }
-    }
-
     public function category($iddanhmuc = null)
     {
         if ($this->isAjaxRequest()) {
-
             if ($iddanhmuc == 'all') {
                 Session::delete('category');
             } else {
@@ -258,24 +282,54 @@ class Room extends Controller
             $this->roomFilter();
             exit;
         } else {
-            if (!empty($iddanhmuc) && filter_var($iddanhmuc, FILTER_VALIDATE_INT)) {
-
-                $Rooms = null;
-                $rooms = Session::get('rooms');
+            $rooms = Session::get('rooms');
+            $Rooms = null;
+            if ($iddanhmuc == 'all') {
+                Session::delete('category');
+                $Rooms = $rooms;
+            } else {
+                Session::set('category', $iddanhmuc, 1800);
                 foreach ($rooms as $item) {
                     if ($item['id_danhmuc'] == $iddanhmuc) {
                         $Rooms[] = $item;
                     }
                 }
-
-                $this->view('user', 'room.php', [
-                    'rooms' => $this->getInforRoomMore($Rooms),
-                    'categorys' => $this->Categorys,
-                    'beds' => $this->Beds,
-                ]);
-            } else {
-                header('location:' . URLROOT . '/room');
             }
+
+            $this->view('user', 'room.php', [
+                'rooms' => $this->getInfoRoomMore($Rooms),
+                'categorys' => $this->Categorys,
+                'beds' => $this->Beds,
+            ]);
+        }
+    }
+
+    public function rangePrice()
+    {
+        if ($this->isAjaxRequest()) {
+            $rangePrice['min'] = $_GET['minPrice'];
+            $rangePrice['max'] = $_GET['maxPrice'];
+            Session::set('rangePrice', $rangePrice, 1800);
+            $this->roomFilter();
+            exit;
+        } else {
+            header('location:' . URLROOT . '/room');
+        }
+    }
+
+    public function filterBed()
+    {
+        if ($this->isAjaxRequest()) {
+            $beds = json_decode($_GET['beds'], true);
+            if ($beds) {
+                Session::set('filterBed', $beds, 1800);
+            } else {
+                Session::delete('filterBed');
+            }
+            $this->roomFilter();
+            exit;
+        } else {
+            header('location:' . URLROOT . '/room');
         }
     }
 
@@ -283,49 +337,8 @@ class Room extends Controller
     {
         if ($this->isAjaxRequest()) {
             $sortBy = $_GET['sortBy'];
-            $rooms = Session::get('rooms');
-
-            if ($sortBy == 'rating') {
-                foreach ($rooms as $key => $item) {
-                    $rating = $this->RoomModel->getRatingRoom($item['idphong']);
-                    $rooms[$key]['rating'] = round($rating, 1);
-                }
-                usort($rooms, function ($a, $b) {
-                    return $b['rating'] - $a['rating'];
-                });
-            }
-
-            if ($sortBy == 'low_to_high') {
-                foreach ($rooms as $key => $item) {
-                    $promotion = $this->RoomModel->getPromotionRoom($item['idphong']);
-                    $rooms[$key]['price'] = !empty($promotion) ? intval($item['giaphong']) - (intval($item['giaphong']) * intval($promotion) * 0.01) : $item['giaphong'];
-                }
-                usort($rooms, function ($a, $b) {
-                    return $a['price'] - $b['price'];
-                });
-            }
-
-            if ($sortBy == 'high_to_low') {
-                foreach ($rooms as $key => $item) {
-                    $promotion = $this->RoomModel->getPromotionRoom($item['idphong']);
-                    $rooms[$key]['price'] = !empty($promotion) ? intval($item['giaphong']) - (intval($item['giaphong']) * intval($promotion) * 0.01) : $item['giaphong'];
-                }
-                usort($rooms, function ($a, $b) {
-                    return $b['price'] - $a['price'];
-                });
-            }
-
-            $this->pagination = new Pagination($rooms, $this->per_page);
-            $rooms = Session::set('rooms', $rooms, 1800);
-            $Rooms = $this->pagination->getItemsbyCurrentPage(1);
-
-            $response = [
-                'rooms' => $this->getInforRoomMore($Rooms)
-            ];
-
-            // Trả về dữ liệu dưới dạng JSON
-            header('Content-Type: application/json');
-            echo json_encode($response);
+            Session::set('sortBy', $sortBy, 1800);
+            $this->roomFilter();
             exit;
         } else {
             header('location:' . URLROOT . '/room');
@@ -335,9 +348,17 @@ class Room extends Controller
     public function page($current_page = 1)
     {
         if ($this->isAjaxRequest()) {
-            $Rooms = $this->pagination->getItemsbyCurrentPage($current_page);
+            if (Session::get('dataPage')) {
+                $rooms = Session::get('dataPage');
+                $totalItems = count($rooms);
+                $this->pagination = new Pagination($totalItems, $this->per_page);
+            } else {
+                $rooms = Session::get('rooms');
+            }
+
+            $Rooms = $this->pagination->getItemsbyCurrentPage($rooms, $current_page);
             $response = [
-                'rooms' => $this->getInforRoomMore($Rooms),
+                'rooms' => $this->getInfoRoomMore($Rooms),
                 'pagination' => [
                     'total_pages' => $this->pagination->getTotalPages(),
                     'current_page' => $this->pagination->getcurrentPage()
@@ -351,15 +372,16 @@ class Room extends Controller
             exit;
         } else {
             if (!empty($current_page) && filter_var($current_page, FILTER_VALIDATE_INT)) {
+                $rooms = Session::get('rooms');
 
-                $Rooms = $this->pagination->getItemsbyCurrentPage($current_page);
+                $Rooms = $this->pagination->getItemsbyCurrentPage($rooms, $current_page);
                 $pag = [
                     'total_pages' => $this->pagination->getTotalPages(),
                     'current_page' => $this->pagination->getcurrentPage()
                 ];
 
                 $this->view('user', 'room.php', [
-                    'rooms' => $this->getInforRoomMore($Rooms),
+                    'rooms' => $this->getInfoRoomMore($Rooms),
                     'categorys' => $this->Categorys,
                     'beds' => $this->Beds,
                     'pagination' => $pag
@@ -370,10 +392,9 @@ class Room extends Controller
         }
     }
 
-
-    public function getInforRoomMore($Rooms)
+    public function getInfoRoomMore($Rooms)
     {
-        if (!empty($Rooms)) {
+        if ($Rooms) {
             foreach ($Rooms as $key => $room) {
                 $promotion = $this->RoomModel->getPromotionRoom($room['idphong']);
                 $Rooms[$key]['khuyenmai'] = $promotion;
@@ -413,40 +434,6 @@ class Room extends Controller
         return $Rooms ?? null;
     }
 
-    public function ratingP($current_page = 1)
-    {
-        if ($this->isAjaxRequest()) {
-            $ratingUser = Session::get('ratingUser');
-            if (!empty($ratingUser)) {
-                $this->pagination = new Pagination($ratingUser, $this->per_page);
-                $rating = $this->pagination->getItemsbyCurrentPage($current_page);
-                $pag = [
-                    'total_pages' => $this->pagination->getTotalPages(),
-                    'current_page' => $this->pagination->getcurrentPage()
-                ];
-            } else {
-                $rating = null;
-                $pag = null;
-            }
-
-            $response = [
-                'ratingUser' => $rating,
-                'pagination' => $pag,
-                'view' => 'room/ratingP'
-            ];
-
-            // Trả về dữ liệu dưới dạng JSON
-            header('Content-Type: application/json');
-            echo json_encode($response);
-            exit;
-        } else {
-            // header('location:' . URLROOT . '/room');
-            $ratingUser = Session::get('ratingUser');
-            var_dump($ratingUser);
-            return;
-        }
-    }
-
     public function detailroom($idphong = null)
     {
         if (!empty($idphong) && filter_var($idphong, FILTER_VALIDATE_INT)) {
@@ -454,52 +441,109 @@ class Room extends Controller
             $room = $this->RoomModel->findRoomById($idphong);
 
             if ($room) {
+                Session::set('detailroom_id', $idphong);
                 foreach ($room as $item) {
                     $roomMore = $this->RoomModel->getRoomsByCategory(3, $item['id_danhmuc']);
                 }
 
                 $amenities = $this->RoomModel->getAmenitiesByRoom($idphong);
-
                 $roomImgs = $this->ImageModel->findRoomImageById($idphong);
 
-
                 $detailRating = $this->RoomModel->getRatingRoom2($idphong);
-
                 if ($detailRating) {
                     foreach ($detailRating as $key => $item) {
                         $detailRating[$key]['diemtheotieuchi'] = $this->RoomModel->getScoreByAmenity($idphong);
                     }
                 }
 
-                $ratingUser = $this->RoomModel->getUserRating($idphong);
-                if ($ratingUser) {
+                $totalItems = $this->RatingModel->countUserRating($idphong);
+                if ($totalItems) {
+                    $this->pagination = new Pagination($totalItems, $this->per_page);
+                    $ratingUser = $this->RatingModel->getUserRatingByPage($idphong, $this->pagination->getPerPage(), $this->pagination->getOffset());
+
                     foreach ($ratingUser as $key => $item) {
-                        $ratingUser[$key]['chitietdanhgia'] = $this->RoomModel->getRatingUserByAmenity($idphong, $item['id_taikhoan'], $item['iddanhgia']);
+                        $ratingUser[$key]['chitietdanhgia'] = $this->RatingModel->getRatingUserByAmenity($idphong, $item['id_taikhoan'], $item['iddanhgia']);
                     }
-                    $this->pagination = new Pagination($ratingUser, $this->per_page);
-                    Session::set('ratingUser', $ratingUser, 1800);
-                    $rating = $this->pagination->getItemsbyCurrentPage(1);
                     $pag = [
                         'total_pages' => $this->pagination->getTotalPages(),
                         'current_page' => $this->pagination->getcurrentPage()
                     ];
                 } else {
-                    $rating = null;
+                    $ratingUser = null;
                     $pag = null;
                 }
 
+                $user_id = Session::get('user_id');
+
                 $this->view('user', 'detailroom.php', [
-                    'room' => $this->getInforRoomMore($room),
+                    'room' => $this->getInfoRoomMore($room),
                     'roomImgs' => $roomImgs,
                     'amenities' => $amenities,
-                    'roomMore' => $this->getInforRoomMore($roomMore),
+                    'roomMore' => $this->getInfoRoomMore($roomMore),
                     'detailRating' => $detailRating,
-                    'ratingUser' => $rating,
+                    'ratingUser' => $ratingUser,
+                    'user_id' => $user_id,
                     'pagination' => $pag
                 ]);
             } else {
                 header('location:' . URLROOT . '/room');
             }
+        } else {
+            header('location:' . URLROOT . '/room');
+        }
+    }
+
+    public function rating()
+    {
+        if (isset($_POST['delete'])) {
+            $delete = $this->RatingModel->deleteRating($_POST['delete']);
+            if ($delete) {
+                echo "<script> alert('Đã xóa bình luận thành công');
+                    window.history.back();
+                </script>";
+                exit();
+            } else {
+                echo '<script>alert("Lỗi")</script>';
+                exit();
+            }
+        }
+    }
+
+    public function ratingPage($current_page = 1)
+    {
+        if ($this->isAjaxRequest()) {
+            $idphong = Session::get('detailroom_id');
+
+            $totalItems = $this->RatingModel->countUserRating($idphong);
+            if ($totalItems) {
+                $this->pagination = new Pagination($totalItems, $this->per_page, $current_page);
+                $ratingUser = $this->RatingModel->getUserRatingByPage($idphong, $this->pagination->getPerPage(), $this->pagination->getOffset());
+
+                foreach ($ratingUser as $key => $item) {
+                    $ratingUser[$key]['chitietdanhgia'] = $this->RatingModel->getRatingUserByAmenity($idphong, $item['id_taikhoan'], $item['iddanhgia']);
+                }
+                $pag = [
+                    'total_pages' => $this->pagination->getTotalPages(),
+                    'current_page' => $this->pagination->getcurrentPage()
+                ];
+            } else {
+                $ratingUser = null;
+                $pag = null;
+            }
+
+            $user_id = Session::get('user_id');
+
+            $response = [
+                'ratingUser' => $ratingUser,
+                'pagination' => $pag,
+                'user_id' => $user_id,
+                'view' => 'room/ratingPage'
+            ];
+
+            // Trả về dữ liệu dưới dạng JSON
+            header('Content-Type: application/json');
+            echo json_encode($response);
+            exit;
         } else {
             header('location:' . URLROOT . '/room');
         }

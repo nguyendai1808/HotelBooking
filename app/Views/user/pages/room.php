@@ -2,7 +2,7 @@
 
     <!-- banner image Start -->
     <section class="banner-image">
-        <img src="<?= USER_PATH ?>/images/<?= $data['display']['baner'] ?? 'notbg.jpg' ?>" alt="banner">
+        <img src="<?= USER_PATH ?>/images/bg-img-2.jpg" alt="banner">
     </section>
     <!-- banner image end -->
 
@@ -112,16 +112,14 @@
                                         <div class="sort-box">
                                             <div class="sort-select-list d-flex">
                                                 <label class="pe-2">Sắp xếp theo:</label>
-                                                <form action="#">
-                                                    <fieldset>
-                                                        <select id="sort-select" style="padding-left: 5px;">
-                                                            <option>Mặc định</option>
-                                                            <option value="rating">Điểm đánh giá</option>
-                                                            <option value="low_to_high">Giá: thấp đến cao</option>
-                                                            <option value="high_to_low">Giá: cao đến thấp</option>
-                                                        </select>
-                                                    </fieldset>
-                                                </form>
+                                                <fieldset>
+                                                    <select id="sort-select" style="padding-left: 5px;">
+                                                        <option value="name">Mặc định</option>
+                                                        <option value="rating">Điểm đánh giá</option>
+                                                        <option value="low_to_high">Giá: thấp đến cao</option>
+                                                        <option value="high_to_low">Giá: cao đến thấp</option>
+                                                    </select>
+                                                </fieldset>
                                             </div>
                                         </div>
                                     </div>
@@ -245,7 +243,7 @@
 
 
     <!-- Comment Start -->
-    <?php include APPROOT . '/views/user/includes/comment.php'; ?>
+    <?php include APPROOT . '/views/user/pages/comment.php'; ?>
     <!-- Comment End -->
 
 </Main>

@@ -5,23 +5,37 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="icon" type="image/x-icon" href="<?= USER_PATH ?>/icon/icon.png">
     <title>HotelBooking</title>
-    <link rel="stylesheet" href="<?= URLROOT ?>/public/bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="<?= USER_PATH ?>/css/style.css" />
     <link rel="stylesheet" href="<?= USER_PATH ?>/css/main.css" />
     <link rel="stylesheet" href="<?= USER_PATH ?>/css/responsive.css" />
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </head>
 
 <body>
-
+    <div id="loader">
+        <div class="spinner-grow text-danger mx-1" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="spinner-grow text-warning mx-1" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="spinner-grow text-info mx-1" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
     <!-- Header Start -->
     <header>
         <div class="header">
             <div class="logo">
-                <a href="<?= URLROOT ?>/home"><img src="<?= USER_PATH ?>/images/<?= $data['display']['logo'] ?? 'notlogo.png' ?>" alt="logo"></a>
+                <a href="<?= URLROOT ?>/home"><img src="<?= USER_PATH ?>/images/HotelBooking-logo.png" alt="logo"></a>
             </div>
 
             <input type="checkbox" id="sidebar-active">
@@ -43,8 +57,8 @@
                 </ul>
                 <div class="navbar-other">
 
-                    <?php if (!empty($data['header'])) :
-                        foreach ($data['header'] as $item) : ?>
+                    <?php if (!empty($header)) :
+                        foreach ($header as $item) : ?>
 
                             <li class="cart">
                                 <a href="<?= URLROOT ?>/cart">

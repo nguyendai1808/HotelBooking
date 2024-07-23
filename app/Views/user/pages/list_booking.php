@@ -1,19 +1,23 @@
-<h3 class="title">Danh sách các phòng</h3>
+<?php
+if (isset($data['list_booking'])) {
+    $list_booking = $data['list_booking'];
+}
+
+if (isset($data['rating'])) {
+    $rating = $data['rating'];
+};
+?>
+
+<h3 class="title mb-3">Danh sách các phòng</h3>
 <div class="myinfor-history m-0">
     <div class="col-12 mb-3" id="booking-items">
 
-        <?php
-        if (isset($data['list_booking'])) {
-            $list_booking = $data['list_booking'];
-        }
-
-        if (!empty($list_booking)) :
+        <?php if (!empty($list_booking)) :
             $stt = 1;
-            $action = !empty($list_booking[0]['invoice']) ? 'invoice' : 'history';
             foreach ($list_booking as $item) : ?>
 
                 <div class="room-item border mb-3" id="form-<?= $stt ?>">
-                    <form class="form-item col-12" action="<?= URLROOT ?>/<?= $action ?>/cancelRoom" method="post">
+                    <form class="form-item col-12" action="<?= URLROOT ?>/history/cancelRoom" method="post">
                         <div class="item-img">
                             <a href="<?= URLROOT ?>/room/detailroom/<?= $item['id_phong'] ?>"><img src="<?= USER_PATH ?>/<?= !empty($item['anhphong']) ? $item['anhphong'] : 'images/notImage.jpg'; ?>"></a>
 
@@ -28,9 +32,10 @@
 
                                 <?php if ($item['trangthaidat'] == 'Hoàn tất' && !empty($item['id_taikhoan']) && strtotime('+4 weeks', strtotime($item['ngaydi'])) > time()) : ?>
 
-                                    <a href="javascript:void(0);" onclick="openRating('<?= $item['id_phong'] ?>','<?= $item['id_taikhoan'] ?>','<?= $item['iddatphong'] ?>')">
+                                    <button class="btn border-0 p-0" type="button" onclick="openRating('<?= $item['id_phong'] ?>','<?= $item['id_taikhoan'] ?>','<?= $item['iddatphong'] ?>')">
                                         <img class="item-rating" src="<?= USER_PATH ?>/icon/rating.png" alt="rating">
-                                    </a>
+                                    </button>
+
                                 <?php endif; ?>
 
                             </div>
@@ -43,7 +48,8 @@
 
                             <p class="mb-2 fw-bold"><span class="text-success"><?= $item['loaihinhtt'] ?></span></p>
 
-                            <?php $giaphong = $item['giaphong'];
+                            <?php
+                            $giaphong = $item['giaphong'];
                             if (!empty($item['khuyenmai'])) :
                                 $giaphong = $item['giaphong'] - (($item['khuyenmai'] / 100) * $item['giaphong']); ?>
 
@@ -55,13 +61,15 @@
 
                             <?php endif; ?>
 
-                            <?php if ($item['trangthaidat'] == 'Đã hủy') :
+                            <?php
+                            if ($item['trangthaidat'] == 'Đã hủy') :
                                 $dathanhtoan = $item['tonggia'] * 0.25;
                             elseif ($item['trangthaidat'] == 'Đã cọc tiền') :
                                 $dathanhtoan = $item['tonggia'] * 0.5;
                             else :
                                 $dathanhtoan = $item['tonggia'];
-                            endif; ?>
+                            endif;
+                            ?>
 
                             <p class="mb-2 text-success">Đã thanh toán: <span><?= number_format($dathanhtoan, 0, ',', '.') ?>đ</span></p>
 
@@ -72,23 +80,14 @@
 
                             <div class="d-flex justify-content-between align-items-center">
 
-                                <?php if ($item['trangthaidat'] == 'Hoàn tất' || $item['trangthaidat'] == 'Đã hủy' || $item['trangthaidat'] == 'Đã đánh giá') : ?>
+                                <button class="btn-invoice" type="submit" name="detail" value="<?= $item['iddondat'] ?>" formaction="<?= URLROOT ?>/invoice">ID: <?= $item['iddondat'] ?></button>
 
-                                    <button class="btn-invoice" type="submit" name="detail" value="<?= $item['iddondat'] ?>" formaction="<?= URLROOT ?>/invoice">ID: <?= $item['iddondat'] ?></button>
+                                <?php if (strtotime($item['ngayden']) > strtotime('+1 week') && $item['trangthaidat'] != 'Đã hủy') : ?>
 
-                                    <a href="<?= URLROOT ?>/room/detailroom/<?= $item['id_phong'] ?>" class="btn-item-book">Đặt Lại</a>
-
-                                <?php else : ?>
-
-                                    <button class="btn-invoice" type="submit" name="detail" value="<?= $item['iddondat'] ?>" formaction="<?= URLROOT ?>/invoice">ID: <?= $item['iddondat'] ?></button>
-
-                                    <?php if (strtotime($item['ngayden']) > strtotime('+1 week')) : ?>
-
-                                        <button class="btn-item-cancel" name="cancel" type="submit" onclick="return confirmAction(this, 'Bạn có chắc chắn muốn hủy không?') && inputNumber('form-<?= $stt ?>')">Hủy</button>
-
-                                    <?php endif; ?>
+                                    <button class="btn-item-cancel" name="cancel" type="submit" onclick="return confirmAction(this, 'Bạn có chắc chắn muốn hủy không?') && inputNumber('form-<?= $stt ?>')">Hủy</button>
 
                                 <?php endif; ?>
+
                             </div>
                         </div>
                     </form>
@@ -96,7 +95,7 @@
                     <div class="item-total col-12 border-top">
                         <div class="w-25 text-center d-flex flex-column">
 
-                            <?php $color = ($item['trangthaidat'] == 'Đã hủy') ? 'danger'  : (($item['trangthaidat'] == 'Đã cọc tiền') ? 'warning' : 'success'); ?>
+                            <?php $color = ($item['trangthaidat'] == 'Đã hủy') ? 'danger' : (($item['trangthaidat'] == 'Đã cọc tiền') ? 'warning' : 'success'); ?>
 
                             <span class="fw-bold text-<?= $color ?>"><?= $item['trangthaidat'] ?></span>
 
@@ -115,16 +114,18 @@
             <?php $stt++;
             endforeach;
 
-            if (!empty($data['criteria'])) {
-                require_once APPROOT . '/views/user/pages/rating.php';
-            };
-
         else : ?>
 
             <h5>Không có phòng nào cả!</h5>
 
         <?php endif; ?>
     </div>
+
+    <?php
+    if (!empty($rating)) {
+        require_once APPROOT . '/views/user/pages/rating.php';
+    }
+    ?>
 
     <!-- Start Pagination -->
     <div class="page-pagination mt-5" id="pagination-links">
@@ -140,7 +141,8 @@
 
             if ($current_page == $total_pages && $start > 1) :
                 $start--;
-            endif; ?>
+            endif;
+        ?>
 
             <ul>
                 <?php if ($current_page > 1) : ?>

@@ -125,4 +125,15 @@
   background-color: rgba(220, 20, 60, 0.651);
 }
 
-
+#loader {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  text-align: center;
+  width: 100%;
+  height: 100vh;
+  line-height: 100vh;
+  background-color: rgba(255, 255, 255, 0.7);
+}

@@ -12,18 +12,22 @@
                         <input type="email" name="email" value="<?= $item['email'] ?>" readonly />
                     </div>
                     <div class="input-box">
-                        <label>Trạng thái</label>
-                        <input type="text" name="status" value="<?= $item['trangthai'] ?>" readonly />
-                    </div>
-                </div>
-                <div class="column">
-                    <div class="input-box">
                         <label>Họ tên</label>
                         <input type="text" name="fullname" value="<?= $item['hoten'] ?>" readonly />
                     </div>
+                </div>
+                <div class="input-box">
+                    <label>Chủ đề</label>
+                    <input type="text" name="subject" value="<?= $item['chude'] ?>" readonly />
+                </div>
+                <div class="column">
                     <div class="input-box">
-                        <label>Chủ đề</label>
-                        <input type="text" name="subject" value="<?= $item['chude'] ?>" readonly />
+                        <label>Trạng thái</label>
+                        <input type="text" name="status" value="<?= $item['trangthai'] ?>" readonly />
+                    </div>
+                    <div class="input-box">
+                        <label>Thời gian</label>
+                        <input type="text" name="date" value="<?= date('d-m-Y', strtotime($item['chude']))?>" readonly />
                     </div>
                 </div>
                 <div class="input-box">

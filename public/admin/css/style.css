@@ -211,3 +211,112 @@
 .form .btn-cancel:hover {
   background: rgba(219, 17, 17, 0.688);
 }
+
+#loader {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  text-align: center;
+  width: 100%;
+  height: 100vh;
+  line-height: 100vh;
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+/* -----------------------------------pagination---------------------------------- */
+.page-pagination {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 12px;
+  text-align: right;
+}
+
+.page-pagination ul {
+  padding: 0;
+}
+
+.page-pagination li {
+  display: inline-block;
+}
+
+.page-pagination li a {
+  width: 30px;
+  line-height: 30px;
+  height: 30px;
+  display: block;
+  border: 1px solid #dfdede;
+  background: white;
+  color: #24262b;
+  border-radius: 3px;
+  font-weight: 500;
+  text-decoration: none;
+  text-align: center;
+}
+
+.page-pagination li a.active,
+.page-pagination li a:hover {
+  background: #ffc107d2;
+  color: #24262b;
+}
+
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 5;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.modal-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 5px;
+  width: 80%;
+  max-width: 700px;
+}
+
+.modal-content img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 25px;
+  color: #FFC107;
+  font-size: 35px;
+  font-weight: bold;
+}
+
+.prev,
+.next {
+  cursor: pointer;
+  position: absolute;
+  top: 45%;
+  width: auto;
+  padding: 16px;
+  margin-top: -22px;
+  color: #FFC107;
+  font-weight: bold;
+  font-size: 30px;
+  border-radius: 0 3px 3px 0;
+  user-select: none;
+  text-decoration: none;
+}
+
+.next {
+  right: 0;
+  border-radius: 3px 0 0 3px;
+}

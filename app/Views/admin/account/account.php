@@ -26,19 +26,19 @@
                                 <td class="number"><?= $item['diemtichluy'] ?? 0 ?></td>
                                 <td class="date"><?= date('d-m-Y', strtotime($item['ngaytao'])) ?></td>
                                 <td class="status">
-                                    <p class="status"><?= $item['trangthai'] ?></p>
+                                    <span class="status fw-bold text-<?php echo $item['trangthai'] == 'Khóa' ? 'danger' : 'success' ?> "><?= $item['trangthai'] ?></span>
                                 </td>
                                 <td class="method">
-                                    <div class="d-flex justify-content-center">
+                                    <form method="post" action="<?= URLROOT ?>/admin/account/action" class="d-flex justify-content-center">
                                         <a href="<?= URLROOT ?>/admin/account/detail/<?= $item['idtaikhoan'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-eye"></i></a>
 
                                         <?php if ($item['trangthai'] == 'Khóa') : ?>
-                                            <a href="<?= URLROOT ?>/admin/account/unlock/<?= $item['idtaikhoan'] ?>" onclick="return confirm('Bạn có chắc chắn muốn mở khóa tài khoản này');" class="btn btn-info text-white mx-1"><i class="fa-solid fa-lock-open"></i></a>
+                                            <button name="unlock" value="<?= $item['idtaikhoan'] ?>" onclick="return confirm('Bạn có chắc chắn muốn mở khóa tài khoản này');" class="btn btn-info text-white mx-1"><i class="fa-solid fa-lock-open"></i></button>
                                         <?php else : ?>
-                                            <a href="<?= URLROOT ?>/admin/account/lock/<?= $item['idtaikhoan'] ?>" onclick="return confirm('Bạn có chắc chắn muốn khóa tài khoản này');" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-lock"></i></a>
+                                            <button name="lock" value="<?= $item['idtaikhoan'] ?>" onclick="return confirm('Bạn có chắc chắn muốn khóa tài khoản này');" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-lock"></i></button>
                                         <?php endif; ?>
 
-                                    </div>
+                                    </form>
                                 </td>
                             </tr>
 
@@ -49,5 +49,35 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- Start Pagination -->
+        <div class="page-pagination" id="pagination-links">
+
+            <?php if (isset($data['pagination'])) : extract($data['pagination']);
+                $start = max($current_page - 1, 1);
+                $end = min($start + 2, $total_pages);
+
+                if ($current_page == $total_pages && $start > 1) :
+                    $start--;
+                endif; ?>
+
+                <ul>
+                    <?php if ($current_page > 1) : ?>
+                        <li><a href="<?= URLROOT ?>/admin/account/page/1"><i class="fa-solid fa-angles-left"></i></a></li>
+                    <?php endif; ?>
+
+                    <?php for ($i = $start; $i <= $end; $i++) : ?>
+                        <li><a <?= $i == $current_page ? 'class="active"' : '' ?> href="<?= URLROOT ?>/admin/account/page/<?= $i ?>"><?= $i ?></a></li>
+                    <?php endfor; ?>
+
+                    <?php if ($current_page < $total_pages) : ?>
+                        <li><a href="<?= URLROOT ?>/admin/account/page/<?= $total_pages ?>"><i class="fa-solid fa-angles-right"></i></a></li>
+                    <?php endif; ?>
+                </ul>
+
+            <?php endif; ?>
+
+        </div>
+        <!-- End Pagination -->
     </div>
 </section>

@@ -5,7 +5,6 @@ class Amenity extends Controller
 
     public function __construct()
     {
-        //gọi model User
         $this->AmenityModel = $this->model('AmenityModel');
     }
 
@@ -28,18 +27,21 @@ class Amenity extends Controller
 
             $image = $_FILES['image']['name'];
             $tmp_img = $_FILES['image']['tmp_name'];
-            $dir_img =  PUBLIC_PATH . '/user/images/amenities/';
-            move_uploaded_file($tmp_img, $dir_img . $image);
 
-            $result = $this->AmenityModel->createAmenity($name, $image);
+            $timestamp = time();
+            $image_extension = pathinfo($image, PATHINFO_EXTENSION);
+            $new_image_name = 'amenity_img_' . $timestamp . '.' . $image_extension;
+            $dir_img = PUBLIC_PATH . '/user/images/amenities/';
+            move_uploaded_file($tmp_img, $dir_img . $new_image_name);
 
+            $result = $this->AmenityModel->createAmenity($name, $new_image_name);
             if ($result) {
-                echo "<script> alert('thêm thành công');
+                echo "<script> alert('Thêm thành công');
                     window.location.href = '" . URLROOT . "/admin/amenity';
                 </script>";
                 exit();
             } else {
-                echo '<script>alert("lỗi")</script>';
+                echo '<script>alert("Lỗi")</script>';
                 exit();
             }
         }
@@ -54,19 +56,33 @@ class Amenity extends Controller
             if (isset($_POST['update'])) {
                 $name = $_POST["name"];
 
-                $image = $_FILES['image']['name'];
-                $tmp_img = $_FILES['image']['tmp_name'];
-                $dir_img =  PUBLIC_PATH . '/user/images/amenities/';
-                move_uploaded_file($tmp_img, $dir_img . $image);
+                if (!empty($_FILES['image']['name'])) {
+                    $dir_img = PUBLIC_PATH . '/user/images/amenities/';
 
-                $update = $this->AmenityModel->updateAmenity($idtiennghi, $name, $image);
+                    $old_image = $this->AmenityModel->getAmenityImageById($idtiennghi);
+                    if ($old_image && file_exists($dir_img . $old_image)) {
+                        unlink($dir_img . $old_image);
+                    }
+
+                    $image = $_FILES['image']['name'];
+                    $tmp_img = $_FILES['image']['tmp_name'];
+
+                    $timestamp = time();
+                    $image_extension = pathinfo($image, PATHINFO_EXTENSION);
+                    $new_image_name = 'amenity_img_' . $timestamp . '.' . $image_extension;
+                    move_uploaded_file($tmp_img, $dir_img . $new_image_name);
+                } else {
+                    $new_image_name = null;
+                }
+
+                $update = $this->AmenityModel->updateAmenity($idtiennghi, $name, $new_image_name);
                 if ($update) {
-                    echo "<script> alert('cập nhật thành công');
+                    echo "<script> alert('Cập nhật thành công');
                         window.location.href = '" . URLROOT . "/admin/amenity';
                     </script>";
                     exit();
                 } else {
-                    echo '<script>alert("lỗi")</script>';
+                    echo '<script>alert("Lỗi")</script>';
                     exit();
                 }
             }
@@ -80,17 +96,24 @@ class Amenity extends Controller
         }
     }
 
-    public function delete($idtiennghi = null)
+    public function delete()
     {
-        if (!empty($idtiennghi) && filter_var($idtiennghi, FILTER_VALIDATE_INT)) {
+        if (isset($_POST['delete'])) {
+            $idtiennghi = $_POST['delete'];
+            $dir_img = PUBLIC_PATH . '/user/images/amenities/';
+            $old_image = $this->AmenityModel->getAmenityImageById($idtiennghi);
+
             $delete = $this->AmenityModel->deleteAmenity($idtiennghi);
             if ($delete) {
-                echo "<script> alert('xóa thành công');
+                if ($old_image && file_exists($dir_img . $old_image)) {
+                    unlink($dir_img . $old_image);
+                }
+                echo "<script> alert('Xóa thành công');
                         window.location.href = '" . URLROOT . "/admin/amenity';
                     </script>";
                 exit();
             } else {
-                echo '<script>alert("lỗi")</script>';
+                echo '<script>alert("Lỗi")</script>';
                 exit();
             }
         } else {
@@ -106,16 +129,16 @@ class Amenity extends Controller
             $name = $_POST["nameBed"];
             $result = $this->AmenityModel->createBed($name);
             if ($result) {
-                echo "<script> alert('thêm thành công');
+                echo "<script> alert('Thêm thành công');
                         window.location.href = '" . URLROOT . "/admin/amenity';
                     </script>";
                 exit();
             } else {
-                echo '<script>alert("lỗi")</script>';
+                echo '<script>alert("Lỗi")</script>';
                 exit();
             }
         }
-        $this->view('admin', 'amenity/createBed.php');
+        $this->view('admin', 'amenity/create_bed.php');
     }
 
 
@@ -128,7 +151,7 @@ class Amenity extends Controller
 
                 $update = $this->AmenityModel->updateBed($idgiuong, $name);
                 if ($update) {
-                    echo "<script> alert('cập nhật thành công');
+                    echo "<script> alert('Cập nhật thành công');
                         window.location.href = '" . URLROOT . "/admin/amenity';
                     </script>";
                     exit();
@@ -139,7 +162,7 @@ class Amenity extends Controller
             }
 
             $bed = $this->AmenityModel->findBedById($idgiuong);
-            $this->view('admin', 'amenity/updateBed.php', [
+            $this->view('admin', 'amenity/update_bed.php', [
                 'bed' => $bed
             ]);
         } else {
@@ -147,12 +170,12 @@ class Amenity extends Controller
         }
     }
 
-    public function deleteBed($idgiuong = null)
+    public function deleteBed()
     {
-        if (!empty($idgiuong) && filter_var($idgiuong, FILTER_VALIDATE_INT)) {
-            $delete = $this->AmenityModel->deleteBed($idgiuong);
+        if (isset($_POST['deleteBed'])) {
+            $delete = $this->AmenityModel->deleteBed($_POST['deleteBed']);
             if ($delete) {
-                echo "<script> alert('xóa thành công');
+                echo "<script> alert('Xóa thành công');
                         window.location.href = '" . URLROOT . "/admin/amenity';
                     </script>";
                 exit();

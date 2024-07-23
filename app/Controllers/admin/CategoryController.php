@@ -2,18 +2,16 @@
 class Category extends Controller
 {
     private $CategoryModel;
+
     public function __construct()
     {
-        //gọi model
         $this->CategoryModel = $this->model('CategoryModel');
     }
 
     public function index()
     {
-        //gọi method
         $category  = $this->CategoryModel->getCategorys();
 
-        //view - page
         $this->view('admin', 'category/category.php', [
             'category' => $category
         ]);
@@ -28,6 +26,9 @@ class Category extends Controller
                 echo "<script> alert('Thêm thành công');
                         window.location.href = '" . URLROOT . "/admin/category';
                     </script>";
+                exit();
+            } else {
+                echo '<script>alert("Lỗi")</script>';
                 exit();
             }
         }
@@ -47,7 +48,7 @@ class Category extends Controller
                     </script>";
                     exit();
                 } else {
-                    echo '<script>alert("lỗi")</script>';
+                    echo '<script>alert("Lỗi")</script>';
                     exit();
                 }
             }
@@ -61,17 +62,17 @@ class Category extends Controller
         }
     }
 
-    public function delete($iddanhmuc = null)
+    public function delete()
     {
-        if (!empty($iddanhmuc) && filter_var($iddanhmuc, FILTER_VALIDATE_INT)) {
-            $delete = $this->CategoryModel->deleteCategory($iddanhmuc);
+        if (isset($_POST['delete'])) {
+            $delete = $this->CategoryModel->deleteCategory($_POST['delete']);
             if ($delete) {
                 echo "<script> alert('Xóa thành công');
                         window.location.href = '" . URLROOT . "/admin/category';
                     </script>";
                 exit();
             } else {
-                echo '<script>alert("lỗi")</script>';
+                echo '<script>alert("Lỗi")</script>';
                 exit();
             }
         } else {

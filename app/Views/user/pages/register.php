@@ -2,27 +2,22 @@
     <div class="wrapper-layout">
         <h2>Đăng ký</h2>
         <form class="form-layout" action="<?= URLROOT ?>/register" method="post" id="registerForm">
-
-            <?php if (!empty($data['error'])) : ?>
-                <p class="text-center text-danger"><?= $data['error'] ?></p>
-            <?php endif ?>
-
             <div class="input-layout">
                 <div class="row">
                     <div class="col-6">
                         <label>Họ</label>
-                        <input type="text" name="surname" id="surname" placeholder="Họ" required />
+                        <input type="text" name="surname" id="surname" placeholder="VD: Nguyễn Văn ..." required />
                     </div>
                     <div class="col-6">
                         <label>Tên</label>
-                        <input type="text" name="name" id="name" placeholder="Tên" required />
+                        <input type="text" name="name" id="name" placeholder="VD: Nam" required />
                     </div>
                 </div>
             </div>
 
             <div class="input-layout">
                 <label>Email</label>
-                <input type="email" name="email" id="email" placeholder="Email" required />
+                <input type="email" name="email" id="email" placeholder="VD: example@domain.com" required />
             </div>
 
             <div class="input-layout" id="form-pass">
@@ -48,8 +43,16 @@
         let pass = document.getElementById('pass');
         let rtpass = document.getElementById('rtpass');
         let email = document.getElementById('email');
-
+        let surname = document.getElementById('surname');
+        let name = document.getElementById('name');
         form.onsubmit = function(event) {
+
+            // Kiểm tra trống
+            if (!surname.value || !name.value || !email.value || !pass.value || !rtpass.value) {
+                alert("Vui lòng nhập đầy đủ.");
+                event.preventDefault();
+                return false;
+            }
 
             // Kiểm tra định dạng email
             const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

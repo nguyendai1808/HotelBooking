@@ -2,6 +2,7 @@
 class HotelModel
 {
     private $db;
+
     public function __construct()
     {
         $this->db = new Database();
@@ -10,6 +11,13 @@ class HotelModel
     public function getHotel()
     {
         $sql = "SELECT * FROM khachsan where idkhachsan = '1'";
+        $result = $this->db->select($sql);
+        return $result;
+    }
+
+    public function getInfoExport()
+    {
+        $sql = "SELECT tenkhachsan, diachi, sdt FROM khachsan";
         $result = $this->db->select($sql);
         return $result;
     }
@@ -24,7 +32,6 @@ class HotelModel
             return false;
         }
     }
-
 
     public function getMainImageHotel()
     {
@@ -109,16 +116,21 @@ class HotelModel
     }
 
 
-    public function saveImage($name, $link)
+    public function saveImage($idimg, $name, $link)
     {
-        $maxId = $this->getMaxIdImageHotel();
-        $maxId = intval($maxId) + 1;
-        $sql = "INSERT INTO anhks(idanhks, tenanh, duongdan, id_khachsan) VALUES ('$maxId' ,'$name','$link','1')";
+        $sql = "INSERT INTO anhks(idanhks, tenanh, duongdan, id_khachsan) VALUES ('$idimg' ,'$name','$link','1')";
         $result = $this->db->execute($sql);
         if ($result) {
-            return $maxId;
+            return true;
         } else {
-            return null;
+            return false;
         }
+    }
+
+    public function getHotelImageById($id)
+    {
+        $sql = "SELECT tenanh FROM anhks where idanhks = '$id'";
+        $result = $this->db->selectFirstColumnValue($sql, 'tenanh');
+        return $result;
     }
 }

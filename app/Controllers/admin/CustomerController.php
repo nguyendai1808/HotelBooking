@@ -1,20 +1,55 @@
 <?php
 class Customer extends Controller
 {
-    protected $CustomerModel;
+    private $CustomerModel;
+
+    private $pagination;
+    private $per_page = 50;
 
     public function __construct()
     {
-        //gọi model User
         $this->CustomerModel = $this->model('CustomerModel');
     }
 
     public function index()
     {
-        $Customers =  $this->CustomerModel->getCustomerInvoice();
+        $totalItems = $this->CustomerModel->countCustomerInvoice();
+        if ($totalItems) {
+            $this->pagination = new Pagination($totalItems, $this->per_page);
+            $Customers = $this->CustomerModel->getCustomerInvoiceByPage($this->pagination->getPerPage(), $this->pagination->getOffset());
+            $pag = [
+                'total_pages' => $this->pagination->getTotalPages(),
+                'current_page' => $this->pagination->getcurrentPage()
+            ];
+        } else {
+            $Customers = null;
+            $pag = null;
+        }
 
         $this->view('admin', 'customer/customer.php', [
-            'customers' => $Customers
+            'customers' => $Customers,
+            'pagination' => $pag
+        ]);
+    }
+
+    public function page($current_page = 1)
+    {
+        $totalItems = $this->CustomerModel->countCustomerInvoice();
+        if ($totalItems) {
+            $this->pagination = new Pagination($totalItems, $this->per_page, $current_page);
+            $Customers = $this->CustomerModel->getCustomerInvoiceByPage($this->pagination->getPerPage(), $this->pagination->getOffset());
+            $pag = [
+                'total_pages' => $this->pagination->getTotalPages(),
+                'current_page' => $this->pagination->getcurrentPage()
+            ];
+        } else {
+            $Customers = null;
+            $pag = null;
+        }
+
+        $this->view('admin', 'customer/customer.php', [
+            'customers' => $Customers,
+            'pagination' => $pag
         ]);
     }
 

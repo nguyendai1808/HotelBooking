@@ -2,6 +2,7 @@
 class ContactModel
 {
     private $db;
+    
     public function __construct()
     {
         $this->db = new Database();
@@ -16,7 +17,7 @@ class ContactModel
 
     public function createContact($fullname, $email, $subject, $mess)
     {
-        $sql = "INSERT INTO lienhe (hoten, email, chude, noidung, trangthai , id_khachsan) VALUES ('$fullname','$email','$subject', '$mess','Chờ phản hồi', 1)";
+        $sql = "INSERT INTO lienhe (hoten, email, chude, noidung, thoigian, trangthai, id_khachsan) VALUES ('$fullname','$email','$subject', CURDATE(), '$mess','Chờ phản hồi', 1)";
         $result = $this->db->execute($sql);
         if ($result) {
             return true;

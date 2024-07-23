@@ -2,14 +2,13 @@
 
     <!-- banner image Start -->
     <section class="banner-image">
-        <img src="<?= USER_PATH ?>/images/<?= $data['display']['baner'] ?? 'notbg.jpg' ?>" alt="banner">
+        <img src="<?= USER_PATH ?>/images/bg-img-2.jpg" alt="banner">
     </section>
     <!-- banner image end -->
 
     <?php include APPROOT . '/views/user/includes/booking.php'; ?>
 
     <?php include APPROOT . '/views/user/includes/changedate.php'; ?>
-
 
     <!-- About start -->
     <section class="about pb-5">
@@ -151,7 +150,7 @@
                                                     <input type="hidden" name="idphong" value="<?= $item['idphong'] ?>">
                                                     <input type="hidden" name="giaphong" value="<?= $giaphong ?>">
                                                     <input type="hidden" id="sophongtrong" value="<?= $item['soluongphongtrong'] ?>">
-                                                    
+
                                                     <div class="d-flex justify-content-between">
                                                         <a class="btn btn-sm btn-warning rounded fw-bold py-2 px-3" href="<?= URLROOT ?>/room/detailroom/<?= $item['idphong'] ?>">Xem chi tiết</a>
                                                         <button type="submit" name="booknow" onclick="clickBooknow(event, '<?= $item['idphong'] ?>');" class="btn btn-sm btn-dark rounded py-2 px-4 fw-bold">Đặt ngay</button>
@@ -269,6 +268,6 @@
     </section>
     <!-- Service End -->
 
-    <?php include APPROOT . '/views/user/includes/comment.php'; ?>
+    <?php include APPROOT . '/views/user/pages/comment.php'; ?>
 
 </Main>

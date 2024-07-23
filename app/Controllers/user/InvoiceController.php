@@ -4,58 +4,36 @@ class Invoice extends Controller
     private $BookingModel;
     private $RoomModel;
     private $RatingModel;
+    private $AccountModel;
 
     public function __construct()
     {
         $this->BookingModel = $this->model('BookingModel');
         $this->RoomModel = $this->model('RoomModel');
         $this->RatingModel = $this->model('RatingModel');
+        $this->AccountModel = $this->model('AccountModel');
     }
 
     public function index()
     {
         if (isset($_POST['invoice'])) {
-            session_unset();
-            Session::set('iddondat', $_POST['invoice'], 900);
-        }
-        if (isset($_POST['detail'])) {
-            Session::set('iddondat', $_POST['detail'], 900);
-        }
-        header('location:' . URLROOT . '/invoice/all');
-    }
-
-
-    public function rating()
-    {
-        if (isset($_POST['rating'])) {
-            if (!empty($_POST['criteria'])) {
-                $tongdiem = 0;
-                $dem = 0;
-                foreach ($_POST['criteria'] as $idtieuchi => $value) {
-                    $tongdiem += $value;
-                    $dem++;
-                }
-                $tongdiem = $tongdiem == 0 ? 0 : $tongdiem / $dem;
-
-                if ($this->RatingModel->createRating($_POST['content'], $tongdiem, $_POST['iddaikhoan'], $_POST['idphong'])) {
-                    $iddanhgia =  $this->RatingModel->getRatingByIdUserRoom($_POST['iddaikhoan'], $_POST['idphong']);
-                    foreach ($_POST['criteria'] as $idtieuchi => $value) {
-                        $this->RatingModel->createDetailRating($idtieuchi, $iddanhgia, $value);
-                    }
-                    $this->RatingModel->updateStatusBooking($_POST['iddatphong']);
-
-                    echo "<script> alert('Đánh giá thành công');
-                        window.location.href = '" . URLROOT . "/invoice/all';
-                    </script>";
-                    exit();
-                }
+            $account = $this->AccountModel->getIdAccountByEmail($_POST['email']);
+            if ($account == Session::get('user_id')) {
+                Session::set('user_id', $account);
+            } else {
+                session_unset();
             }
-            echo "<script> alert('Lỗi');
-                window.location.href = '" . URLROOT . "/invoice/all';
-            </script>";
-            exit();
-        } else {
+            Session::set('iddondat', $_POST['invoice'], 1800);
+        }
+
+        if (isset($_POST['detail'])) {
+            Session::set('iddondat', $_POST['detail'], 1800);
+        }
+
+        if (Session::get('iddondat')) {
             header('location:' . URLROOT . '/invoice/all');
+        } else {
+            header('location:' . URLROOT . '/room');
         }
     }
 
@@ -64,12 +42,12 @@ class Invoice extends Controller
         $iddondat = Session::get('iddondat');
         if ($iddondat) {
             $invoice = $this->BookingModel->getBookingInvoiceByStatus($iddondat);
-            $criteria = $this->RatingModel->getCriteria();
+            $rating = $this->RatingModel->getCriteria();
             if ($this->isAjaxRequest()) {
                 ob_start();
                 extract([
-                    'list_booking' => $this->getInforBooking($invoice),
-                    'criteria' => $criteria
+                    'list_booking' => $this->getInfoBooking($invoice),
+                    'rating' => $rating
                 ]);
                 require_once APPROOT . '/views/user/pages/list_booking.php';
                 require_once APPROOT . '/views/user/pages/rating.php';
@@ -85,13 +63,13 @@ class Invoice extends Controller
                 exit;
             } else {
                 $this->view('user', 'invoice.php', [
-                    'page' => 'list_booking.php',
-                    'list_booking' => $this->getInforBooking($invoice),
-                    'criteria' => $criteria
+                    'list_booking' => $this->getInfoBooking($invoice),
+                    'rating' => $rating
                 ]);
             }
+        } else {
+            header('location:' . URLROOT . '/invoice');
         }
-        header('location:' . URLROOT . '/home');
     }
 
     public function checkoutLounge()
@@ -101,7 +79,7 @@ class Invoice extends Controller
             $booking = $this->BookingModel->getBookingInvoiceByStatus($iddondat, 'Đã cọc tiền');
             if ($this->isAjaxRequest()) {
                 ob_start();
-                extract(['list_booking' => $this->getInforBooking($booking)]);
+                extract(['list_booking' => $this->getInfoBooking($booking)]);
                 require_once APPROOT . '/views/user/pages/list_booking.php';
                 $page = ob_get_clean();
 
@@ -116,12 +94,12 @@ class Invoice extends Controller
             } else {
 
                 $this->view('user', 'invoice.php', [
-                    'page' => 'list_booking.php',
-                    'list_booking' => $this->getInforBooking($booking)
+                    'list_booking' => $this->getInfoBooking($booking)
                 ]);
             }
+        } else {
+            header('location:' . URLROOT . '/invoice');
         }
-        header('location:' . URLROOT . '/home');
     }
 
     public function paidBooking()
@@ -131,7 +109,7 @@ class Invoice extends Controller
             $booking = $this->BookingModel->getBookingInvoiceByStatus($iddondat, 'Đã thanh toán');
             if ($this->isAjaxRequest()) {
                 ob_start();
-                extract(['list_booking' => $this->getInforBooking($booking)]);
+                extract(['list_booking' => $this->getInfoBooking($booking)]);
                 require_once APPROOT . '/views/user/pages/list_booking.php';
                 $page = ob_get_clean();
 
@@ -146,12 +124,12 @@ class Invoice extends Controller
             } else {
 
                 $this->view('user', 'invoice.php', [
-                    'page' => 'list_booking.php',
-                    'list_booking' => $this->getInforBooking($booking)
+                    'list_booking' => $this->getInfoBooking($booking)
                 ]);
             }
+        } else {
+            header('location:' . URLROOT . '/invoice');
         }
-        header('location:' . URLROOT . '/home');
     }
 
     public function booked()
@@ -159,12 +137,12 @@ class Invoice extends Controller
         $iddondat = Session::get('iddondat');
         if ($iddondat) {
             $booking = $this->BookingModel->getBookingInvoiceByStatus($iddondat, 'Hoàn tất, Đã đánh giá');
-            $criteria = $this->RatingModel->getCriteria();
+            $rating = $this->RatingModel->getCriteria();
             if ($this->isAjaxRequest()) {
                 ob_start();
                 extract([
-                    'list_booking' => $this->getInforBooking($booking),
-                    'criteria' => $criteria
+                    'list_booking' => $this->getInfoBooking($booking),
+                    'rating' => $rating
                 ]);
                 require_once APPROOT . '/views/user/pages/list_booking.php';
                 require_once APPROOT . '/views/user/pages/rating.php';
@@ -181,24 +159,23 @@ class Invoice extends Controller
             } else {
 
                 $this->view('user', 'invoice.php', [
-                    'page' => 'list_booking.php',
-                    'list_booking' => $this->getInforBooking($booking),
-                    'criteria' => $criteria
+                    'list_booking' => $this->getInfoBooking($booking),
+                    'rating' => $rating
                 ]);
             }
+        } else {
+            header('location:' . URLROOT . '/invoice');
         }
-        header('location:' . URLROOT . '/home');
     }
 
     public function canceledBooking()
     {
         $iddondat = Session::get('iddondat');
         if ($iddondat) {
-            $booking = $this->BookingModel->getBookingInvoiceByStatus($iddondat, 'Đã Hủy');
-
+            $booking = $this->BookingModel->getBookingInvoiceByStatus($iddondat, 'Đã hủy');
             if ($this->isAjaxRequest()) {
                 ob_start();
-                extract(['list_booking' => $this->getInforBooking($booking)]);
+                extract(['list_booking' => $this->getInfoBooking($booking)]);
                 require_once APPROOT . '/views/user/pages/list_booking.php';
                 $page = ob_get_clean();
 
@@ -213,16 +190,15 @@ class Invoice extends Controller
             } else {
 
                 $this->view('user', 'invoice.php', [
-                    'page' => 'list_booking.php',
-                    'list_booking' => $this->getInforBooking($booking)
+                    'list_booking' => $this->getInfoBooking($booking)
                 ]);
             }
+        } else {
+            header('location:' . URLROOT . '/invoice');
         }
-        header('location:' . URLROOT . '/home');
     }
 
-
-    public function getInforBooking($invoice)
+    public function getInfoBooking($invoice)
     {
         if ($invoice) {
             foreach ($invoice as $key => $item) {
@@ -241,7 +217,7 @@ class Invoice extends Controller
                     $invoice[$key]['anhphong'] = $mainImg;
 
                     $paymentMethod = $this->RoomModel->findPaymentMethod($room['idphong']);
-                    if($paymentMethod){
+                    if ($paymentMethod) {
                         $invoice[$key]['loaihinhtt'] = implode(" & ", array_column($paymentMethod, 'loaihinhthanhtoan'));
                     }
 
@@ -264,29 +240,5 @@ class Invoice extends Controller
         }
 
         return $invoice;
-    }
-
-
-    public function cancelRoom()
-    {
-        if (isset($_POST['cancel'])) {
-            if ($this->BookingModel->updateCancelInvoiceRoom($_POST['iddondat'], $_POST['iddatphong'], $_POST['trangthaidon'], $_POST['soluonghuy'])) {
-                $booking = $this->BookingModel->getInvoiceBookingById($_POST['iddondat']);
-                $email = $this->BookingModel->getEmailCustommerByInvoice($_POST['iddondat']);
-                $mail = new Mail();
-                if ($mail->sendMailCancelRoom($email, 'Thông báo hủy đặt phòng!', $this->getInforBooking($booking))) {
-                    echo "<script> alert('Hủy phòng thành công!');
-                    window.location.href = '" . URLROOT . "/invoice/all';
-                    </script>";
-                    exit();
-                }
-            } else {
-                echo "<script> alert('Lỗi');
-                window.location.href = '" . URLROOT . "/invoice/all';
-                </script>";
-                exit();
-            }
-        }
-        header('location:' . URLROOT . '/invoice/all');
     }
 }

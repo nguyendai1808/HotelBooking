@@ -28,12 +28,12 @@ if (!empty($account)) :
 
                     <div class="input-layout col-12">
                         <label>Số điện thoại</label>
-                        <input type="text" name="phone" placeholder="Số điện thoại" value="<?= $item['sdt'] ?>" required />
+                        <input type="number" name="phone" placeholder="Số điện thoại" value="<?= $item['sdt'] ?>" required />
                     </div>
 
                     <div class="input-layout col-12">
                         <label>Ảnh đại diện</label>
-                        <img src="<?= USER_PATH ?>/images/avatars/<?= !empty($item['anh']) ? $item['anh'] : 'user.png' ?>" alt="img">
+                        <img src="<?= USER_PATH ?>/images/avatars/<?= !empty($item['anh']) ? $item['anh'] : 'user.png' ?>" alt="img" class="img-thumbnail">
                         <input type="file" name="image" accept="image/*" onchange="previewImage(this)" />
                     </div>
 

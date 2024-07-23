@@ -18,8 +18,7 @@ body a {
 }
 
 .container-fluid {
-    padding: 0px;
-    margin: 0px;
+    padding: 0 !important;
 }
 
 .line-below {
@@ -57,7 +56,6 @@ body a {
 /* ---------------------------------rating history-----------------------------------*/
 
 .rating-room {
-    display: none;
     position: fixed;
     top: 0;
     left: 0;
@@ -746,7 +744,7 @@ input::-webkit-slider-thumb {
     outline: none;
     margin-left: 10px;
     border: none;
-    background-color: rgb(252, 247, 242);
+    background: none;
     color: #9D6D33;
     font-weight: 500;
 }
@@ -827,7 +825,7 @@ input::-webkit-slider-thumb {
 }
 
 .page-pagination li a {
-    padding: 0 15px;
+    width: 40px;
     line-height: 40px;
     height: 40px;
     display: block;
@@ -881,6 +879,7 @@ input::-webkit-slider-thumb {
     transform: translate(-50%, -50%);
     color: white;
     text-align: center;
+    width: max-content;
 }
 
 .banner-content h3 {
@@ -1289,9 +1288,47 @@ main .service .service-item:hover {
     align-items: center;
 }
 
-.review-amenities .review-user small {
+.review-amenities .review-user .dropdown {
     position: absolute;
-    right: 0;
+    right: 10px;
+}
+
+.review-amenities .dropdown button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.review-amenities .dropdown .content button {
+    color: #333;
+    padding: 10px 15px;
+    display: block;
+    width: 100%;
+    text-align: left;
+}
+
+.review-amenities .dropdown .content i {
+    width: 30px;
+    
+}
+
+
+.review-amenities .dropdown .content {
+    display: none;
+    position: absolute;
+    top: 5px;
+    right: 15px;
+    background-color: #f6f6f6;
+    min-width: max-content;
+    box-shadow: 2px 2px 5px #bababac6;
+}
+
+.review-amenities .dropdown:hover .content {
+    display: block;
+}
+
+.review-amenities .dropdown .content button:hover {
+    background-color: #e9e9e9;
 }
 
 .review-amenities .review-item {
@@ -1433,10 +1470,6 @@ main .service .service-item:hover {
     grid-auto-columns: calc((100% / 3) - 12px);
     gap: 16px;
 
-}
-
-.room-slider .slider-wrapper .carousel .card {
-    background-color: rgb(252, 247, 242);
 }
 
 .room-slider .slider-wrapper #left {

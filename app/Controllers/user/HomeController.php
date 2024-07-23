@@ -8,7 +8,6 @@ class Home extends Controller
 
     public function __construct()
     {
-        //gọi model User
         $this->HotelModel = $this->model('HotelModel');
         $this->RoomModel = $this->model('RoomModel');
         $this->ServiceModel = $this->model('ServiceModel');
@@ -16,12 +15,10 @@ class Home extends Controller
 
     public function index()
     {
-        //phòng
         $RoomsHot = $this->RoomModel->getRoomsHot(5);
 
         $RoomsSale = $this->RoomModel->getRoomsBySale(5);
 
-        //khách sạn
         $Hotel = $this->HotelModel->getHotel();
 
         if ($Hotel) {
@@ -43,19 +40,18 @@ class Home extends Controller
             }
         }
 
-        //dịch vụ
         $Services = $this->ServiceModel->getServices(6);
 
         //gọi và show dữ liệu ra view
         $this->view('user', 'home.php', [
-            'roomshot' => $this->getInforRoomMore($RoomsHot),
-            'roomsSale' => $this->getInforRoomMore($RoomsSale),
+            'roomshot' => $this->getInfoRoomMore($RoomsHot),
+            'roomsSale' => $this->getInfoRoomMore($RoomsSale),
             'hotel' => $Hotel,
             'services' => $Services
         ]);
     }
 
-    public function getInforRoomMore($Rooms)
+    public function getInfoRoomMore($Rooms)
     {
         if (!empty($Rooms)) {
             foreach ($Rooms as $key => $room) {
@@ -88,7 +84,7 @@ class Home extends Controller
                 $Rooms[$key]['soluongphongtrong'] = $quantityRoom;
 
                 $paymentMethod = $this->RoomModel->findPaymentMethod($room['idphong']);
-                if($paymentMethod){
+                if ($paymentMethod) {
                     $Rooms[$key]['loaihinhtt'] = implode(" & ", array_column($paymentMethod, 'loaihinhthanhtoan'));
                 }
             }
@@ -99,26 +95,15 @@ class Home extends Controller
     public function bookingForm()
     {
         if ($this->isAjaxRequest()) {
-            $checkin = isset($_POST['checkin']) ? $_POST['checkin'] : '';
-            $checkout = isset($_POST['checkout']) ? $_POST['checkout'] : '';
-            $adult = isset($_POST['adult']) ? $_POST['adult'] : '';
-            $child = isset($_POST['child']) ? $_POST['child'] : '';
+            $checkin = isset($_POST['checkin']) ? $_POST['checkin'] : Session::get('checkin');
+            $checkout = isset($_POST['checkout']) ? $_POST['checkout'] : Session::get('checkout');
+            $adult = isset($_POST['adult']) ? $_POST['adult'] : Session::get('adult');
+            $child = isset($_POST['child']) ? $_POST['child'] : Session::get('child');
 
             Session::set('checkin', $checkin);
             Session::set('checkout', $checkout);
             Session::set('adult', $adult);
             Session::set('child', $child);
-        }
-    }
-
-    public function changedate()
-    {
-        if ($this->isAjaxRequest()) {
-            $checkin = isset($_POST['checkin']) ? $_POST['checkin'] : '';
-            $checkout = isset($_POST['checkout']) ? $_POST['checkout'] : '';
-
-            Session::set('checkin', $checkin);
-            Session::set('checkout', $checkout);
         }
     }
 

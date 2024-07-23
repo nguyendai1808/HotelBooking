@@ -4,10 +4,8 @@ class Cart extends Controller
     private $BookingModel;
     private $RoomModel;
 
-
     public function __construct()
     {
-        //gọi model
         $this->BookingModel = $this->model('BookingModel');
         $this->RoomModel = $this->model('RoomModel');
     }
@@ -25,7 +23,6 @@ class Cart extends Controller
                 $this->BookingModel->updateTotalPrice($item['iddatphong'], $item['id_phong']);
 
                 $Room =  $this->RoomModel->findRoomById($item['id_phong']);
-
                 foreach ($Room as $room) {
 
                     $nameBed = $this->RoomModel->getNameBed($room['idphong']);
@@ -69,7 +66,6 @@ class Cart extends Controller
 
     public function updateCart()
     {
-
         if ($this->isAjaxRequest()) {
             $iddatphong = $_POST['iddatphong'];
             $ngayden = $_POST['ngayden'];
@@ -97,7 +93,6 @@ class Cart extends Controller
 
     public function deleteCart()
     {
-
         if (isset($_POST['delete'])) {
             $this->BookingModel->deleteBooking($_POST['delete']);
         }

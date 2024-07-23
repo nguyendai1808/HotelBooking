@@ -314,8 +314,12 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         minus.addEventListener("click", () => {
-            if (parseInt(input.value) == min) {
-                bookingForm.value = '';
+            if (bookingForm) {
+                if (parseInt(input.value) == min || bookingForm.value == '') {
+                    bookingForm.value = '';
+                } else {
+                    input.stepDown();
+                }
             } else {
                 input.stepDown();
             }
@@ -324,13 +328,13 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-
-
 // -----------------------------------------------eye -pass---------------------------------------------//
-document.addEventListener("DOMContentLoaded", function () {
-    var form = document.querySelectorAll('#form-pass .eye-toggle');
-    if (form) {
-        form.forEach(toggle => {
+
+document.addEventListener("DOMContentLoaded", togglePassword);
+function togglePassword() {
+    var toggles = document.querySelectorAll('#form-pass .eye-toggle');
+    if (toggles) {
+        toggles.forEach(toggle => {
             toggle.addEventListener('click', function () {
                 const input = this.previousElementSibling;
                 const visible = this.getAttribute('data-visible') === 'true';
@@ -347,4 +351,18 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
     }
+}
+
+// -----------------------------------------------ngăn chặn việc gửi lại form---------------------------------------------//
+if (window.history.replaceState) {
+    window.history.replaceState(null, null, window.location.href);
+}
+
+// -----------------------------------------------Loader---------------------------------------------//
+
+document.addEventListener("DOMContentLoaded", function () {
+    window.addEventListener("beforeunload", function (event) {
+        document.getElementById("loader").style.display = "block";
+    });
 });
+

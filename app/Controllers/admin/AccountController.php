@@ -1,21 +1,89 @@
 <?php
 class Account extends Controller
 {
-    protected $AccountModel;
+    private $AccountModel;
+
+    private $pagination;
+    private $per_page = 50;
 
     public function __construct()
     {
-        //gọi model User
         $this->AccountModel = $this->model('AccountModel');
     }
 
     public function index()
     {
-        $accounts =  $this->AccountModel->getAccount2();
+        $totalItems = $this->AccountModel->countAccountUser();
+        if ($totalItems) {
+            $this->pagination = new Pagination($totalItems, $this->per_page);
+            $accounts = $this->AccountModel->getAccountUserByPage($this->pagination->getPerPage(), $this->pagination->getOffset());
+            $pag = [
+                'total_pages' => $this->pagination->getTotalPages(),
+                'current_page' => $this->pagination->getcurrentPage()
+            ];
+        } else {
+            $accounts = null;
+            $pag = null;
+        }
 
         $this->view('admin', 'account/account.php', [
-            'accounts' => $accounts
+            'accounts' => $accounts,
+            'pagination' => $pag
         ]);
+    }
+
+
+    public function page($current_page = 1)
+    {
+        $totalItems = $this->AccountModel->countAccountUser();
+        if ($totalItems) {
+            $this->pagination = new Pagination($totalItems, $this->per_page, $current_page);
+            $accounts = $this->AccountModel->getAccountUserByPage($this->pagination->getPerPage(), $this->pagination->getOffset());
+            $pag = [
+                'total_pages' => $this->pagination->getTotalPages(),
+                'current_page' => $this->pagination->getcurrentPage()
+            ];
+        } else {
+            $accounts = null;
+            $pag = null;
+        }
+
+        $this->view('admin', 'account/account.php', [
+            'accounts' => $accounts,
+            'pagination' => $pag
+        ]);
+    }
+
+
+    public function action()
+    {
+        if (isset($_POST['lock'])) {
+            $result = $this->AccountModel->lockAccount($_POST['lock']);
+            if ($result) {
+                echo "<script> alert('Khóa tài khoản thành công');
+                        window.location.href = '" . URLROOT . "/admin/account';
+                    </script>";
+                exit();
+            } else {
+                echo "<script> alert('Lỗi');</script>";
+                exit();
+            }
+        }
+
+        if (isset($_POST['unlock'])) {
+            $result = $this->AccountModel->unLockAccount($_POST['unlock']);
+            if ($result) {
+                echo "<script> alert('Mở khóa tài khoản thành công');
+                    window.location.href = '" . URLROOT . "/admin/account';
+                </script>";
+                exit();
+            } else {
+                echo '<script>alert("lỗi")</script>';
+                exit();
+            }
+        } else {
+            header('location:' . URLROOT . '/admin/account');
+        }
     }
 
     public function create()
@@ -27,6 +95,9 @@ class Account extends Controller
                         window.location.href = '" . URLROOT . "/admin/account';
                     </script>";
                 exit();
+            } else {
+                echo "<script> alert('Lỗi');</script>";
+                exit();
             }
         }
         $this->view('admin', 'account/create.php');
@@ -35,43 +106,11 @@ class Account extends Controller
     public function detail($idtaikhoan)
     {
         if (!empty($idtaikhoan) && filter_var($idtaikhoan, FILTER_VALIDATE_INT)) {
-
             $account =  $this->AccountModel->findAccountById($idtaikhoan);
 
             $this->view('admin', 'account/detail.php', [
                 'account' => $account
             ]);
-        } else {
-            header('location:' . URLROOT . '/admin/account');
-        }
-    }
-
-    public function lock($idtaikhoan)
-    {
-        if (!empty($idtaikhoan) && filter_var($idtaikhoan, FILTER_VALIDATE_INT)) {
-
-            $result = $this->AccountModel->lockAccount($idtaikhoan);
-            if ($result) {
-                header('location:' . URLROOT . '/admin/account');
-            }
-        } else {
-            header('location:' . URLROOT . '/admin/account');
-        }
-    }
-
-    public function unlock($idtaikhoan)
-    {
-
-        if (!empty($idtaikhoan) && filter_var($idtaikhoan, FILTER_VALIDATE_INT)) {
-
-            $result = $this->AccountModel->unLockAccount($idtaikhoan);
-
-            if ($result) {
-                header('location:' . URLROOT . '/admin/account');
-            } else {
-                echo '<script>alert("lỗi")</script>';
-                exit();
-            }
         } else {
             header('location:' . URLROOT . '/admin/account');
         }

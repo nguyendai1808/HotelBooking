@@ -5,18 +5,34 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="icon" type="image/x-icon" href="<?= USER_PATH ?>/icon/icon.png">
     <title>Admin</title>
 
     <link rel="stylesheet" href="<?= ADMIN_PATH ?>/css/style.css" />
     <link rel="stylesheet" href="<?= ADMIN_PATH ?>/css/main.css" />
     <link rel="stylesheet" href="<?= ADMIN_PATH ?>/css/responsive.css" />
-    <link rel="stylesheet" href="<?= URLROOT ?>/public/bootstrap/bootstrap.min.css" />
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </head>
 
 <body>
+
+    <div id="loader">
+        <div class="spinner-grow text-danger mx-1" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="spinner-grow text-warning mx-1" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="spinner-grow text-info mx-1" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
 
     <section class="sidebar">
         <div class="logo-details">
@@ -39,7 +55,7 @@
             <li>
                 <a href="<?= URLROOT ?>/admin/service">
                     <i class="fa-solid fa-cart-flatbed-suitcase"></i>
-                    <span class="item-name">Dịch vụ</span>
+                    <span class="item-name">Dịch vụ & LHTT</span>
                 </a>
             </li>
 
@@ -65,9 +81,9 @@
             </li>
 
             <li>
-                <a href="<?= URLROOT ?>/admin/offers">
-                    <i class="fa-solid fa-money-check-dollar"></i>
-                    <span class="item-name">Khuyến mãi & LHTT</span>
+                <a href="<?= URLROOT ?>/admin/promotion">
+                    <i class="fa-solid fa-tags"></i>
+                    <span class="item-name">Khuyến mãi</span>
                 </a>
             </li>
             <li>
@@ -97,7 +113,7 @@
             </li>
             <li>
                 <a href="<?= URLROOT ?>/admin/rating">
-                    <i class="fa-regular fa-comment"></i>
+                    <i class="fa-solid fa-comments"></i>
                     <span class="item-name">Đánh giá</span>
                 </a>
             </li>
@@ -120,8 +136,8 @@
         <div class="profile-details">
 
             <a href="#" class="dropdown-toggle" id="accountDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <img src="<?= USER_PATH ?>/images/avatars/<?= $data['header'][0]['anh'] ?? 'user.png' ?>" alt="img" />
-                <span class="admin_name"><?= $data['header'][0]['ten'] ?? '' ?></span>
+                <img src="<?= USER_PATH ?>/images/avatars/<?= $header[0]['anh'] ?? 'user.png' ?>" alt="img" />
+                <span class="admin_name"><?= $header[0]['ten'] ?? '' ?></span>
             </a>
 
             <ul class="dropdown-menu" aria-labelledby="accountDropdown">

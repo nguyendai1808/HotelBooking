@@ -8,11 +8,11 @@
 <footer>
     <div class="footer">
         <div class="footer-wrapper">
-            <?php if (!empty($data['footer'])) :
-                foreach ($data['footer'] as $item) : ?>
+            <?php if (!empty($footer)) :
+                foreach ($footer as $item) : ?>
                     <div class="footer-item">
                         <a href="<?= URLROOT ?>/home">
-                            <img src="<?= USER_PATH ?>/images/<?= $data['display']['logo'] ?? 'notlogo.png' ?>" class="logo" />
+                            <img src="<?= USER_PATH ?>/images/HotelBooking-logo.png" class="logo"/>
                         </a>
                         <p class="desc">
                             <?= $item['mota'] ?>
@@ -93,7 +93,6 @@
 <script src="<?= USER_PATH ?>/js/script.js"></script>
 <script src="<?= USER_PATH ?>/js/ajax/pagination.js"></script>
 <script src="<?= USER_PATH ?>/js/ajax/update_content.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

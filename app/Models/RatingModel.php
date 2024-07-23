@@ -2,6 +2,7 @@
 class RatingModel
 {
     private $db;
+
     public function __construct()
     {
         $this->db = new Database();
@@ -11,6 +12,47 @@ class RatingModel
     {
         $sql = "SELECT danhgia.*, taikhoan.ho, taikhoan.ten, taikhoan.anh 
         FROM danhgia join taikhoan on danhgia.id_taikhoan = taikhoan.idtaikhoan";
+        $result = $this->db->select($sql);
+        return $result;
+    }
+
+    public function getRatingByPage($per_page, $offset)
+    {
+        $sql = "SELECT danhgia.*, taikhoan.ho, taikhoan.ten, taikhoan.anh 
+        FROM danhgia join taikhoan on danhgia.id_taikhoan = taikhoan.idtaikhoan
+        LIMIT $per_page OFFSET $offset";
+        $result = $this->db->select($sql);
+        return $result;
+    }
+
+    public function countUserRating($idphong)
+    {
+        $sql = "SELECT COUNT(*) AS count FROM danhgia
+        JOIN taikhoan on danhgia.id_taikhoan = taikhoan.idtaikhoan 
+        WHERE danhgia.id_phong = '$idphong'";
+        $result = $this->db->selectFirstColumnValue($sql, 'count');
+        return $result;
+    }
+
+    public function getUserRatingByPage($idphong, $per_page, $offset)
+    {
+        $sql = "SELECT ho, ten, anh, noidung, thoigian, id_taikhoan, iddanhgia FROM danhgia 
+        JOIN taikhoan on danhgia.id_taikhoan = taikhoan.idtaikhoan
+        WHERE danhgia.id_phong = '$idphong' 
+        ORDER BY danhgia.thoigian DESC, danhgia.tongdiem DESC, danhgia.iddanhgia DESC
+        LIMIT $per_page OFFSET $offset";
+        $result = $this->db->select($sql);
+        return $result;
+    }
+
+    public function getRatingUserByAmenity($idphong, $idtaikhoan, $iddanhgia)
+    {
+        $sql = "SELECT chitietdanhgia.sodiem, tieuchidanhgia.tentieuchi
+        FROM danhgia JOIN chitietdanhgia ON danhgia.iddanhgia = chitietdanhgia.id_danhgia
+        JOIN tieuchidanhgia ON chitietdanhgia.id_tieuchi = tieuchidanhgia.idtieuchi
+        WHERE danhgia.iddanhgia = '$iddanhgia'
+        AND danhgia.id_phong = '$idphong'
+        AND danhgia.id_taikhoan = '$idtaikhoan'";
         $result = $this->db->select($sql);
         return $result;
     }
@@ -103,8 +145,7 @@ class RatingModel
     {
         $sql = "SELECT (SUM(chitietdanhgia.sodiem) / COUNT(*)) as sodiem, tieuchidanhgia.tentieuchi 
         FROM danhgia join chitietdanhgia on danhgia.iddanhgia = chitietdanhgia.id_danhgia 
-        join tieuchidanhgia on chitietdanhgia.id_tieuchi = tieuchidanhgia.idtieuchi 
-        where danhgia.trangthai != 'Ẩn'
+        join tieuchidanhgia on chitietdanhgia.id_tieuchi = tieuchidanhgia.idtieuchi
         GROUP BY tieuchidanhgia.idtieuchi;";
         $result = $this->db->select($sql);
         return $result;
@@ -113,8 +154,7 @@ class RatingModel
 
     public function getTotalRatingHotel()
     {
-        $sql = "SELECT (SUM(tongdiem) / COUNT(*)) as tongdiem, COUNT(*) as sodanhgia FROM danhgia 
-        where danhgia.trangthai != 'Ẩn'";
+        $sql = "SELECT (SUM(tongdiem) / COUNT(*)) as tongdiem, COUNT(*) as sodanhgia FROM danhgia";
         $result = $this->db->select($sql);
         return $result;
     }

@@ -27,17 +27,22 @@
                                 <td class="number"><?= number_format($item['giaphong'], 0, ',', '.') ?></td>
                                 <td class="number"><?= $item['soluong'] ?></td>
                                 <td class="status">
-                                    <?= $item['trangthai'] ?>
+                                    <span class="fw-bold text-<?php echo $item['trangthai'] == 'Tạm dừng' ? 'warning' : 'success' ?>"><?= $item['trangthai'] ?></span>
                                 </td>
                                 <td class="method">
-                                    <div class="d-flex justify-content-center">
+                                    <form method="post" action="<?= URLROOT ?>/admin/room/action" class="d-flex justify-content-center">
 
-                                        <?php $method = $item['trangthai'] == 'Hoạt động' ? 'pause' : 'continue'; ?>
+                                        <?php if ($item['trangthai'] == 'Hoạt động') : ?>
 
-                                        <a href="<?= URLROOT ?>/admin/room/<?= $method . '/' . $item['idphong'] ?>" onclick="return confirm('Bạn có chắc chắn muốn thay đổi trạng thái');" class="btn btn-info text-white mx-1"><i class="fa-solid fa-rotate"></i></a>
+                                            <button name="pause" value="<?= $item['idphong'] ?>" onclick="return confirm('Bạn có chắc chắn muốn thay đổi trạng thái tạm dừng');" class="btn btn-info text-white mx-1"><i class="fa-solid fa-rotate"></i></button>
+                                        <?php else : ?>
+
+                                            <button name="continue" value="<?= $item['idphong'] ?>" onclick="return confirm('Bạn có chắc chắn muốn thay đổi trạng thái hoạt động');" class="btn btn-info text-white mx-1"><i class="fa-solid fa-rotate"></i></button>
+                                        <?php endif; ?>
+
                                         <a href="<?= URLROOT ?>/admin/room/update/<?= $item['idphong'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-pen-to-square"></i></a>
-                                        <a href="<?= URLROOT ?>/admin/room/delete/<?= $item['idphong'] ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa');" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></a>
-                                    </div>
+                                        <button name="delete" value="<?= $item['idphong'] ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa');" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></button>
+                                    </form>
                                 </td>
                             </tr>
 

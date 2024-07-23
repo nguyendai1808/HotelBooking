@@ -1,44 +1,4 @@
-
-const URLROOT = 'http://localhost/HotelBooking';
-const USER_PATH = URLROOT + '/public/user';
-const ADMIN_PATH = URLROOT + '/public/admin';
-
 $(document).ready(function () {
-
-    selectMenuItem();
-
-    $('#sidebar').on('click', 'li', function (e) {
-        $('#sidebar li').removeClass('selected');
-        $(this).addClass('selected');
-
-        var url = $(this).data('url');
-        loadPersonalInfo(url);
-        history.pushState(null, '', url);
-    });
-
-    function loadPersonalInfo(url) {
-        $.ajax({
-            url: url,
-            type: 'GET',
-            dataType: 'json',
-            success: function (data) {
-                $('#main-content').html(data.page);
-            },
-            error: function (xhr, status, error) {
-                console.error('Error loading content:', error);
-            }
-        });
-    }
-
-    function selectMenuItem() {
-        var currentUrl = window.location.href.toLowerCase();
-        $('#sidebar li').each(function () {
-            if ($(this).data('url').toLowerCase() === currentUrl) {
-                $('#sidebar li').removeClass('selected');
-                $(this).addClass('selected');
-            }
-        });
-    }
 
     $(document).on('click', '#pagination-links a', function (e) {
         var mainContent = document.body.querySelector('main');
@@ -46,19 +6,16 @@ $(document).ready(function () {
         var url = $(this).attr('href');
         if (mainContent.id === 'service-page') {
             loadPageService(url);
+            changeUrl(url);
         } else if (mainContent.id === 'room-page') {
             loadPageRoom(url);
+            changeUrl(url);
         } else if (mainContent.id === 'history-page' || mainContent.id === 'personal_infor-page') {
             loadPageBooking(url);
-            loadpaginationLinks(url);
-            return;
         } else if (mainContent.id === 'detailroom-page') {
             loadRating(url);
-            loadpaginationLinks(url);
-            return;
         }
         loadpaginationLinks(url);
-        changeUrl(url);
     });
 
     function loadPageService(url) {
@@ -72,6 +29,7 @@ $(document).ready(function () {
 
                 data.services.forEach(function (item) {
                     var serviceItem = '<div class="col-lg-4 col-md-6">' +
+                        '<a href="' + URLROOT + '/contact">' +
                         '<div class="service-item line-bottom">' +
                         '<div class="service-img">' +
                         '<img src="' + USER_PATH + '/images/services/' + item.icon + '" alt="icon">' +
@@ -79,6 +37,7 @@ $(document).ready(function () {
                         '<h5 class="mb-3 text-black">' + item.tendichvu + '</h5>' +
                         '<p class="text-body">' + item.mota + '</p>' +
                         '</div>' +
+                        '</a>' +
                         '</div>';
                     $('#service-items').append(serviceItem);
                 });
@@ -100,16 +59,31 @@ $(document).ready(function () {
                 $('#ratingUser').html('');
 
                 data.ratingUser.forEach(function (item) {
-                    var hoten = item.ho ? item.ho : '' + ' ' + item.ten
+                    var hoten = item.ho ? item.ho + ' ' + item.ten : item.ten;
                     var reviewItem = `
                         <div class="review-item">
                             <div class="review-user">
                                 <img class="user-avatar" src="${USER_PATH}/images/avatars/${item.anh ? item.anh : 'user.png'}" alt="avatar">
                                 <div>
                                     <strong>${hoten.trim()}</strong>
-                                    <p class="m-0">${item.thoigian ? item.thoigian : ''}</p>
+                                    <p class="m-0">${item.thoigian ? formatDate(item.thoigian) : ''}</p>
                                 </div>
-                                <small><i class="fa-solid fa-quote-right fa-2x"></i></small>
+                                <div class="dropdown">
+                                    <button><i class="fa-solid fa-ellipsis-vertical"></i></button>`;
+                    if (item.id_taikhoan == data.user_id) {
+                        reviewItem += `
+                                    <form class="content" method="post" action="`+ URLROOT + `/room/rating">
+                                        <button type="submit" name="update">
+                                            <i class="fa-solid fa-pen-to-square pe-2"></i>Sửa
+                                        </button>
+
+                                        <button type="submit" name="delete" value="<?= $item['iddanhgia'] ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa bình luận này');">
+                                            <i class="fa-solid fa-delete-left pe-2"></i>Xóa
+                                        </button>
+                                    </form>`;
+                    }
+                    reviewItem += `
+                                </div>
                             </div>
                             <ul class="rating">
                                 <li class="lable">Đánh giá:</li>`;
@@ -119,7 +93,6 @@ $(document).ready(function () {
                             reviewItem += `<li class="text-success">${row.tentieuchi ? row.tentieuchi : ''}: ${row.sodiem}đ</li>`;
                         });
                     }
-
                     reviewItem += `
                             </ul>
                             <p class="cmt">Bình luận: <span>${item.noidung}</span></p>
@@ -128,7 +101,7 @@ $(document).ready(function () {
                     $('#ratingUser').append(reviewItem);
                 });
 
-                var element = document.getElementById('reviews');
+                var element = document.getElementById('ratingUser');
                 scrollTop(element);
             },
             error: function (xhr, status, error) {
@@ -136,7 +109,6 @@ $(document).ready(function () {
             }
         });
     }
-
 
     function loadPageBooking(url) {
         $.ajax({
@@ -148,7 +120,6 @@ $(document).ready(function () {
 
                 data.bookings.forEach(function (item, index) {
                     var stt = index + 1;
-                    var action = item.invoice ? 'invoice' : 'history';
                     var giaphong = item.khuyenmai ? (item.giaphong - ((item.khuyenmai / 100) * item.giaphong)) : item.giaphong;
                     var dathanhtoan;
 
@@ -172,7 +143,7 @@ $(document).ready(function () {
 
                     var bookingItem = `
                         <div class="room-item border mb-3" id="form-${stt}">
-                            <form class="form-item col-12" action="${URLROOT}/${action}/cancelRoom" method="post">
+                            <form class="form-item col-12" action="${URLROOT}/history/cancelRoom" method="post">
                                 <div class="item-img">
                                     <a href="${URLROOT}/room/detailroom/${item.id_phong}">
                                         <img src="${USER_PATH}/${item.anhphong ? item.anhphong : 'images/notImage.jpg'}">
@@ -184,9 +155,10 @@ $(document).ready(function () {
                                         <h5><a href="${URLROOT}/room/detailroom/${item.id_phong}">${item.tenphong} - ${item.tengiuong}</a></h5>
 
                                         ${(item.trangthaidat == 'Hoàn tất' && item.id_taikhoan && ngaydiPlus4Weeks > new Date()) ? `
-                                        <a href="javascript:void(0);" onclick="openRating('${item.id_phong}','${item.id_taikhoan}','${item.iddatphong}')">
+                                        <button class="btn border-0 p-0" type="button" onclick="openRating('${item.id_phong}','${item.id_taikhoan}','${item.iddatphong}')">
                                             <img class="item-rating" src="${USER_PATH}/icon/rating.png" alt="rating">
-                                        </a>` : ''}
+                                        </button>`: ''}
+
                                     </div>
 
                                     <div class="item-date">
@@ -223,7 +195,7 @@ $(document).ready(function () {
                             </form>
                             <div class="item-total col-12 border-top">
                                 <div class="w-25 text-center d-flex flex-column">
-                                    <span class="fw-bold text-${item.trangthaidat == 'Đã hủy' ? 'danger' : (item.trangthaidat == 'Hoàn tất' || item.trangthaidat == 'Đã đánh giá' ? 'success' : 'warning')}">${item.trangthaidat}</span>
+                                    <span class="fw-bold text-${item.trangthaidat == 'Đã hủy' ? 'danger' : (item.trangthaidat == 'Đã cọc tiền' ? 'warning' : 'success')}">${item.trangthaidat}</span>
                                     <span>${formatDate(item.thoigiandat)}</span>
                                 </div>
                                 <div class="w-75 d-flex justify-content-end text-end">
@@ -248,7 +220,6 @@ $(document).ready(function () {
             }
         });
     }
-
 
     function loadPageRoom(url) {
         $.ajax({
@@ -331,9 +302,6 @@ $(document).ready(function () {
     function formatCurrency(amount) {
         return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + 'đ';
     }
-
-
-
 
     function scrollTop(element) {
         if (element) {

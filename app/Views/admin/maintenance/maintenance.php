@@ -24,15 +24,15 @@
                                 <td class="date"><?= date('d-m-Y', strtotime($item['thoigianketthuc'])) ?></td>
                                 <td class="desc"><?= $item['mota'] ?></td>
                                 <td class="method">
-                                    <div class="d-flex justify-content-center">
+                                    <form method="post" action="<?= URLROOT ?>/admin/maintenance/delete" class="d-flex justify-content-center">
                                         <a href="<?= URLROOT ?>/admin/maintenance/detail/<?= $item['idbaotri'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-eye"></i></a>
 
                                         <?php if (strtotime($item['thoigianketthuc']) > time()) : ?>
                                             <a href="<?= URLROOT ?>/admin/maintenance/update/<?= $item['idbaotri'] ?>" class="btn btn-primary text-white mx-1"><i class="fa-solid fa-pen-to-square"></i></a>
                                         <?php endif; ?>
 
-                                        <a href="<?= URLROOT ?>/admin/maintenance/delete/<?= $item['idbaotri'] ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa');" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></a>
-                                    </div>
+                                        <button name="delete" value="<?= $item['idbaotri'] ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa');" class="btn btn-danger text-white mx-1"><i class="fa-solid fa-trash"></i></button>
+                                    </form>
                                 </td>
                             </tr>
 

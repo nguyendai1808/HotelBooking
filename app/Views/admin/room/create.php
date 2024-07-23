@@ -127,8 +127,17 @@
             <button class="btn-add" type="submit">Thêm mới</button>
             <a class="btn-a btn-cancel" href="<?= URLROOT . '/admin/room' ?>">Hủy</a>
         </form>
-
     </div>
+
+    <div id="imgModal" class="modal">
+        <span class="close">&times;</span>
+        <div class="modal-content">
+            <img id="modal-img" src="" alt="Large Image">
+            <a class="prev" onclick="changeImg(-1)">&#10094;</a>
+            <a class="next" onclick="changeImg(1)">&#10095;</a>
+        </div>
+    </div>
+    
 </section>
 
 
@@ -263,6 +272,7 @@
                             newFiles.forEach(file => dataTransfer.items.add(file));
                             imageUpload.files = dataTransfer.files;
                         });
+                        initializeImageModals();
                     };
 
                     reader.readAsDataURL(file);

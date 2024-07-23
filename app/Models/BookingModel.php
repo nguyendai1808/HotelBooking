@@ -2,6 +2,7 @@
 class BookingModel
 {
     private $db;
+
     public function __construct()
     {
         $this->db = new Database();
@@ -66,6 +67,16 @@ class BookingModel
         }
     }
 
+
+    public function getInfoExportInvoice($iddondat)
+    {
+        $sql = "SELECT thoigiandat, trangthaidon, datphong.ngayden, ngaydi, soluongdat, tonggia, phong.tenphong FROM dondat 
+        JOIN datphong ON dondat.iddondat = datphong.id_dondat
+        JOIN phong ON datphong.id_phong = phong.idphong
+        WHERE dondat.iddondat = '$iddondat' AND datphong.trangthaidat = 'Hoàn tất'";
+        $result = $this->db->select($sql);
+        return $result;
+    }
 
     public function getInvoiceBookingById($iddondat)
     {
@@ -417,13 +428,23 @@ class BookingModel
 
     //-----------------------------------------------admin---------------------------------------------------//
 
-    public function getBookingsInvoice()
+    public function countBookingsInvoice()
+    {
+        $sql = "SELECT COUNT(*) as count FROM dondat join thanhtoan on dondat.iddondat = thanhtoan.id_dondat 
+        where dondat.thoigiandat = thanhtoan.ngaythanhtoan";
+        $result = $this->db->selectFirstColumnValue($sql, 'count');
+        return $result;
+    }
+
+    public function getBookingsInvoiceByPage($per_page, $offset)
     {
         $sql = "SELECT * FROM dondat join thanhtoan on dondat.iddondat = thanhtoan.id_dondat 
-        where dondat.thoigiandat = thanhtoan.ngaythanhtoan ORDER BY dondat.thoigiandat DESC";
+        where dondat.thoigiandat = thanhtoan.ngaythanhtoan ORDER BY dondat.thoigiandat DESC
+        LIMIT $per_page OFFSET $offset";
         $result = $this->db->select($sql);
         return $result;
     }
+
 
     public function cancelInvoice($iddondat)
     {
@@ -497,7 +518,8 @@ class BookingModel
     public function estimatedTotalRevenue()
     {
         $sql = "SELECT SUM(tongsotien) AS tongsotien FROM dondat
-        WHERE MONTH(thoigiandat) = MONTH(CURRENT_DATE()) AND YEAR(thoigiandat) = YEAR(CURRENT_DATE())";
+        WHERE MONTH(thoigiandat) = MONTH(CURRENT_DATE()) AND YEAR(thoigiandat) = YEAR(CURRENT_DATE())
+        AND trangthaidon != 'Đã hủy'";
         $result = $this->db->selectFirstColumnValue($sql, 'tongsotien');
         return $result ?? 0;
     }
@@ -512,36 +534,7 @@ class BookingModel
         return $result ?? 0;
     }
 
-    //thực tế tháng trước
-    public function actualTotalRevenueLastMonth()
-    {
-        $sql = "SELECT SUM(sotienthanhtoan) AS tongsotien FROM thanhtoan join dondat on thanhtoan.id_dondat = dondat.iddondat
-        WHERE  MONTH(ngaythanhtoan) = MONTH(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH)) AND YEAR(ngaythanhtoan) = YEAR(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
-        AND dondat.trangthaidon = 'Hoàn tất'";
-        $result = $this->db->selectFirstColumnValue($sql, 'tongsotien');
-        return $result ?? 0;
-    }
-
-    //dự tính tháng trước
-    public function estimatedTotalRevenueLastMonth()
-    {
-        $sql = "SELECT SUM(tongsotien) AS tongsotien FROM dondat
-        WHERE MONTH(thoigiandat) = MONTH(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH)) AND YEAR(thoigiandat) = YEAR(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))";
-        $result = $this->db->selectFirstColumnValue($sql, 'tongsotien');
-        return $result ?? 0;
-    }
-
-    //khoản trừ đơn hủy đặt tháng trước
-    public function deductibleRevenueLastMonth()
-    {
-        $sql = "SELECT SUM(tongsotien) AS tongsotien FROM dondat
-        WHERE  MONTH(thoigiandat) = MONTH(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH)) AND YEAR(thoigiandat) = YEAR(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
-        AND trangthaidon = 'Đã hủy'";
-        $result = $this->db->selectFirstColumnValue($sql, 'tongsotien');
-        return $result ?? 0;
-    }
-
-
+    //đếm số đơn theo tháng
     public function countNumberBooking($month)
     {
         $sql = "SELECT COUNT(iddondat) AS sodon
@@ -550,6 +543,7 @@ class BookingModel
         return $result ?? 0;
     }
 
+    //đếm tổng số tiền theo tháng
     public function countTotalAmountBooking($month)
     {
         $sql = "SELECT SUM(sotienthanhtoan) AS tongsotien FROM thanhtoan join dondat on thanhtoan.id_dondat = dondat.iddondat
@@ -559,15 +553,7 @@ class BookingModel
         return $result ?? 0;
     }
 
-    public function countTomountBooking($month)
-    {
-        $sql = "SELECT SUM(sotienthanhtoan) AS tongsotien FROM thanhtoan join dondat on thanhtoan.id_dondat = dondat.iddondat
-        WHERE  MONTH(ngaythanhtoan) = '$month' AND YEAR(ngaythanhtoan) = YEAR(CURRENT_DATE())
-        AND dondat.trangthaidon = 'Hoàn tất'";
-        $result = $this->db->selectFirstColumnValue($sql, 'tongsotien');
-        return $result ?? 0;
-    }
-
+    //đếm số đơn theo trạng thái
     public function countNumberBookingByStatus($status)
     {
         $sql = "SELECT Count(iddondat) AS sodon From dondat
@@ -575,5 +561,18 @@ class BookingModel
         AND trangthaidon = '$status'";
         $result = $this->db->selectFirstColumnValue($sql, 'sodon');
         return $result ?? 0;
+    }
+
+
+    public function getBookingExport($start, $end, $status)
+    {
+        $sql = "SELECT iddondat, hoten, email, sdt, thoigiandat, tongsotien, sotiencoc, sotienconthieu, trangthaidon 
+        FROM dondat join thanhtoan on dondat.iddondat = thanhtoan.id_dondat 
+        join khachhang on khachhang.idkhachhang = thanhtoan.id_khachhang
+        where dondat.thoigiandat = thanhtoan.ngaythanhtoan and dondat.trangthaidon = '$status'
+        and (dondat.thoigiandat BETWEEN '$start' AND '$end')
+        ORDER BY dondat.thoigiandat";
+        $result = $this->db->select($sql);
+        return $result;
     }
 }

@@ -2,6 +2,7 @@
 class AmenityModel
 {
     private $db;
+    
     public function __construct()
     {
         $this->db = new Database();
@@ -11,6 +12,13 @@ class AmenityModel
     {
         $sql = "SELECT * FROM tiennghi";
         $result = $this->db->select($sql);
+        return $result;
+    }
+
+    public function getAmenityImageById($id)
+    {
+        $sql = "SELECT icon FROM tiennghi WHERE idtiennghi = '$id'";
+        $result = $this->db->selectFirstColumnValue($sql, 'icon');
         return $result;
     }
 

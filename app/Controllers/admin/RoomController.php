@@ -5,24 +5,21 @@ class Room extends Controller
     private $ImageModel;
     private $CategoryModel;
     private $AmenityModel;
-    private $OffersModel;
+    private $ServiceModel;
 
     public function __construct()
     {
-        //gọi model User
         $this->RoomModel = $this->model('RoomModel');
         $this->ImageModel = $this->model('ImageModel');
         $this->CategoryModel = $this->model('CategoryModel');
         $this->AmenityModel = $this->model('AmenityModel');
-        $this->OffersModel = $this->model('OffersModel');
+        $this->ServiceModel = $this->model('ServiceModel');
     }
 
 
     public function index()
     {
-
         $rooms = $this->RoomModel->getRoomsAdmin();
-
         //view - page
         $this->view('admin', 'room/room.php', [
             'rooms' => $this->getRoomMore($rooms)
@@ -61,31 +58,43 @@ class Room extends Controller
         return $Rooms;
     }
 
-    public function pause($idphong)
+    public function action()
     {
-        if (!empty($idphong) && filter_var($idphong, FILTER_VALIDATE_INT)) {
-
-            $result = $this->RoomModel->updateStatusRoom('Tạm dừng', $idphong);
+        if (isset($_POST['pause'])) {
+            $result = $this->RoomModel->updateStatusRoom('Tạm dừng', $_POST['pause']);
             if ($result) {
-                echo "<script> alert('cập nhật trạng thái: Tạm dừng');
+                echo "<script> alert('Cập nhật trạng thái: Tạm dừng');
                         window.location.href = '" . URLROOT . "/admin/room';
                     </script>";
                 exit();
+            } else {
+                echo '<script>alert("Lỗi")</script>';
+                exit();
             }
-        } else {
-            header('location:' . URLROOT . '/admin/room');
         }
-    }
 
-    public function continue($idphong)
-    {
-        if (!empty($idphong) && filter_var($idphong, FILTER_VALIDATE_INT)) {
-
-            $result = $this->RoomModel->updateStatusRoom('Hoạt động', $idphong);
+        if (isset($_POST['continue'])) {
+            $result = $this->RoomModel->updateStatusRoom('Hoạt động', $_POST['continue']);
             if ($result) {
-                echo "<script> alert('cập nhật trạng thái: Hoạt động');
+                echo "<script> alert('Cập nhật trạng thái: Hoạt động');
                         window.location.href = '" . URLROOT . "/admin/room';
                     </script>";
+                exit();
+            } else {
+                echo '<script>alert("Lỗi")</script>';
+                exit();
+            }
+        }
+
+        if (isset($_POST['delete'])) {
+            $delete = $this->RoomModel->deleteRoom($_POST['delete']);
+            if ($delete) {
+                echo "<script> alert('Xóa thành công');
+                        window.location.href = '" . URLROOT . "/admin/room';
+                    </script>";
+                exit();
+            } else {
+                echo '<script>alert("Lỗi")</script>';
                 exit();
             }
         } else {
@@ -135,22 +144,22 @@ class Room extends Controller
                     }
                 }
 
-                if ($_FILES['images']) {
-                    $uploadDir = PUBLIC_PATH . '/user/images/rooms/newroom/';
+                if (!empty($_FILES['images'])) {
+                    $uploadDir = PUBLIC_PATH . '/user/images/rooms/';
 
                     foreach ($_FILES['images']['tmp_name'] as $key => $tmp_name) {
                         $file_name = $_FILES['images']['name'][$key];
                         $file_tmp = $_FILES['images']['tmp_name'][$key];
 
-                        // Lấy phần mở rộng của tệp
-                        $file_ext = pathinfo($file_name, PATHINFO_EXTENSION);
-
-                        // Tạo tên tệp mới với đuôi _idphong
-                        $new_file_name = uniqid() . "_$idphong" . '.' . $file_ext;
+                        $iddanhmuc = $this->RoomModel->getIdCategoryById($idphong);
+                        $timestamp = time();
+                        $file_extension = pathinfo($file_name, PATHINFO_EXTENSION);
+                        $new_file_name = 'room_img_' . $iddanhmuc . '_' . $idphong . '_' . $timestamp . '_' . $key . '.' . $file_extension;
 
                         if (move_uploaded_file($file_tmp, $uploadDir . $new_file_name)) {
-                            $imageId = $this->RoomModel->saveImage($new_file_name, 'images/rooms/newroom', $idphong);
-                            $response['images'][] = ['id' => $imageId, 'url' => USER_PATH . '/images/rooms/newroom/' . $new_file_name];
+                            $imageId = intval($this->RoomModel->getMaxIdImageRoom()) + 1;
+                            $this->RoomModel->saveImage($imageId, $new_file_name, 'images/rooms', $idphong);
+                            $response['images'][] = ['id' => $imageId, 'url' => USER_PATH . '/images/rooms/' . $new_file_name];
                         }
                     }
                 }
@@ -167,7 +176,7 @@ class Room extends Controller
 
         $beds = $this->AmenityModel->getBeds();
         $amenitys = $this->AmenityModel->getAmenities();
-        $payTypes = $this->OffersModel->getPayTypes();
+        $payTypes = $this->ServiceModel->getPayTypes();
         $categorys = $this->CategoryModel->getCategorys();
 
         $this->view('admin', 'room/create.php', [
@@ -233,7 +242,7 @@ class Room extends Controller
                     </script>";
                     exit();
                 } else {
-                    echo '<script>alert("lỗi")</script>';
+                    echo '<script>alert("Lỗi")</script>';
                     exit();
                 }
             }
@@ -256,7 +265,7 @@ class Room extends Controller
 
             $beds = $this->AmenityModel->getBeds();
             $amenitys = $this->AmenityModel->getAmenities();
-            $payTypes = $this->OffersModel->getPayTypes();
+            $payTypes = $this->ServiceModel->getPayTypes();
             $categorys = $this->CategoryModel->getCategorys();
 
             $this->view('admin', 'room/update.php', [
@@ -275,23 +284,23 @@ class Room extends Controller
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_FILES['images'])) {
             $response = ['status' => 'error', 'images' => []];
-            $uploadDir = PUBLIC_PATH . '/user/images/rooms/newroom/';
 
             $idphong = $_POST['idphong'];
+            $uploadDir = PUBLIC_PATH . '/user/images/rooms/';
 
             foreach ($_FILES['images']['tmp_name'] as $key => $tmp_name) {
                 $file_name = $_FILES['images']['name'][$key];
                 $file_tmp = $_FILES['images']['tmp_name'][$key];
 
-                // Lấy phần mở rộng của tệp
-                $file_ext = pathinfo($file_name, PATHINFO_EXTENSION);
-
-                // Tạo tên tệp mới với đuôi _idphong
-                $new_file_name = uniqid() . "_$idphong" . '.' . $file_ext;
+                $iddanhmuc = $this->RoomModel->getIdCategoryById($idphong);
+                $timestamp = time();
+                $file_extension = pathinfo($file_name, PATHINFO_EXTENSION);
+                $new_file_name = 'room_img_' . $iddanhmuc . '_' . $idphong . '_' . $timestamp . '_' . $key . '.' . $file_extension;
 
                 if (move_uploaded_file($file_tmp, $uploadDir . $new_file_name)) {
-                    $imageId = $this->RoomModel->saveImage($new_file_name, 'images/rooms/newroom', $idphong);
-                    $response['images'][] = ['id' => $imageId, 'url' => USER_PATH . '/images/rooms/newroom/' . $new_file_name];
+                    $imageId = intval($this->RoomModel->getMaxIdImageRoom()) + 1;
+                    $this->RoomModel->saveImage($imageId, $new_file_name, 'images/rooms', $idphong);
+                    $response['images'][] = ['id' => $imageId, 'url' => USER_PATH . '/images/rooms/' . $new_file_name];
                 }
             }
 
@@ -310,31 +319,19 @@ class Room extends Controller
     public function deleteImg()
     {
         if (isset($_POST['id'])) {
+            $dir_img = PUBLIC_PATH . '/user/images/rooms/';
+            $old_image = $this->RoomModel->getRoomImageById($_POST['id']);
+
             $delete =  $this->RoomModel->deleteImage($_POST['id']);
             if ($delete) {
+                if ($old_image && file_exists($dir_img . $old_image)) {
+                    unlink($dir_img . $old_image);
+                }
                 echo 'success';
             } else {
                 echo 'error';
             }
             return;
-        } else {
-            header('location:' . URLROOT . '/admin/room');
-        }
-    }
-
-    public function delete($idphong = null)
-    {
-        if (!empty($idphong) && filter_var($idphong, FILTER_VALIDATE_INT)) {
-            $delete = $this->RoomModel->deleteRoom($idphong);
-            if ($delete) {
-                echo "<script> alert('Xóa thành công');
-                        window.location.href = '" . URLROOT . "/admin/room';
-                    </script>";
-                exit();
-            } else {
-                echo '<script>alert("lỗi")</script>';
-                exit();
-            }
         } else {
             header('location:' . URLROOT . '/admin/room');
         }

@@ -197,6 +197,16 @@
         <?php endforeach; ?>
 
     </div>
+
+    <div id="imgModal" class="modal">
+        <span class="close">&times;</span>
+        <div class="modal-content">
+            <img id="modal-img" src="" alt="Large Image">
+            <a class="prev" onclick="changeImg(-1)">&#10094;</a>
+            <a class="next" onclick="changeImg(1)">&#10095;</a>
+        </div>
+    </div>
+
 </section>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -205,7 +215,7 @@
         var imgWrapper = $(this).closest('.img-wrapper');
         var imgId = imgWrapper.data('id');
         $.ajax({
-            url: 'http://localhost/HotelBooking/admin/room/deleteImg',
+            url: URLROOT + '/admin/room/deleteImg',
             type: 'POST',
             data: {
                 id: imgId
@@ -213,6 +223,7 @@
             success: function(response) {
                 if (response === 'success') {
                     imgWrapper.remove();
+                    initializeImageModals();
                 } else {
                     alert('Xóa ảnh thất bại!');
                 }
@@ -235,7 +246,7 @@
             }
 
             $.ajax({
-                url: 'http://localhost/HotelBooking/admin/room/uploadImages',
+                url: URLROOT + '/admin/room/uploadImages',
                 type: 'POST',
                 data: formData,
                 contentType: false,
@@ -245,12 +256,13 @@
                         response.images.forEach(function(image) {
                             var imgHtml = `
                         <div class="img-wrapper" data-id="${image.id}">
-                            <img src="${image.url}" alt="img">
+                            <img src="${image.url}" alt="img" class="img-thumbnail">
                             <button type="button" class="delete-img">x</button>
                         </div>
                         `;
                             $('.list-img').append(imgHtml);
                         });
+                        initializeImageModals();
                     } else {
                         alert('Tải lên ảnh thất bại!');
                     }

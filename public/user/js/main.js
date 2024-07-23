@@ -1,3 +1,7 @@
+const URLROOT = 'https://hotelbooking.com';
+const USER_PATH = URLROOT + '/public/user';
+const ADMIN_PATH = URLROOT + '/public/admin';
+
 //------------------------------------------open change-date--------------------------------------------/
 function openChangDate(idphong) {
     var changedate = document.getElementById("change-date");
@@ -10,7 +14,7 @@ function openChangDate(idphong) {
 
     if (arrivalDate != '' && departureDate != '') {
         $.ajax({
-            url: 'http://localhost/HotelBooking/home/checkRoom',
+            url: URLROOT + '/home/checkRoom',
             type: 'POST',
             dataType: 'json',
             data: {
@@ -50,7 +54,7 @@ function openChangeCartDate(idform, idphong) {
 
     if (arrivalDate != 'Ngày đến' && departureDate != 'Ngày đi') {
         $.ajax({
-            url: 'http://localhost/HotelBooking/home/checkRoom',
+            url: URLROOT + '/home/checkRoom',
             type: 'POST',
             dataType: 'json',
             data: {
@@ -90,20 +94,36 @@ function saveChangeDate() {
         if (mainContent.id == 'cart-page') {
             updateChangeCartDate();
             return false;
+        }
+        if (mainContent.id == 'detailroom-page') {
+            $.ajax({
+                url: URLROOT + '/home/bookingForm',
+                type: 'POST',
+                data: {
+                    checkin: ngayden,
+                    checkout: ngaydi
+                },
+                success: function (response) {
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                }
+            });
+            return false;
         } else {
             var form = document.getElementById('change-date-form');
             var phongtrong = form.querySelector('#emptyRoom').textContent;
 
             if (Number(phongtrong) <= 0) {
                 if (confirm("Với lịch hiện tại số phòng trống đã hết, Bạn vẫn muốn chọn lịch với những phòng khác chứ!")) {
-
-                    form.action = 'http://localhost/HotelBooking/room/search';
+                    form.action = URLROOT + '/room/search';
                     closeChangeDate();
                 } else {
                     return false;
                 }
             } else {
-                form.action = 'http://localhost/HotelBooking/payment';
+                form.action = URLROOT + '/payment';
                 closeChangeDate();
             }
 
@@ -159,7 +179,7 @@ function updateCart(idform) {
     var tonggia = parseInt(songay) * parseInt(soluongdat) * parseInt(giaphong);
 
     $.ajax({
-        url: 'http://localhost/HotelBooking/cart/updateCart',
+        url: URLROOT + '/cart/updateCart',
         type: 'POST',
         dataType: 'json',
         data: {
@@ -241,11 +261,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
             }
-            
+
             numberDate.innerText = gapBetweenDate(departureInput.value, arrivalInput.value);
         });
 
-       
+
     }
 
 });
@@ -294,7 +314,7 @@ function checkboxChange(checkbox, idform) {
             return;
         } else {
             $.ajax({
-                url: 'http://localhost/HotelBooking/home/checkRoom',
+                url: URLROOT + '/home/checkRoom',
                 type: 'POST',
                 dataType: 'json',
                 data: {
@@ -360,7 +380,7 @@ function bookingRoom() {
         // Tạo một form mới
         var form = document.createElement('form');
         form.method = 'POST';
-        form.action = 'http://localhost/HotelBooking/payment'; // Thiết lập action của form
+        form.action = URLROOT + '/payment';
 
         // Tạo input hidden và gắn giá trị
         checkedItems.forEach(function (itemId) {
@@ -479,6 +499,9 @@ document.addEventListener("DOMContentLoaded", function () {
     var form = document.getElementById("bookingForm");
 
     if (form) {
+        var initialCheckin = form.querySelector('#checkinDate').value;
+        var initialCheckout = form.querySelector('#checkoutDate').value;
+
         form.addEventListener("change", function () {
             var checkin = form.querySelector('#checkinDate').value;
             var checkout = form.querySelector('#checkoutDate').value;
@@ -487,7 +510,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Gửi yêu cầu POST thông qua AJAX
             $.ajax({
-                url: 'http://localhost/HotelBooking/home/bookingForm',
+                url: URLROOT + '/home/bookingForm',
                 type: 'POST',
                 data: {
                     checkin: checkin,
@@ -496,8 +519,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     child: child
                 },
                 success: function (response) {
-                    var mainContent = document.body.querySelector('main');
-                    if (mainContent.id == 'detailroom-page') {
+                    if (checkin !== initialCheckin || checkout !== initialCheckout) {
                         location.reload();
                     }
                 },
@@ -506,8 +528,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             });
         });
+        window.onload = function () {
+            var offsetPosition = form.offsetTop;
+            window.scrollTo({
+                top: offsetPosition - 100,
+                behavior: "smooth"
+            });
+        };
     }
 });
+
 
 // -----------------Bắt sự kiện khi thay đổi giá trị trong change-date kiểm tra phòng trống--------------------//
 document.addEventListener("DOMContentLoaded", function () {
@@ -521,7 +551,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Gửi yêu cầu POST thông qua AJAX
             $.ajax({
-                url: 'http://localhost/HotelBooking/home/checkRoom',
+                url: URLROOT + '/home/checkRoom',
                 type: 'POST',
                 dataType: 'json',
                 data: {
@@ -542,16 +572,9 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 // ------------------------------------- Submit Form Customer---------------------------------------//
-function SubmitFormCustomer() {
-    var form = document.getElementById("form-customer");
-    var fullname = form.querySelector('#fullname').value;
-    var email = form.querySelector('#email').value;
-    var phone = form.querySelector('#phone').value;
-    var address = form.querySelector('#address').value;
-
-    // Gửi yêu cầu POST thông qua AJAX
+function submitFormCustomer(fullname, email, phone, address) {
     $.ajax({
-        url: 'http://localhost/HotelBooking/payment/saveCustomer',
+        url: URLROOT + '/payment/saveCustomer',
         type: 'POST',
         data: {
             fullname: fullname,
@@ -570,14 +593,16 @@ function SubmitFormCustomer() {
 
 // -----------------------------------------------check form payment---------------------------------------------//
 function checkFormCustomer() {
-    var fullname = document.getElementById('fullname').value.trim();
-    var phone = document.getElementById('phone').value.trim();
-    var email = document.getElementById('email').value.trim();
+    var form = document.getElementById("form-customer");
+    var fullname = form.querySelector('#fullname').value.trim();
+    var email = form.querySelector('#email').value.trim();
+    var phone = form.querySelector('#phone').value.trim();
+    var address = form.querySelector('#address').value.trim();
+
     var valid = true;
     var errorMessage = "";
     var firstInvalidField = null;
 
-    // Kiểm tra họ và tên
     if (fullname === "") {
         errorMessage += "- Họ và tên là bắt buộc.\n";
         valid = false;
@@ -620,7 +645,7 @@ function checkFormCustomer() {
             firstInvalidField.focus();
         }
     } else {
-        SubmitFormCustomer();
+        submitFormCustomer(fullname, email, phone, address);
     }
 
     return valid;

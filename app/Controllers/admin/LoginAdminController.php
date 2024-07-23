@@ -1,11 +1,10 @@
 <?php
 class LoginAdmin extends Controller
 {
-    protected $AccountModel;
+    private $AccountModel;
 
     public function __construct()
     {
-        //gọi model User
         $this->AccountModel = $this->model('AccountModel');
     }
 

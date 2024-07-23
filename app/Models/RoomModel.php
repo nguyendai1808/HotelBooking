@@ -2,6 +2,7 @@
 class RoomModel
 {
     private $db;
+    
     public function __construct()
     {
         $this->db = new Database();
@@ -86,37 +87,13 @@ class RoomModel
         return (intval($sophong) - $sophongbaotri);
     }
 
-
-
     public function getScoreByAmenity($idphong)
     {
         $sql = "SELECT (SUM(chitietdanhgia.sodiem) / COUNT(*)) as sodiem, tieuchidanhgia.tentieuchi FROM danhgia 
         join chitietdanhgia on danhgia.iddanhgia = chitietdanhgia.id_danhgia
         join tieuchidanhgia on chitietdanhgia.id_tieuchi = tieuchidanhgia.idtieuchi
-        where danhgia.id_phong = '$idphong' and danhgia.trangthai != 'Ẩn' GROUP BY tieuchidanhgia.idtieuchi";
+        where danhgia.id_phong = '$idphong' GROUP BY tieuchidanhgia.idtieuchi";
 
-        $result = $this->db->select($sql);
-        return $result;
-    }
-
-
-    public function getUserRating($idphong)
-    {
-        $sql = "SELECT ho, ten, anh, noidung, thoigian, id_taikhoan, iddanhgia FROM danhgia JOIN taikhoan on danhgia.id_taikhoan = taikhoan.idtaikhoan 
-        WHERE danhgia.id_phong = '$idphong' and danhgia.trangthai != 'Ẩn' ORDER BY danhgia.thoigian DESC, danhgia.tongdiem DESC, danhgia.iddanhgia DESC";
-        $result = $this->db->select($sql);
-        return $result;
-    }
-
-    public function getRatingUserByAmenity($idphong, $idtaikhoan, $iddanhgia)
-    {
-        $sql = "SELECT chitietdanhgia.sodiem, tieuchidanhgia.tentieuchi
-        FROM danhgia JOIN chitietdanhgia ON danhgia.iddanhgia = chitietdanhgia.id_danhgia
-        JOIN tieuchidanhgia ON chitietdanhgia.id_tieuchi = tieuchidanhgia.idtieuchi
-        WHERE danhgia.iddanhgia = '$iddanhgia'
-        AND danhgia.id_phong = '$idphong' 
-        AND danhgia.trangthai != 'Ẩn' 
-        AND danhgia.id_taikhoan = '$idtaikhoan'";
         $result = $this->db->select($sql);
         return $result;
     }
@@ -124,7 +101,7 @@ class RoomModel
     public function getRatingRoom2($idphong)
     {
         $sql = "SELECT (SUM(tongdiem) / COUNT(*)) as tongdiem, COUNT(*) as sodanhgia FROM danhgia 
-        where id_phong = '$idphong' and danhgia.trangthai != 'Ẩn'";
+        where id_phong = '$idphong'";
         $result = $this->db->select($sql);
         return $result;
     }
@@ -257,7 +234,7 @@ class RoomModel
 
     public function getRatingRoom($id)
     {
-        $sql = "SELECT (SUM(tongdiem) / COUNT(*)) as tongdiem FROM danhgia WHERE id_phong = '$id' and danhgia.trangthai != 'Ẩn'";
+        $sql = "SELECT (SUM(tongdiem) / COUNT(*)) as tongdiem FROM danhgia WHERE id_phong = '$id'";
         $result = $this->db->selectFirstColumnValue($sql, 'tongdiem');
         return $result ?? null;
     }
@@ -321,7 +298,7 @@ class RoomModel
     public function getMaxIdRoom()
     {
         $sql = "SELECT Max(idphong) as max FROM phong";
-        $result = $this->db->selectFirstColumnValue($sql,'max');
+        $result = $this->db->selectFirstColumnValue($sql, 'max');
         return intval($result) + 1;
     }
 
@@ -382,19 +359,30 @@ class RoomModel
         return $result;
     }
 
-    public function saveImage($name, $link, $idphong)
+    public function saveImage($id, $name, $link, $idphong)
     {
-        $maxId = $this->getMaxIdImageRoom();
-        $maxId = intval($maxId) + 1;
-        $sql = "INSERT INTO anhphong(idanhphong, tenanh, duongdan, id_phong) VALUES ('$maxId' ,'$name','$link','$idphong')";
+        $sql = "INSERT INTO anhphong(idanhphong, tenanh, duongdan, id_phong) VALUES ('$id' ,'$name','$link','$idphong')";
         $result = $this->db->execute($sql);
         if ($result) {
-            return $maxId;
+            return true;
         } else {
-            return null;
+            return false;
         }
     }
 
+    public function getRoomImageById($idImg)
+    {
+        $sql = "SELECT tenanh FROM anhphong where idanhphong = '$idImg'";
+        $result = $this->db->selectFirstColumnValue($sql, 'tenanh');
+        return $result;
+    }
+
+    public function getIdCategoryById($idphong)
+    {
+        $sql = "SELECT id_danhmuc FROM phong where idphong = '$idphong'";
+        $result = $this->db->selectFirstColumnValue($sql, 'id_danhmuc');
+        return $result;
+    }
 
     public function updateRoom($idphong, $tenphong, $kichthuoc, $nguoilon, $trenho, $gia, $soluong, $id_danhmuc)
     {

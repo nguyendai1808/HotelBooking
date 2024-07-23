@@ -1,11 +1,65 @@
 $(document).ready(function () {
 
-    $('#category').on('click', 'li', function (e) {
-        var categoryId = $(this).data('id');
+    selectMenuItem();
+
+    function selectMenuItem() {
+        var currentUrl = window.location.href.toLowerCase();
+        $('#sidebar li').each(function () {
+            if ($(this).data('url').toLowerCase() === currentUrl) {
+                $('#sidebar li').removeClass('selected');
+                $(this).addClass('selected');
+            }
+        });
+    }
+
+    $('#sidebar').on('click', 'li', function (e) {
+        $('#sidebar li').removeClass('selected');
+        $(this).addClass('selected');
+
+        var url = $(this).data('url');
+        loadPersonalInfo(url);
+        history.pushState(null, '', url);
+    });
+
+    function loadPersonalInfo(url) {
         $.ajax({
-            url: 'http://localhost/HotelBooking/room/category/' + categoryId,
+            url: url,
             type: 'GET',
             dataType: 'json',
+            success: function (data) {
+                $('#main-content').html(data.page);
+            },
+            error: function (xhr, status, error) {
+                console.error('Error loading content:', error);
+            }
+        });
+    }
+
+    $('#category').on('click', 'li', function (e) {
+        var categoryId = $(this).data('id');
+        let url = URLROOT + '/room/category/' + categoryId;
+        $.ajax({
+            url: url,
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                updateRoom(data);
+                updatePagination(data);
+                history.pushState(null, '', url);
+            },
+            error: function (xhr, status, error) {
+                console.error(error);
+            }
+        });
+    });
+
+    //Sự kiện change của select box
+    $('#sort-select').on('change', function () {
+        var sortBy = $(this).val();
+        $.ajax({
+            url: URLROOT + '/room/sortRooms',
+            method: 'GET',
+            data: { sortBy: sortBy },
             success: function (data) {
                 updateRoom(data);
                 updatePagination(data);
@@ -16,26 +70,7 @@ $(document).ready(function () {
         });
     });
 
-
-    //Sự kiện change của select box
-    $('#sort-select').on('change', function () {
-        var sortBy = $(this).val();
-        $.ajax({
-            url: 'http://localhost/HotelBooking/room/sortRooms',
-            method: 'GET',
-            data: { sortBy: sortBy },
-            success: function (data) {
-                updateRoom(data);
-            },
-            error: function (xhr, status, error) {
-                console.error(error);
-            }
-        });
-    });
-
-
     function updateRoom(data) {
-        // Xoá nội dung phòng hiện tại
         $('#room-items').html('');
         if (data.rooms) {
             data.rooms.forEach(function (item) {
@@ -92,7 +127,7 @@ $(document).ready(function () {
             $('#room-items').append(roomItem);
         }
     }
-    
+
     function updatePagination(data) {
         $('#pagination-links').html('');
 
@@ -195,7 +230,7 @@ $(document).ready(function () {
 
     function updateRoomQuantity(minPrice, maxPrice) {
         $.ajax({
-            url: "http://localhost/HotelBooking/room/rangePrice",
+            url: URLROOT + "/room/rangePrice",
             type: 'GET',
             dataType: 'json',
             data: {
@@ -213,8 +248,6 @@ $(document).ready(function () {
             }
         });
     }
-
-
 
     //  checkbox bed-quantity 
     let timeout;
@@ -254,7 +287,7 @@ $(document).ready(function () {
         }));
 
         $.ajax({
-            url: "http://localhost/HotelBooking/room/filterBed",
+            url: URLROOT + "/room/filterBed",
             type: 'GET',
             dataType: 'json',
             data: { beds: JSON.stringify(selectedBeds) },
